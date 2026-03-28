@@ -1,0 +1,56 @@
+buildscript {
+    repositories {
+        maven { url = 'https://maven.minecraftforge.net/' }
+        maven { url = 'https://maven.blamejared.com' }
+        mavenCentral()
+    }
+    dependencies {
+        classpath 'net.minecraftforge.gradle:ForgeGradle:2.3-SNAPSHOT'
+    }
+}
+
+apply plugin: 'net.minecraftforge.gradle.forge'
+
+apply from: 'repositories.gradle'
+apply from: 'dependencies.gradle'
+
+version = project.mod_version
+group = project.mod_group
+archivesBaseName = project.mod_archives_base_name
+
+sourceCompatibility = targetCompatibility = '1.8'
+
+minecraft {
+    version = "${project.mc_version}-${project.forge_version}"
+    runDir = 'run'
+    mappings = 'snapshot_20171003'
+    makeObfSourceJar = false
+}
+
+processResources {
+    inputs.property "version", project.version
+    inputs.property "mcversion", project.mc_version
+
+    from(sourceSets.main.resources.srcDirs) {
+        include 'mcmod.info'
+        expand 'version': project.version, 'mcversion': project.mc_version
+    }
+
+    from(sourceSets.main.resources.srcDirs) {
+        exclude 'mcmod.info'
+    }
+}
+
+jar {
+    manifest {
+        attributes([
+            "Specification-Title"     : project.mod_name,
+            "Specification-Vendor"    : "Mica Technologies",
+            "Specification-Version"   : "1",
+            "Implementation-Title"    : project.mod_name,
+            "Implementation-Version"  : "${version}",
+            "Implementation-Vendor"   : "Mica Technologies",
+            "Implementation-Timestamp": new Date().format("yyyy-MM-dd'T'HH:mm:ssZ")
+        ])
+    }
+}

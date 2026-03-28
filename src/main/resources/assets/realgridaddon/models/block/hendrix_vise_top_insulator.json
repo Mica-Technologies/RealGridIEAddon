@@ -1,0 +1,6 @@
+{
+  "parent": "block/cube_all",
+  "textures": {
+    "all": "realgridaddon:blocks/hendrix_vise_top_insulator"
+  }
+}

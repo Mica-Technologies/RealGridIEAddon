@@ -1,0 +1,32 @@
+{
+  "forge_marker": 1,
+  "defaults": {
+    "model": "realgridaddon:distribution_switch"
+  },
+  "variants": {
+    "facing": {
+      "north": {},
+      "south": {
+        "y": 180
+      },
+      "west": {
+        "y": 270
+      },
+      "east": {
+        "y": 90
+      }
+    },
+    "active": {
+      "true": {
+        "textures": {
+          "all": "realgridaddon:blocks/distribution_switch_on"
+        }
+      },
+      "false": {
+        "textures": {
+          "all": "realgridaddon:blocks/distribution_switch_off"
+        }
+      }
+    }
+  }
+}

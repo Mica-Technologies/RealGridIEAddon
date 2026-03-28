@@ -1,0 +1,32 @@
+{
+  "forge_marker": 1,
+  "defaults": {
+    "model": "realgridaddon:porcelain_post_top_insulator"
+  },
+  "variants": {
+    "facing": {
+      "north": {},
+      "south": {
+        "y": 180
+      },
+      "west": {
+        "y": 270
+      },
+      "east": {
+        "y": 90
+      }
+    },
+    "color": {
+      "0": {
+        "textures": {
+          "all": "realgridaddon:blocks/porcelain_post_top_insulator_white"
+        }
+      },
+      "1": {
+        "textures": {
+          "all": "realgridaddon:blocks/porcelain_post_top_insulator_black"
+        }
+      }
+    }
+  }
+}

@@ -1,0 +1,3 @@
+dependencies {
+    deobfCompile "blusunrize:ImmersiveEngineering:0.12-+:deobf"
+}

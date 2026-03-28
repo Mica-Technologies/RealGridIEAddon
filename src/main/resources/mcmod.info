@@ -1,0 +1,11 @@
+[{
+  "modid": "realgridaddon",
+  "name": "Real Grid Addon",
+  "description": "Realistic power grid components for Immersive Engineering - transformers, insulators, and switchgear",
+  "version": "${version}",
+  "mcversion": "${mcversion}",
+  "url": "",
+  "authorList": ["Mica Technologies"],
+  "credits": "Mica Technologies",
+  "dependencies": ["immersiveengineering"]
+}]

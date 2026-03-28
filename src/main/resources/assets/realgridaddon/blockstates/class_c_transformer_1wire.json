@@ -1,0 +1,26 @@
+{
+  "forge_marker": 1,
+  "defaults": {
+    "model": "realgridaddon:class_c_transformer_1wire"
+  },
+  "variants": {
+    "facing": {
+      "north": {},
+      "south": {
+        "y": 180
+      },
+      "west": {
+        "y": 270
+      },
+      "east": {
+        "y": 90
+      }
+    },
+    "dummy": {
+      "0": {},
+      "1": {
+        "model": "realgridaddon:class_c_transformer_1wire_upper"
+      }
+    }
+  }
+}
