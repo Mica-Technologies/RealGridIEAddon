@@ -63,6 +63,9 @@ local.properties
 # TeXlipse plugin
 .texlipse
 
+### Claude Code ###
+.claude/
+
 ### Intellij IDEA ###
 
 *.iml
