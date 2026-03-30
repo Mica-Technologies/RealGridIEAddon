@@ -1,6 +1,5 @@
+// Add any additional repositories for your dependencies here
+
 repositories {
-    maven {
-        name = 'BlameJared Maven'
-        url = 'https://maven.blamejared.com'
-    }
+
 }
