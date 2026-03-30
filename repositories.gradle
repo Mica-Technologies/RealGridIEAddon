@@ -1,5 +1,9 @@
 // Add any additional repositories for your dependencies here
 
 repositories {
-
+    maven {
+        // Blusunrize Maven - Immersive Engineering artifacts
+        name 'Blusunrize Maven'
+        url 'https://maven.blusunrize.com'
+    }
 }

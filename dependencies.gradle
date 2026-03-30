@@ -38,5 +38,7 @@
  * For more details, see https://docs.gradle.org/8.4/userguide/java_library_plugin.html#sec:java_library_configurations_graph
  */
 dependencies {
-
+    // Immersive Engineering - required dependency (latest 1.12.2 release)
+    // Reference: https://github.com/Flaxbeard/ImmersivePetroleum uses "blusunrize:ImmersiveEngineering:0.12-92-+"
+    api rfg.deobf("blusunrize:ImmersiveEngineering:0.12-+")
 }
