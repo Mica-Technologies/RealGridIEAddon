@@ -38,7 +38,7 @@ public abstract class BlockRealTransformerBase extends Block implements ITileEnt
     {
         super(Material.IRON);
         setRegistryName(RealGridAddon.MODID, registryName);
-        setUnlocalizedName(RealGridAddon.MODID + "." + registryName);
+        setTranslationKey(RealGridAddon.MODID + "." + registryName);
         setHardness(3.0f);
         setResistance(15.0f);
         setDefaultState(blockState.getBaseState()
@@ -57,7 +57,7 @@ public abstract class BlockRealTransformerBase extends Block implements ITileEnt
     {
         int facingIndex = meta & 3;
         int dummyVal = (meta >> 2) & 1;
-        EnumFacing facing = EnumFacing.getHorizontal(facingIndex);
+        EnumFacing facing = EnumFacing.byHorizontalIndex(facingIndex);
         return getDefaultState().withProperty(FACING, facing).withProperty(DUMMY, dummyVal);
     }
 

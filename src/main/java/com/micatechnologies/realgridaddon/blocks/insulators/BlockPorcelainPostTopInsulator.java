@@ -41,7 +41,7 @@ public class BlockPorcelainPostTopInsulator extends BlockInsulatorBase
     @Override
     public IBlockState getStateFromMeta(int meta)
     {
-        EnumFacing facing = EnumFacing.getHorizontal(meta & 3);
+        EnumFacing facing = EnumFacing.byHorizontalIndex(meta & 3);
         int color = (meta >> 2) & 1;
         return getDefaultState().withProperty(FACING, facing).withProperty(COLOR, color);
     }

@@ -42,7 +42,7 @@ public class BlockDistributionSwitch extends Block implements ITileEntityProvide
     {
         super(Material.IRON);
         setRegistryName(RealGridAddon.MODID, "distribution_switch");
-        setUnlocalizedName(RealGridAddon.MODID + ".distribution_switch");
+        setTranslationKey(RealGridAddon.MODID + ".distribution_switch");
         setHardness(3.0f);
         setResistance(15.0f);
         setDefaultState(blockState.getBaseState()
@@ -59,7 +59,7 @@ public class BlockDistributionSwitch extends Block implements ITileEntityProvide
     @Override
     public IBlockState getStateFromMeta(int meta)
     {
-        EnumFacing facing = EnumFacing.getHorizontal(meta & 3);
+        EnumFacing facing = EnumFacing.byHorizontalIndex(meta & 3);
         boolean active = (meta & 4) != 0;
         return getDefaultState().withProperty(FACING, facing).withProperty(ACTIVE, active);
     }

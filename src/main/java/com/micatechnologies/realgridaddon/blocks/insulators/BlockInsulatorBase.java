@@ -34,7 +34,7 @@ public abstract class BlockInsulatorBase extends Block implements ITileEntityPro
     {
         super(Material.ROCK);
         setRegistryName(RealGridAddon.MODID, registryName);
-        setUnlocalizedName(RealGridAddon.MODID + "." + registryName);
+        setTranslationKey(RealGridAddon.MODID + "." + registryName);
         setHardness(1.5f);
         setResistance(10.0f);
         setDefaultState(blockState.getBaseState().withProperty(FACING, EnumFacing.NORTH));
@@ -49,7 +49,7 @@ public abstract class BlockInsulatorBase extends Block implements ITileEntityPro
     @Override
     public IBlockState getStateFromMeta(int meta)
     {
-        EnumFacing facing = EnumFacing.getHorizontal(meta & 3);
+        EnumFacing facing = EnumFacing.byHorizontalIndex(meta & 3);
         return getDefaultState().withProperty(FACING, facing);
     }
 

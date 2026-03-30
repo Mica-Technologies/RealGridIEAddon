@@ -208,7 +208,7 @@ public class TileEntityDistributionSwitch extends TileEntityImmersiveConnectable
     public void readCustomNBT(NBTTagCompound nbt, boolean descPacket)
     {
         super.readCustomNBT(nbt, descPacket);
-        facing = EnumFacing.getFront(nbt.getInteger("facing"));
+        facing = EnumFacing.byIndex(nbt.getInteger("facing"));
         wires = nbt.getInteger("wires");
         active = nbt.getBoolean("active");
         inverted = nbt.getBoolean("inverted");
