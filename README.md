@@ -108,6 +108,14 @@ The `build.gradle` can be updated to the latest version from GregTechCEu/Buildsc
 
 Version is derived from Git tags. To release a version, create a tag (e.g., `1.0.0`) and the build will use it automatically. If no tag exists, a development version is generated.
 
+### CI/CD
+
+GitHub Actions workflows are included:
+
+- **Test Mod Build (Pull Request)** -- Compiles the mod on every pull request to catch build failures early.
+- **Build Mod Release/Pre-Release (Main Branch)** -- On every push to `main`, builds the mod and publishes a GitHub pre-release with the JAR and integrity hashes. Use the manual workflow dispatch with `release: true` to create a full release.
+- **Cleanup Old/Outdated Mod Pre-Release(s)** -- Automatically removes pre-releases older than 90 days, keeping at least 3 recent ones.
+
 ## Project Structure
 ```
 RealGridIEAddon/
