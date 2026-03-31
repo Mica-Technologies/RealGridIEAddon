@@ -1,7 +1,7 @@
 {
   "forge_marker": 1,
   "defaults": {
-    "model": "realgridaddon:class_c_transformer_1wire"
+    "model": "realgridaddon:classc_transformer"
   },
   "variants": {
     "facing": {
