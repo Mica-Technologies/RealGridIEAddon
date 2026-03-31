@@ -1,19 +1,21 @@
 {
   "forge_marker": 1,
   "defaults": {
-    "model": "realgridaddon:maclean_dead_end_insulator"
+    "model": "realgridaddon:maclean_fiberglass_dei_7core_3"
   },
   "variants": {
     "facing": {
-      "north": {},
-      "south": {
+      "north": {
         "y": 180
       },
+      "south": {
+        "y": 0
+      },
       "west": {
-        "y": 270
+        "y": 90
       },
       "east": {
-        "y": 90
+        "y": 270
       }
     }
   }

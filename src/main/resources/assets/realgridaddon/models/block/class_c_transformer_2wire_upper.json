@@ -1,6 +1,0 @@
-{
-  "parent": "block/cube_all",
-  "textures": {
-    "all": "realgridaddon:blocks/class_c_transformer_2wire_upper"
-  }
-}

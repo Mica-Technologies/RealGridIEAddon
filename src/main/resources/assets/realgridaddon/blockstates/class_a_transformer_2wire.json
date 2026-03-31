@@ -5,21 +5,23 @@
   },
   "variants": {
     "facing": {
-      "north": {},
-      "south": {
+      "north": {
         "y": 180
       },
+      "south": {
+        "y": 0
+      },
       "west": {
-        "y": 270
+        "y": 90
       },
       "east": {
-        "y": 90
+        "y": 270
       }
     },
     "dummy": {
       "0": {},
       "1": {
-        "model": "realgridaddon:class_a_transformer_2wire_upper"
+        "model": "realgridaddon:dummyair"
       }
     }
   }

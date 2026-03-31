@@ -1,19 +1,21 @@
 {
   "forge_marker": 1,
   "defaults": {
-    "model": "realgridaddon:hendrix_vise_top_insulator"
+    "model": "realgridaddon:hendrix_vti_3core_small"
   },
   "variants": {
     "facing": {
-      "north": {},
-      "south": {
+      "north": {
         "y": 180
       },
+      "south": {
+        "y": 0
+      },
       "west": {
-        "y": 270
+        "y": 90
       },
       "east": {
-        "y": 90
+        "y": 270
       }
     }
   }
