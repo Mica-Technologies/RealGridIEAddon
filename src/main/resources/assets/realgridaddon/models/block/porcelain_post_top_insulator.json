@@ -1,6 +1,0 @@
-{
-  "parent": "block/cube_all",
-  "textures": {
-    "all": "realgridaddon:blocks/porcelain_post_top_insulator_white"
-  }
-}
