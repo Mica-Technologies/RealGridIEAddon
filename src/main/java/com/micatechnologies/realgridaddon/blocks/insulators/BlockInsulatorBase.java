@@ -3,6 +3,9 @@ package com.micatechnologies.realgridaddon.blocks.insulators;
 import blusunrize.immersiveengineering.api.IEProperties;
 import blusunrize.immersiveengineering.api.energy.wires.TileEntityImmersiveConnectable;
 import com.micatechnologies.realgridaddon.RealGridAddon;
+import blusunrize.immersiveengineering.api.energy.wires.IImmersiveConnectable;
+import blusunrize.immersiveengineering.api.energy.wires.ImmersiveNetHandler;
+import blusunrize.immersiveengineering.common.util.Utils;
 import net.minecraft.block.Block;
 import net.minecraft.block.ITileEntityProvider;
 import net.minecraft.block.material.Material;
@@ -142,6 +145,18 @@ public abstract class BlockInsulatorBase extends Block implements ITileEntityPro
     public EnumBlockRenderType getRenderType(IBlockState state)
     {
         return EnumBlockRenderType.MODEL;
+    }
+
+    @Override
+    public void breakBlock(World world, BlockPos pos, IBlockState state)
+    {
+        TileEntity te = world.getTileEntity(pos);
+        if (te instanceof IImmersiveConnectable && !world.isRemote)
+        {
+            ImmersiveNetHandler.INSTANCE.clearAllConnectionsFor(
+                Utils.toCC(te), world, world.getGameRules().getBoolean("doTileDrops"));
+        }
+        super.breakBlock(world, pos, state);
     }
 
     @Override
