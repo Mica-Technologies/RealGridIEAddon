@@ -1,7 +1,8 @@
 {
   "forge_marker": 1,
   "defaults": {
-    "model": "realgridaddon:distribution_switch"
+    "model": "immersiveengineering:smartmodel/connector",
+    "custom": { "base": "realgridaddon:block/distribution_switch" }
   },
   "variants": {
     "facing": {

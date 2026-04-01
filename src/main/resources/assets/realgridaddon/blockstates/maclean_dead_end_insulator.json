@@ -1,7 +1,8 @@
 {
   "forge_marker": 1,
   "defaults": {
-    "model": "realgridaddon:maclean_fiberglass_dei_7core_3"
+    "model": "immersiveengineering:smartmodel/connector",
+    "custom": { "base": "realgridaddon:block/maclean_fiberglass_dei_7core_3" }
   },
   "variants": {
     "facing": {
