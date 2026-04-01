@@ -1,7 +1,11 @@
 package com.micatechnologies.realgridaddon.blocks.insulators;
 
+import blusunrize.immersiveengineering.api.IEProperties;
+import net.minecraft.block.properties.IProperty;
 import net.minecraft.block.properties.PropertyInteger;
 import net.minecraft.block.state.BlockStateContainer;
+import net.minecraftforge.common.property.ExtendedBlockState;
+import net.minecraftforge.common.property.IUnlistedProperty;
 import net.minecraft.block.state.IBlockState;
 import net.minecraft.creativetab.CreativeTabs;
 import net.minecraft.entity.EntityLivingBase;
@@ -35,7 +39,7 @@ public class BlockPorcelainPostTopInsulator extends BlockInsulatorBase
     @Override
     protected BlockStateContainer createBlockState()
     {
-        return new BlockStateContainer(this, FACING, COLOR);
+        return new ExtendedBlockState(this, new IProperty[]{FACING, COLOR}, new IUnlistedProperty[]{IEProperties.CONNECTIONS});
     }
 
     @Override

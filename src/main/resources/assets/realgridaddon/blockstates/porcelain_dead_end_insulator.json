@@ -1,7 +1,8 @@
 {
   "forge_marker": 1,
   "defaults": {
-    "model": "realgridaddon:maclean_porcelain_dead_end_insulators"
+    "model": "immersiveengineering:smartmodel/connector",
+    "custom": { "base": "realgridaddon:block/maclean_porcelain_dead_end_insulators" }
   },
   "variants": {
     "facing": {

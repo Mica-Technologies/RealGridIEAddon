@@ -1,15 +1,19 @@
 package com.micatechnologies.realgridaddon.blocks.insulators;
 
+import blusunrize.immersiveengineering.api.IEProperties;
+import blusunrize.immersiveengineering.api.energy.wires.TileEntityImmersiveConnectable;
 import com.micatechnologies.realgridaddon.RealGridAddon;
 import net.minecraft.block.Block;
 import net.minecraft.block.ITileEntityProvider;
 import net.minecraft.block.material.Material;
+import net.minecraft.block.properties.IProperty;
 import net.minecraft.block.properties.PropertyDirection;
 import net.minecraft.block.state.BlockStateContainer;
 import net.minecraft.block.state.IBlockState;
 import net.minecraft.entity.EntityLivingBase;
 import net.minecraft.item.ItemStack;
 import net.minecraft.tileentity.TileEntity;
+import net.minecraft.util.BlockRenderLayer;
 import net.minecraft.util.EnumBlockRenderType;
 import net.minecraft.util.EnumFacing;
 import net.minecraft.util.EnumHand;
@@ -17,6 +21,9 @@ import net.minecraft.util.math.AxisAlignedBB;
 import net.minecraft.util.math.BlockPos;
 import net.minecraft.world.IBlockAccess;
 import net.minecraft.world.World;
+import net.minecraftforge.common.property.ExtendedBlockState;
+import net.minecraftforge.common.property.IExtendedBlockState;
+import net.minecraftforge.common.property.IUnlistedProperty;
 
 import javax.annotation.Nullable;
 
@@ -43,7 +50,28 @@ public abstract class BlockInsulatorBase extends Block implements ITileEntityPro
     @Override
     protected BlockStateContainer createBlockState()
     {
-        return new BlockStateContainer(this, FACING);
+        return new ExtendedBlockState(this, new IProperty[]{FACING}, new IUnlistedProperty[]{IEProperties.CONNECTIONS});
+    }
+
+    @Override
+    public IBlockState getExtendedState(IBlockState state, IBlockAccess world, BlockPos pos)
+    {
+        if (state instanceof IExtendedBlockState)
+        {
+            TileEntity te = world.getTileEntity(pos);
+            if (te instanceof TileEntityImmersiveConnectable)
+            {
+                state = ((IExtendedBlockState) state).withProperty(IEProperties.CONNECTIONS,
+                    ((TileEntityImmersiveConnectable) te).genConnBlockstate());
+            }
+        }
+        return state;
+    }
+
+    @Override
+    public boolean canRenderInLayer(IBlockState state, BlockRenderLayer layer)
+    {
+        return layer == BlockRenderLayer.SOLID || layer == BlockRenderLayer.TRANSLUCENT;
     }
 
     @Override
