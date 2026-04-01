@@ -72,41 +72,9 @@
 			}
 		},
 		{
-<<<<<<< Updated upstream:src/main/resources/assets/realgridaddon/models/block/maclean_porcelain_dead_end_insulators.json
-			"from": [10.2, 5.85, 9.5],
-			"to": [10.45, 6.1, 11.5],
-			"rotation": {"angle": -25, "axis": "y", "origin": [10, 7, 6]},
-			"faces": {
-				"north": {"uv": [0, 8, 8, 16], "texture": "#0"},
-				"east": {"uv": [0, 8, 8, 16], "texture": "#0"},
-				"south": {"uv": [0, 8, 8, 16], "texture": "#0"},
-				"west": {"uv": [0, 8, 8, 16], "texture": "#0"},
-				"up": {"uv": [0, 8, 8, 16], "texture": "#0"},
-				"down": {"uv": [0, 8, 8, 16], "texture": "#0"}
-			}
-		},
-		{
-			"from": [10.2, 5.85, 17.5],
-			"to": [10.45, 6.1, 19.5],
-			"rotation": {"x": 0, "y": -152.5, "z": 0, "origin": [10, 7, 14]},
-			"faces": {
-				"north": {"uv": [0, 8, 8, 16], "texture": "#0"},
-				"east": {"uv": [0, 8, 8, 16], "texture": "#0"},
-				"south": {"uv": [0, 8, 8, 16], "texture": "#0"},
-				"west": {"uv": [0, 8, 8, 16], "texture": "#0"},
-				"up": {"uv": [0, 8, 8, 16], "texture": "#0"},
-				"down": {"uv": [0, 8, 8, 16], "texture": "#0"}
-			}
-		},
-		{
-			"from": [7.4, 5.35, -0.2],
-			"to": [8.65, 6.6, 0.2],
-			"rotation": {"angle": 0, "axis": "y", "origin": [8, 5, 6]},
-=======
 			"from": [6.4, 7.35, -0.2],
 			"to": [9.65, 10.6, 0.2],
 			"rotation": {"angle": 0, "axis": "y", "origin": [8, 8, 6]},
->>>>>>> Stashed changes:src/main/resources/assets/realgridaddon/models/block/maclean_porcelain_dead_end_insulator_new.json
 			"faces": {
 				"north": {"uv": [0, 0, 8, 8], "texture": "#0"},
 				"east": {"uv": [0, 0, 8, 8], "texture": "#0"},
