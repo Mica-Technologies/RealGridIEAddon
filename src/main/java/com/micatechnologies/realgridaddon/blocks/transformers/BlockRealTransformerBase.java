@@ -1,7 +1,10 @@
 package com.micatechnologies.realgridaddon.blocks.transformers;
 
 import blusunrize.immersiveengineering.api.IEProperties;
+import blusunrize.immersiveengineering.api.energy.wires.IImmersiveConnectable;
+import blusunrize.immersiveengineering.api.energy.wires.ImmersiveNetHandler;
 import blusunrize.immersiveengineering.api.energy.wires.TileEntityImmersiveConnectable;
+import blusunrize.immersiveengineering.common.util.Utils;
 import com.micatechnologies.realgridaddon.RealGridAddon;
 import net.minecraft.block.Block;
 import net.minecraft.block.ITileEntityProvider;
@@ -161,6 +164,11 @@ public abstract class BlockRealTransformerBase extends Block implements ITileEnt
                     world.setBlockToAir(targetPos);
                 }
             }
+        }
+        if (te instanceof IImmersiveConnectable && !world.isRemote)
+        {
+            ImmersiveNetHandler.INSTANCE.clearAllConnectionsFor(
+                Utils.toCC(te), world, world.getGameRules().getBoolean("doTileDrops"));
         }
         super.breakBlock(world, pos, state);
     }

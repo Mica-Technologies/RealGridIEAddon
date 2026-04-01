@@ -1,6 +1,7 @@
 package com.micatechnologies.realgridaddon.blocks.switchgear;
 
 import blusunrize.immersiveengineering.api.IEProperties;
+import blusunrize.immersiveengineering.api.energy.wires.IImmersiveConnectable;
 import blusunrize.immersiveengineering.api.energy.wires.ImmersiveNetHandler;
 import blusunrize.immersiveengineering.api.energy.wires.TileEntityImmersiveConnectable;
 import blusunrize.immersiveengineering.common.util.ChatUtils;
@@ -226,6 +227,18 @@ public class BlockDistributionSwitch extends Block implements ITileEntityProvide
     public EnumBlockRenderType getRenderType(IBlockState state)
     {
         return EnumBlockRenderType.MODEL;
+    }
+
+    @Override
+    public void breakBlock(World world, BlockPos pos, IBlockState state)
+    {
+        TileEntity te = world.getTileEntity(pos);
+        if (te instanceof IImmersiveConnectable && !world.isRemote)
+        {
+            ImmersiveNetHandler.INSTANCE.clearAllConnectionsFor(
+                Utils.toCC(te), world, world.getGameRules().getBoolean("doTileDrops"));
+        }
+        super.breakBlock(world, pos, state);
     }
 
     @Override
