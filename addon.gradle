@@ -1,5 +1,20 @@
 // Add any additional Gradle commands or configuration here
 
+// ARM macOS (Apple Silicon) support for runClient17/runClient21:
+// 1. Bundled JNA 4.4.0 has no arm64 natives -> override with JNA 5.13.0
+// 2. java-objc-bridge (narrator) has no arm64 natives -> disable narrator
+if (project.hasProperty('enableJava17RunTasks') && enableJava17RunTasks.toBoolean()) {
+    dependencies {
+        java17PatchDependencies('net.java.dev.jna:jna:5.13.0') { transitive = false }
+        java17PatchDependencies('net.java.dev.jna:jna-platform:5.13.0') { transitive = false }
+    }
+
+    // java-objc-bridge 1.0.0 (bundled with MC) has no arm64 native -> override with 1.1
+    dependencies {
+        java17PatchDependencies('ca.weblite:java-objc-bridge:1.1') { transitive = false }
+    }
+}
+
 // TOOLS FOR GITHUB ACTIONS
 task printModVersion {
     doLast {
