@@ -234,6 +234,13 @@ public class BlockDistributionSwitch extends Block implements ITileEntityProvide
         return true;
     }
 
+    @Override
+    public boolean eventReceived(IBlockState state, World world, BlockPos pos, int id, int param)
+    {
+        TileEntity te = world.getTileEntity(pos);
+        return te != null && te.receiveClientEvent(id, param);
+    }
+
     @Nullable
     @Override
     public TileEntity createNewTileEntity(World world, int meta)
