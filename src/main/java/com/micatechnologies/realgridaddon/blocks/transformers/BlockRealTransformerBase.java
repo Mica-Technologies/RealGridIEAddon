@@ -196,6 +196,13 @@ public abstract class BlockRealTransformerBase extends Block implements ITileEnt
     }
 
     @Override
+    public boolean eventReceived(IBlockState state, World world, BlockPos pos, int id, int param)
+    {
+        TileEntity te = world.getTileEntity(pos);
+        return te != null && te.receiveClientEvent(id, param);
+    }
+
+    @Override
     public boolean hasTileEntity(IBlockState state)
     {
         return true;
