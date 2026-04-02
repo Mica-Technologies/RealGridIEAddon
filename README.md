@@ -22,8 +22,8 @@ Wire relay components that allow energy to pass through and support multiple con
 
 All insulators accept LV, MV, and HV wire connections.
 
-### Distribution Switchgear
-Based on MacLean triple action air release switches:
+### Cutoff Switch
+Based on MacLean fiberglass cutoff switches:
 - Supports up to 3 wire connections (any mix of HV, MV, LV)
 - Controlled exclusively by **redstone signal** (no manual toggle)
 - When powered: switch opens (power stops flowing)

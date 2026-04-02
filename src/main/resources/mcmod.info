@@ -1,7 +1,7 @@
 [{
-  "modid": "realgridaddon",
-  "name": "Real Grid Addon",
-  "description": "Realistic power grid components for Immersive Engineering - transformers, insulators, and switchgear",
+  "modid": "realgrid",
+  "name": "RealGrid",
+  "description": "Realistic power grid components for Immersive Engineering - transformers, insulators, and a working cutoff switch",
   "version": "${version}",
   "mcversion": "${mcversion}",
   "url": "",

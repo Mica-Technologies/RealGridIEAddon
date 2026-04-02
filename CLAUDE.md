@@ -38,13 +38,13 @@ JAVA_HOME="C:/Users/<username>/.jdks/azul-17.0.18" ./gradlew build
 
 ## Architecture Overview
 
-This is a **Minecraft 1.12.2 Forge mod** (mod ID: `realgridaddon`) that adds realistic power grid components as an addon for [Immersive Engineering](https://www.curseforge.com/minecraft/mc-mods/immersive-engineering). The build system is GregTechCEu Buildscripts (RetroFuturaGradle wrapper).
+This is a **Minecraft 1.12.2 Forge mod** (mod ID: `realgrid`) that adds realistic power grid components as an addon for [Immersive Engineering](https://www.curseforge.com/minecraft/mc-mods/immersive-engineering). The build system is GregTechCEu Buildscripts (RetroFuturaGradle wrapper).
 
 ### Source Layout
 
 ```
 src/main/java/com/micatechnologies/realgridaddon/
-├── RealGridAddon.java           # Main @Mod class; lifecycle events delegate to proxy
+├── RealGrid.java           # Main @Mod class; lifecycle events delegate to proxy
 ├── proxy/
 │   ├── CommonProxy.java         # Server-side: registers tile entities in preInit
 │   └── ClientProxy.java         # Client-side: extends CommonProxy
