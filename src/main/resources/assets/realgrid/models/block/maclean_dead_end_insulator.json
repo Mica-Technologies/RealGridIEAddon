@@ -1,6 +1,6 @@
 {
   "parent": "block/cube_all",
   "textures": {
-    "all": "realgridaddon:blocks/maclean_dead_end_insulator"
+    "all": "realgrid:blocks/maclean_dead_end_insulator"
   }
 }
