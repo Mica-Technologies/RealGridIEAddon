@@ -2,7 +2,7 @@
   "forge_marker": 1,
   "defaults": {
     "model": "immersiveengineering:smartmodel/connector",
-    "custom": { "base": "realgrid:block/distribution_switch" }
+    "custom": { "base": "realgrid:block/cutoff_switch" }
   },
   "variants": {
     "facing": {
@@ -20,12 +20,12 @@
     "active": {
       "true": {
         "textures": {
-          "all": "realgrid:blocks/distribution_switch_on"
+          "all": "realgrid:block/cutoff_on"
         }
       },
       "false": {
         "textures": {
-          "all": "realgrid:blocks/distribution_switch_off"
+          "all": "realgrid:block/cutoff_off"
         }
       }
     }

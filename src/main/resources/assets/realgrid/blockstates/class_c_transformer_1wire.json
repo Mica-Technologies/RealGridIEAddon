@@ -2,7 +2,7 @@
   "forge_marker": 1,
   "defaults": {
     "model": "immersiveengineering:smartmodel/connector",
-    "custom": { "base": "realgrid:block/classc_transformer" }
+    "custom": { "base": "realgrid:block/class_c_transformer" }
   },
   "variants": {
     "facing": {
@@ -22,7 +22,7 @@
     "dummy": {
       "0": {},
       "1": {
-        "model": "realgrid:classc_transformer_top_1wire"
+        "model": "realgrid:class_c_transformer_top_1wire"
       }
     }
   }
