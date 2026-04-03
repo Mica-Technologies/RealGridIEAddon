@@ -26,19 +26,19 @@ tile.realgrid.maclean_pti_2core.name=MacLean Fiberglass Post Top Insulator (5 Co
 tile.realgrid.maclean_pti_2core.name=MacLean Fiberglass Post Top Insulator (6 Core)
 
 # MacLean Fiberglass Dead End Insulators
-tile.realgrid.maclean_dei_3core=MacLean Fiberglass Dead End Insulator (3 Core)
-tile.realgrid.maclean_dei_4core=MacLean Fiberglass Dead End Insulator (4 Core)
-tile.realgrid.maclean_dei_4core_2=MacLean Fiberglass Dead End Insulator (4 Core, Version 2)
-tile.maclean_dei_6core=MacLean Fiberglass Dead End Insulator (6 Core)
-tile.realgrid.maclean_dei_7core=MacLean Fiberglass Dead End Insulator (7 Core)
-tile.realgrid.maclean_dei_7core_2=MacLean Fiberglass Dead End Insulator (7 Core, Version 2)
-tile.realgrid.maclean_dei_7core=MacLean Fiberglass Dead End Insulator (7 Core, Version 3)
-tile.maclean_dei_8core=MacLean Fiberglass Dead End Insulator (8 Core)
-tile.realgrid.maclean_dei_9core=MacLean Fiberglass Dead End Insulator (9 Core)
+tile.realgrid.maclean_dei_3core.name=MacLean Fiberglass Dead End Insulator (3 Core)
+tile.realgrid.maclean_dei_4core.name=MacLean Fiberglass Dead End Insulator (4 Core)
+tile.realgrid.maclean_dei_4core_2.name=MacLean Fiberglass Dead End Insulator (4 Core, Version 2)
+tile.maclean_dei_6core.name=MacLean Fiberglass Dead End Insulator (6 Core)
+tile.realgrid.maclean_dei_7core.name=MacLean Fiberglass Dead End Insulator (7 Core)
+tile.realgrid.maclean_dei_7core_2.name=MacLean Fiberglass Dead End Insulator (7 Core, Version 2)
+tile.realgrid.maclean_dei_7core.name=MacLean Fiberglass Dead End Insulator (7 Core, Version 3)
+tile.maclean_dei_8core.name=MacLean Fiberglass Dead End Insulator (8 Core)
+tile.realgrid.maclean_dei_9core.name=MacLean Fiberglass Dead End Insulator (9 Core)
 
 # Switchgear
 tile.realgrid.cutoff_switch.name=Cutoff Switch
 
 # Info Messages
-realgrid.info.switch_inverted.on=Switchgear mode: Cutoff Switch is OPEN!
+realgrid.info.switch_inverted.on=Cutoff Switch is OPEN!
 realgrid.info.switch_inverted.off=Cutoff Switch is CLOSED!
