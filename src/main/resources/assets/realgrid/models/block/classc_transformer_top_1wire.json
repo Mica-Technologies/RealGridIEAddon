@@ -3,8 +3,8 @@
 	"credit": "Model made by Brandon Holt (RinRin Blissgreen)",
 	"parent": "block/cube_all",
 	"textures": {
-		"0": "realgridaddon:blocks/transformers",
-		"particle": "realgridaddon:blocks/transformers"
+		"0": "realgrid:blocks/transformers",
+		"particle": "realgrid:blocks/transformers"
 	},
 	"elements": [
 		{
