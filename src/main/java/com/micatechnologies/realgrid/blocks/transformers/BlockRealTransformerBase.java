@@ -44,8 +44,8 @@ public abstract class BlockRealTransformerBase extends Block implements ITileEnt
     public BlockRealTransformerBase(String registryName)
     {
         super(Material.IRON);
-        setRegistryName(realgrid.MODID, registryName);
-        setTranslationKey(realgrid.MODID + "." + registryName);
+        setRegistryName(RealGrid.MODID, registryName);
+        setTranslationKey(RealGrid.MODID + "." + registryName);
         setHardness(3.0f);
         setResistance(15.0f);
         setDefaultState(blockState.getBaseState()

@@ -1,4 +1,4 @@
-package com.micatechnologies.realgrid.blocks.switchgear;
+package com.micatechnologies.realgrid.blocks.cutoffs;
 
 import blusunrize.immersiveengineering.api.TargetingInfo;
 import blusunrize.immersiveengineering.api.energy.wires.IImmersiveConnectable;
@@ -24,7 +24,7 @@ import net.minecraft.util.math.Vec3d;
  * When no redstone, switch closes (allows power) unless inverted.
  * Invertible with engineer's hammer + sneak.
  */
-public class TileEntityDistributionSwitch extends TileEntityImmersiveConnectable
+public class TileEntityCutoffSwitch extends TileEntityImmersiveConnectable
     implements IDirectionalTile, IBlockBounds, IRedstoneOutput, ITickable
 {
     public static final int MAX_WIRES = 3;

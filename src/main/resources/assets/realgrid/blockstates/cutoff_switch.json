@@ -2,7 +2,7 @@
   "forge_marker": 1,
   "defaults": {
     "model": "immersiveengineering:smartmodel/connector",
-    "custom": { "base": "realgridaddon:block/distribution_switch" }
+    "custom": { "base": "realgrid:block/distribution_switch" }
   },
   "variants": {
     "facing": {
@@ -20,12 +20,12 @@
     "active": {
       "true": {
         "textures": {
-          "all": "realgridaddon:blocks/distribution_switch_on"
+          "all": "realgrid:blocks/distribution_switch_on"
         }
       },
       "false": {
         "textures": {
-          "all": "realgridaddon:blocks/distribution_switch_off"
+          "all": "realgrid:blocks/distribution_switch_off"
         }
       }
     }
