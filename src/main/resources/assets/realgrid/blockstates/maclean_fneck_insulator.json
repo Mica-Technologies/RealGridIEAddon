@@ -2,7 +2,7 @@
   "forge_marker": 1,
   "defaults": {
     "model": "immersiveengineering:smartmodel/connector",
-    "custom": { "base": "realgridaddon:block/maclean_pti_6core" }
+    "custom": { "base": "realgrid:block/maclean_pti_6core" }
   },
   "variants": {
     "facing": {

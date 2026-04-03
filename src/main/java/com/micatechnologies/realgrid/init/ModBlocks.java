@@ -10,7 +10,7 @@ import com.micatechnologies.realgrid.blocks.insulators.BlockMacLeanDeadEndInsula
 import com.micatechnologies.realgrid.blocks.insulators.BlockHendrixViseTopInsulator;
 import com.micatechnologies.realgrid.blocks.insulators.BlockPorcelainPostTopInsulator;
 import com.micatechnologies.realgrid.blocks.insulators.BlockPorcelainDeadEndInsulator;
-import com.micatechnologies.realgrid.blocks.switchgear.BlockCutoffSwitch;
+import com.micatechnologies.realgrid.blocks.cutoffs.BlockCutoffSwitch;
 import com.micatechnologies.realgrid.items.ItemBlockBase;
 import net.minecraft.block.Block;
 import net.minecraft.creativetab.CreativeTabs;
@@ -46,7 +46,7 @@ public class ModBlocks
     public static final BlockPorcelainDeadEndInsulator PORCELAIN_DEAD_END_INSULATOR = new BlockPorcelainDeadEndInsulator();
 
     // Switchgear
-    public static final BlockDistributionSwitch DISTRIBUTION_SWITCH = new BlockCutoffSwitch();
+    public static final BlockCutoffSwitch CUTOFF_SWITCH = new BlockCutoffSwitch();
 
     // Creative Tab
     public static final CreativeTabs CREATIVE_TAB = new CreativeTabs(RealGrid.MODID)

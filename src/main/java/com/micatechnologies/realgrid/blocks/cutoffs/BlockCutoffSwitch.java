@@ -154,7 +154,7 @@ public class BlockCutoffSwitch extends Block implements ITileEntityProvider
                     switchTe.inverted = !switchTe.inverted;
                     ChatUtils.sendServerNoSpamMessages(player,
                         new TextComponentTranslation(
-                            RealGridAddon.MODID + ".info.switch_inverted." +
+                            RealGrid.MODID + ".info.switch_inverted." +
                             (switchTe.inverted ? "on" : "off")));
                     if (switchTe.wires > 1)
                     {
@@ -197,7 +197,7 @@ public class BlockCutoffSwitch extends Block implements ITileEntityProvider
     public int getStrongPower(IBlockState state, IBlockAccess world, BlockPos pos, EnumFacing side)
     {
         TileEntity te = world.getTileEntity(pos);
-        if (te instanceof TileEntityDistributionSwitch)
+        if (te instanceof TileEntityCutoffSwitch)
         {
             return ((TileEntityCutoffSwitch) te).getStrongRSOutput(state, side);
         }
