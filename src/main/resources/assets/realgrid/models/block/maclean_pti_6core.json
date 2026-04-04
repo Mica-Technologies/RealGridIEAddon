@@ -2,8 +2,8 @@
 	"format_version": "1.21.11",
 	"credit": "Model made by Brandon Holt (RinRin Blissgreen)",
 	"textures": {
-		"0": "realgrid:blocks/maclean_90s_porcelain_insulator",
-		"particle": "realgrid:blocks/maclean_90s_porcelain_insulator"
+		"0": "realgrid:blocks/fiberglass_insulators",
+		"particle": "realgrid:blocks/fiberglass_insulators"
 	},
 	"elements": [
 		{
