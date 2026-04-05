@@ -5,12 +5,17 @@ import com.micatechnologies.realgrid.blocks.transformers.BlockClassATransformer2
 import com.micatechnologies.realgrid.blocks.transformers.BlockClassATransformer1Wire;
 import com.micatechnologies.realgrid.blocks.transformers.BlockClassCTransformer2Wire;
 import com.micatechnologies.realgrid.blocks.transformers.BlockClassCTransformer1Wire;
+import com.micatechnologies.realgrid.blocks.transformers.BlockJumboTransformer1Wire;
+import com.micatechnologies.realgrid.blocks.transformers.BlockJumboTransformer2Wire;
 import com.micatechnologies.realgrid.blocks.insulators.BlockMacLeanFNeckInsulator;
 import com.micatechnologies.realgrid.blocks.insulators.BlockMacLeanDeadEndInsulator;
 import com.micatechnologies.realgrid.blocks.insulators.BlockHendrixViseTopInsulator;
 import com.micatechnologies.realgrid.blocks.insulators.BlockPorcelainPostTopInsulator;
 import com.micatechnologies.realgrid.blocks.insulators.BlockPorcelainDeadEndInsulator;
 import com.micatechnologies.realgrid.blocks.cutoffs.BlockCutoffSwitch;
+import com.micatechnologies.realgrid.blocks.cutoffs.BlockCutoffSwitch2;
+import com.micatechnologies.realgrid.blocks.cutoffs.BlockCutoffSwitch3;
+import com.micatechnologies.realgrid.blocks.cutoffs.BlockCutoffSwitch4;
 import com.micatechnologies.realgrid.items.ItemBlockBase;
 import net.minecraft.block.Block;
 import net.minecraft.creativetab.CreativeTabs;
@@ -37,6 +42,8 @@ public class ModBlocks
     public static final BlockClassATransformer1Wire CLASS_A_TRANSFORMER_1WIRE = new BlockClassATransformer1Wire();
     public static final BlockClassCTransformer2Wire CLASS_C_TRANSFORMER_2WIRE = new BlockClassCTransformer2Wire();
     public static final BlockClassCTransformer1Wire CLASS_C_TRANSFORMER_1WIRE = new BlockClassCTransformer1Wire();
+public static final BlockJumboTransformer2Wire JUMBO_TRANSFORMER_2WIRE = new BlockJumboTransformer2Wire();
+    public static final BlockJumboTransformer1Wire JUMBO_TRANSFORMER_1WIRE = new BlockJumboTransformer1Wire();
 
     // Insulators
     public static final BlockMacLeanFNeckInsulator MACLEAN_FNECK_INSULATOR = new BlockMacLeanFNeckInsulator();
@@ -47,6 +54,9 @@ public class ModBlocks
 
     // Switchgear
     public static final BlockCutoffSwitch CUTOFF_SWITCH = new BlockCutoffSwitch();
+public static final BlockCutoffSwitch2 CUTOFF_SWITCH_2 = new BlockCutoffSwitch2();
+public static final BlockCutoffSwitch3 CUTOFF_SWITCH_3 = new BlockCutoffSwitch3();
+public static final BlockCutoffSwitch4 CUTOFF_SWITCH_4 = new BlockCutoffSwitch4();
 
     // Creative Tab
     public static final CreativeTabs CREATIVE_TAB = new CreativeTabs(RealGrid.MODID)
@@ -67,12 +77,17 @@ public class ModBlocks
             CLASS_A_TRANSFORMER_1WIRE,
             CLASS_C_TRANSFORMER_2WIRE,
             CLASS_C_TRANSFORMER_1WIRE,
+            JUMBO_TRANSFORMER_2WIRE,
+            JUMBO_TRANSFORMER_1WIRE,
             MACLEAN_FNECK_INSULATOR,
             MACLEAN_DEAD_END_INSULATOR,
             HENDRIX_VISE_TOP_INSULATOR,
             PORCELAIN_POST_TOP_INSULATOR,
             PORCELAIN_DEAD_END_INSULATOR,
-            CUTOFF_SWITCH
+            CUTOFF_SWITCH,
+            CUTOFF_SWITCH_2,
+            CUTOFF_SWITCH_3,
+            CUTOFF_SWITCH_4
         };
 
         for (Block block : blocks)

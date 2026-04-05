@@ -53,7 +53,7 @@ import javax.annotation.Nullable;
  *   dangling wire segments are not left in the world, consistent with IE's own
  *   block-removal behaviour.
  */
-public class BlockCutoffSwitch extends Block implements ITileEntityProvider {
+public class BlockCutoffSwitch3 extends Block implements ITileEntityProvider {
 
     // -----------------------------------------------------------------------
     // Block state properties
@@ -77,7 +77,7 @@ public class BlockCutoffSwitch extends Block implements ITileEntityProvider {
     // Constructor
     // -----------------------------------------------------------------------
 
-    public BlockCutoffSwitch() {
+    public BlockCutoffSwitch3() {
         super(Material.IRON);
         setRegistryName(RealGrid.MODID, "maclean_cutoff_switch");
         setTranslationKey(RealGrid.MODID + ".maclean_cutoff_switch");
@@ -142,8 +142,8 @@ public class BlockCutoffSwitch extends Block implements ITileEntityProvider {
     @Override
     public IBlockState getActualState(IBlockState state, IBlockAccess world, BlockPos pos) {
         TileEntity te = world.getTileEntity(pos);
-        if (te instanceof TileEntityCutoffSwitch) {
-            return state.withProperty(ACTIVE, ((TileEntityCutoffSwitch) te).active);
+        if (te instanceof TileEntityCutoffSwitch3) {
+            return state.withProperty(ACTIVE, ((TileEntityCutoffSwitch3) te).active);
         }
         return state;
     }
@@ -167,8 +167,8 @@ public class BlockCutoffSwitch extends Block implements ITileEntityProvider {
                                  EntityLivingBase placer, ItemStack stack) {
         if (!world.isRemote) {
             TileEntity te = world.getTileEntity(pos);
-            if (te instanceof TileEntityCutoffSwitch) {
-                ((TileEntityCutoffSwitch) te).facing = state.getValue(FACING);
+            if (te instanceof TileEntityCutoffSwitch3) {
+                ((TileEntityCutoffSwitch3) te).facing = state.getValue(FACING);
             }
         }
     }
@@ -195,9 +195,9 @@ public class BlockCutoffSwitch extends Block implements ITileEntityProvider {
                                      EntityPlayer player, EnumHand hand,
                                      EnumFacing facing, float hitX, float hitY, float hitZ) {
         TileEntity te = world.getTileEntity(pos);
-        if (!(te instanceof TileEntityCutoffSwitch)) return false;
+        if (!(te instanceof TileEntityCutoffSwitch3)) return false;
 
-        TileEntityCutoffSwitch switchTe = (TileEntityCutoffSwitch) te;
+        TileEntityCutoffSwitch3 switchTe = (TileEntityCutoffSwitch3) te;
         ItemStack heldItem = player.getHeldItem(hand);
 
         // --- Path 1: Sneak + Hammer → invert redstone control (IHammerInteraction) ---
@@ -241,7 +241,7 @@ public class BlockCutoffSwitch extends Block implements ITileEntityProvider {
     @Override
     public void neighborChanged(IBlockState state, World world, BlockPos pos,
                                  Block blockIn, BlockPos fromPos) {
-        // Intentionally empty: state changes are driven by TileEntityCutoffSwitch.update()
+        // Intentionally empty: state changes are driven by TileEntityCutoffSwitch3.update()
     }
 
     // -----------------------------------------------------------------------
@@ -255,8 +255,8 @@ public class BlockCutoffSwitch extends Block implements ITileEntityProvider {
     public int getWeakPower(IBlockState state, IBlockAccess world,
                              BlockPos pos, EnumFacing side) {
         TileEntity te = world.getTileEntity(pos);
-        if (te instanceof TileEntityCutoffSwitch)
-            return ((TileEntityCutoffSwitch) te).getWeakRSOutput(state, side);
+        if (te instanceof TileEntityCutoffSwitch3)
+            return ((TileEntityCutoffSwitch3) te).getWeakRSOutput(state, side);
         return 0;
     }
 
@@ -264,8 +264,8 @@ public class BlockCutoffSwitch extends Block implements ITileEntityProvider {
     public int getStrongPower(IBlockState state, IBlockAccess world,
                                BlockPos pos, EnumFacing side) {
         TileEntity te = world.getTileEntity(pos);
-        if (te instanceof TileEntityCutoffSwitch)
-            return ((TileEntityCutoffSwitch) te).getStrongRSOutput(state, side);
+        if (te instanceof TileEntityCutoffSwitch3)
+            return ((TileEntityCutoffSwitch3) te).getStrongRSOutput(state, side);
         return 0;
     }
 
@@ -317,6 +317,6 @@ public class BlockCutoffSwitch extends Block implements ITileEntityProvider {
     @Nullable
     @Override
     public TileEntity createNewTileEntity(World world, int meta) {
-        return new TileEntityCutoffSwitch();
+        return new TileEntityCutoffSwitch3();
     }
 }

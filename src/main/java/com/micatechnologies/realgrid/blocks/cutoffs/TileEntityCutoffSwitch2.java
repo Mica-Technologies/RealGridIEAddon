@@ -35,7 +35,7 @@ import net.minecraft.util.math.Vec3d;
  *  - Redstone signal present (inverted mode): closes switch (power flows)
  *  - Outputs a weak / strong redstone signal indicating its current state
  */
-public class TileEntityCutoffSwitch extends TileEntityImmersiveConnectable
+public class TileEntityCutoffSwitch2 extends TileEntityImmersiveConnectable
         implements IDirectionalTile, IBlockBounds, IRedstoneOutput, ITickable, IHammerInteraction {
 
     // -----------------------------------------------------------------------
