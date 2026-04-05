@@ -5,11 +5,18 @@ tile.realgrid.class_a_transformer_1wire.name=Power Partners Class A Transformer 
 tile.realgrid.class_a_transformer_2wire.name=Power Partners Class A Transformer (2 Wire)
 tile.realgrid.class_c_transformer_1wire.name=Power Partners Class C Transformer (1 Wire)
 tile.realgrid.class_c_transformer_2wire.name=Power Partners Class C Transformer (2 Wire)
+tile.realgrid.jumbo_transformer_1wire.name=Power Partners Jumbo Transformer (1 Wire)
+tile.realgrid.jumbo_transformer_2wire.name=Power Partners Jumbo Transformer (2 Wire)
 
 # Hendrix Vise Top Insulators
 tile.realgrid.hendrix_vti_2core.name=Hendrix Vise Top Insulator (2 Core)
 tile.realgrid.hendrix_vti_3core_small.name=Hendrix Vise Top Insulator (3 Core, Small Version)
 tile.realgrid.hendrix_vti_3core.name=Hendrix Vise Top Insulator (3 Core)
+
+# Hendrix Vise Top Insulators- Side Mount
+tile.realgrid.hendrix_vti_side_2core.name=Hendrix Vise Top Insulator (2 Core Side Mount)
+tile.realgrid.hendrix_vti_side_3core_small.name=Hendrix Vise Top Insulator (3 Core Side Mount, Small Version)
+tile.realgrid.hendrix_vti_side_3core.name=Hendrix Vise Top Insulator (3 Core Side Mount)
 
 # MacLean Porcelain Insulators
 tile.realgrid.large_maclean_porcelain_insulator_new.name=MacLean Porcelain Insulator (New, Large)
@@ -17,13 +24,36 @@ tile.realgrid.large_maclean_porcelain_insulator_old.name=MacLean Porcelain Insul
 tile.realgrid.small_maclean_porcelain_insulator_new.name=MacLean Porcelain Insulator (New, Small)
 tile.realgrid.small_maclean_porcelain_insulator_old.name=MacLean Porcelain Insulator (Old, Small)
 
-# MacLean Fiberglass Post Top Insulators
+# MacLean Porcelain Insulators- Side Mount
+tile.realgrid.large_maclean_porcelain_insulator_side_new.name=MacLean Porcelain Insulator (Side Mount New, Large)
+tile.realgrid.large_maclean_porcelain_insulator_side_old.name=MacLean Porcelain Insulator (Side Mount Old, Large)
+tile.realgrid.small_maclean_porcelain_insulator_side_new.name=MacLean Porcelain Insulator (Side Mount New, Small)
+tile.realgrid.small_maclean_porcelain_insulator_side_old.name=MacLean Porcelain Insulator (Side Mount Old, Small)
+
+Locke Porcelain Insulators
+tile.realgrid.locke_2core_insulator_new.name=Locke Porcelain Insulators (2 Core, New)
+tile.realgrid.locke_2core_insulator_new.name=Locke Porcelain Insulators (2 Core, Old)
+tile.realgrid.locke_2core_insulator_new.name=Locke Porcelain Insulators (3 Core, New)
+tile.realgrid.locke_2core_insulator_new.name=Locke Porcelain Insulators (3 Core, Old)
+
+Locke Porcelain Insulators- Side Mount
+tile.realgrid.locke_2core_insulator_side_new.name=Locke Porcelain Insulators (2 Core Side, New)
+tile.realgrid.locke_2core_insulator_side_new.name=Locke Porcelain Insulators (2 Core Side, Old)
+tile.realgrid.locke_2core_insulator_side_new.name=Locke Porcelain Insulators (3 Core Side, New)
+tile.realgrid.locke_2core_insulator_side_new.name=Locke Porcelain Insulators (3 Core Side, Old)
+
+# MacLean Fiberglass Insulators- Post Top
 tile.realgrid.maclean_pti_2core.name=MacLean Fiberglass Post Top Insulator (2 Core)
 tile.realgrid.maclean_pti_3core.name=MacLean Fiberglass Post Top Insulator (3 Core)
 tile.realgrid.maclean_pti_5core.name=MacLean Fiberglass Post Top Insulator (5 Core)
 tile.realgrid.maclean_pti_5core_2.name=MacLean Fiberglass Post Top Insulator (5 Core, Version 2)
 tile.realgrid.maclean_pti_5core_3.name=MacLean Fiberglass Post Top Insulator (5 Core, Version 3)
 tile.realgrid.maclean_pti_6core.name=MacLean Fiberglass Post Top Insulator (6 Core)
+
+# MacLean Fiberglass Insulators- Side Mount
+tile.realgrid.maclean_pti_side_2core.name=MacLean Fiberglass Post Top Insulator (Side Mount, 2 Core)
+tile.realgrid.maclean_pti_side_3core.name=MacLean Fiberglass Post Top Insulator (Side Mount, 3 Core)
+tile.realgrid.maclean_pti_side_6core.name=MacLean Fiberglass Post Top Insulator (Side Mount, 6 Core)
 
 # MacLean Fiberglass Dead End Insulators
 tile.realgrid.maclean_dei_3core.name=MacLean Fiberglass Dead End Insulator (3 Core)
@@ -37,11 +67,14 @@ tile.maclean_dei_8core.name=MacLean Fiberglass Dead End Insulator (8 Core)
 tile.realgrid.maclean_dei_9core.name=MacLean Fiberglass Dead End Insulator (9 Core)
 
 # Cutoffs
-tile.realgrid.cutoff_switch.name=Cutoff Switch
+tile.realgrid.maclean_cutoff_switch.name=MacLean Dual Action Cutoff Switch
+tile.realgrid.maclean_cutoff_switch_2.name=MacLean Single Action Cutoff Switch
+tile.realgrid.maclean_cutoff_switch_3.name=MacLean Porcelain Pin Cutoff Switch (New)
+tile.realgrid.maclean_cutoff_switch_4.name=MacLean Porcelain Pin Cutoff Switch (Old)
 
 # Info Messages
-realgrid.info.switch_inverted.on=Cutoff Switch is OPEN!
-realgrid.info.switch_inverted.off=Cutoff Switch is CLOSED!
+realgrid.info.cutoff_status.open=Cutoff Switch is OPEN!
+realgrid.info.cutoff_status.closed=Cutoff Switch is CLOSED!
 
 # Creative Tab
 itemGroup.realgrid=RealGrid IE Addon

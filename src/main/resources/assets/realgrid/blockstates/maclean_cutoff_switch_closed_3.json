@@ -1,0 +1,33 @@
+{
+  "forge_marker": 1,
+  "defaults": {
+    "model": "immersiveengineering:smartmodel/connector",
+    "custom": { "base": "realgrid:block/maclean_cutoff_switch_closed_3" }
+  },
+  "variants": {
+    "facing": {
+      "north": {},
+      "south": {
+        "y": 90
+      },
+      "west": {
+        "y": 270
+      },
+      "east": {
+        "y": 180
+      }
+    },
+    "active": {
+      "true": {
+        "textures": {
+          "all": "realgrid:block/maclean_cutoff_switch_open_3"
+        }
+      },
+      "false": {
+        "textures": {
+          "all": "realgrid:block/maclean_cutoff_switch_closed_3"
+        }
+      }
+    }
+  }
+}
