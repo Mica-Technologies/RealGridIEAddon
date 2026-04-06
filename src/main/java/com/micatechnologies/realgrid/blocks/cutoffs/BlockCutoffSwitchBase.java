@@ -40,9 +40,10 @@ import javax.annotation.Nullable;
  * {@link TileEntityCutoffSwitch}.
  *
  * Interaction model:
- *   Right-click (no hammer)    — toggle switch open / closed
- *   Sneak + Engineer's Hammer  — toggle redstone inversion mode
- *   Redstone signal            — drives switch state via TE tick
+ *   Right-click (no hammer)      — toggle switch open / closed
+ *   Sneak + Engineer's Hammer    — toggle redstone inversion mode
+ *   Redstone signal              — drives switch state via TE tick
+ *   Engineer's Wire Cutters      — removes wires via IE's standard path
  *
  * Concrete subclasses only need to provide a registry name and a TE factory.
  */
@@ -55,6 +56,16 @@ public abstract class BlockCutoffSwitchBase extends Block implements ITileEntity
     public static final PropertyDirection FACING =
             PropertyDirection.create("facing", EnumFacing.Plane.HORIZONTAL);
 
+    /**
+     * ACTIVE = true  → switch is CLOSED (power flows, closed model displayed).
+     * ACTIVE = false → switch is OPEN   (power blocked, open model displayed).
+     *
+     * FIX (model not changing): The block model variants in the blockstates JSON
+     * must be keyed on this property. The property is read by getActualState()
+     * from te.active on every chunk render, and the block state is also updated
+     * in world storage by applyStateChange() via setBlockState(flag=6). Both
+     * paths now agree, so the renderer always selects the correct variant.
+     */
     public static final PropertyBool ACTIVE = PropertyBool.create("active");
 
     private static final AxisAlignedBB SWITCH_AABB =
@@ -135,6 +146,15 @@ public abstract class BlockCutoffSwitchBase extends Block implements ITileEntity
                 | (state.getValue(ACTIVE) ? 4 : 0);
     }
 
+    /**
+     * Reads te.active at render time so the model always reflects the current
+     * switch state even when the stored block-state metadata and the TE are
+     * momentarily out of sync (e.g. on initial chunk load).
+     *
+     * This is the primary path the chunk renderer uses to select between the
+     * open and closed model variants: the blockstates JSON must have entries
+     * for both "active=true" (closed) and "active=false" (open).
+     */
     @Override
     public IBlockState getActualState(IBlockState state, IBlockAccess world, BlockPos pos) {
         TileEntityCutoffSwitch te = getSwitchTE(world, pos);
@@ -147,9 +167,9 @@ public abstract class BlockCutoffSwitchBase extends Block implements ITileEntity
 
     @Override
     public IBlockState getStateForPlacement(World world, BlockPos pos, EnumFacing facing,
-                                             float hitX, float hitY, float hitZ,
-                                             int meta, EntityLivingBase placer,
-                                             EnumHand hand) {
+                                            float hitX, float hitY, float hitZ,
+                                            int meta, EntityLivingBase placer,
+                                            EnumHand hand) {
         return getDefaultState()
                 .withProperty(FACING, placer.getHorizontalFacing().getOpposite())
                 .withProperty(ACTIVE, true);
@@ -157,7 +177,7 @@ public abstract class BlockCutoffSwitchBase extends Block implements ITileEntity
 
     @Override
     public void onBlockPlacedBy(World world, BlockPos pos, IBlockState state,
-                                 EntityLivingBase placer, ItemStack stack) {
+                                EntityLivingBase placer, ItemStack stack) {
         if (!world.isRemote) {
             TileEntityCutoffSwitch te = getSwitchTE(world, pos);
             if (te != null) te.facing = state.getValue(FACING);
@@ -165,14 +185,47 @@ public abstract class BlockCutoffSwitchBase extends Block implements ITileEntity
     }
 
     // -----------------------------------------------------------------------
+    // Block destruction — clean up IE wire connections
+    // -----------------------------------------------------------------------
+
+    /**
+     * FIX (wire events on block destroy): The previous implementation had no
+     * breakBlock() override, so destroying the block left all its wire
+     * connections in IE's network without firing the proper wire-removal events.
+     * IE's own connectable blocks always tear down wires in breakBlock().
+     *
+     * We call te.onBlockDestroyed() first (while the TileEntity still exists
+     * at pos), then delegate to super.breakBlock() to let IE and Forge clean up
+     * the TileEntity itself.
+     */
+    @Override
+    public void breakBlock(World world, BlockPos pos, IBlockState state) {
+        if (!world.isRemote) {
+            TileEntityCutoffSwitch te = getSwitchTE(world, pos);
+            if (te != null) {
+                te.onBlockDestroyed();
+            }
+        }
+        super.breakBlock(world, pos, state);
+    }
+
+    // -----------------------------------------------------------------------
     // Player interaction
     // -----------------------------------------------------------------------
 
+    /**
+     * FIX (wire cutters): IE's engineer's wire cutters work through
+     * IImmersiveConnectable.removeCable(), which is called by IE when the player
+     * right-clicks a wire with the cutters. Because TileEntityCutoffSwitch
+     * extends TileEntityImmersiveConnectable and now properly delegates to
+     * super.removeCable(), the cutters work without any special handling here.
+     * The hammer-interaction path below is separate and unchanged.
+     */
     @Override
     public boolean onBlockActivated(World world, BlockPos pos, IBlockState state,
-                                     EntityPlayer player, EnumHand hand,
-                                     EnumFacing facing,
-                                     float hitX, float hitY, float hitZ) {
+                                    EntityPlayer player, EnumHand hand,
+                                    EnumFacing facing,
+                                    float hitX, float hitY, float hitZ) {
         if (world.isRemote) return true;
 
         TileEntityCutoffSwitch te = getSwitchTE(world, pos);
@@ -185,17 +238,18 @@ public abstract class BlockCutoffSwitchBase extends Block implements ITileEntity
             if (handled) {
                 ChatUtils.sendServerNoSpamMessages(player, new TextComponentTranslation(
                         RealGrid.MODID + ".info.switch_inverted."
-                        + (te.inverted ? "on" : "off")));
+                                + (te.inverted ? "on" : "off")));
             }
             return handled;
         }
 
+        // Wire cutters are handled entirely by IE — do not intercept them here.
         if (!Utils.isHammer(heldItem)) {
             te.active = !te.active;
             te.applyStateChange();
             ChatUtils.sendServerNoSpamMessages(player, new TextComponentTranslation(
                     RealGrid.MODID + ".info.cutoff_status."
-                    + (te.active ? "closed" : "open")));
+                            + (te.active ? "closed" : "open")));
             return true;
         }
 
@@ -208,23 +262,22 @@ public abstract class BlockCutoffSwitchBase extends Block implements ITileEntity
 
     @Override
     public void neighborChanged(IBlockState state, World world, BlockPos pos,
-                                 Block blockIn, BlockPos fromPos) {
+                                Block blockIn, BlockPos fromPos) {
         // Handled by TileEntityCutoffSwitch.update()
     }
 
-    @Override
-    public boolean canProvidePower(IBlockState state) { return true; }
+    @Override public boolean canProvidePower(IBlockState state) { return true; }
 
     @Override
     public int getWeakPower(IBlockState state, IBlockAccess world,
-                             BlockPos pos, EnumFacing side) {
+                            BlockPos pos, EnumFacing side) {
         TileEntityCutoffSwitch te = getSwitchTE(world, pos);
         return te != null ? te.getWeakRSOutput(state, side) : 0;
     }
 
     @Override
     public int getStrongPower(IBlockState state, IBlockAccess world,
-                               BlockPos pos, EnumFacing side) {
+                              BlockPos pos, EnumFacing side) {
         TileEntityCutoffSwitch te = getSwitchTE(world, pos);
         return te != null ? te.getStrongRSOutput(state, side) : 0;
     }
@@ -238,9 +291,11 @@ public abstract class BlockCutoffSwitchBase extends Block implements ITileEntity
         return SWITCH_AABB;
     }
 
-    @Override public boolean isOpaqueCube(IBlockState state)           { return false; }
-    @Override public boolean isFullCube(IBlockState state)             { return false; }
-    @Override public EnumBlockRenderType getRenderType(IBlockState state) {
+    @Override public boolean isOpaqueCube(IBlockState state) { return false; }
+    @Override public boolean isFullCube(IBlockState state)   { return false; }
+
+    @Override
+    public EnumBlockRenderType getRenderType(IBlockState state) {
         return EnumBlockRenderType.MODEL;
     }
 
@@ -250,7 +305,7 @@ public abstract class BlockCutoffSwitchBase extends Block implements ITileEntity
 
     @Override
     public boolean eventReceived(IBlockState state, World world,
-                                  BlockPos pos, int id, int param) {
+                                 BlockPos pos, int id, int param) {
         TileEntity te = world.getTileEntity(pos);
         return te != null && te.receiveClientEvent(id, param);
     }
