@@ -259,7 +259,7 @@ public class TileEntityCutoffSwitch extends TileEntityImmersiveConnectable
                 // receive the correct ACTIVE property and re-render the matching
                 // model variant immediately.
                 IBlockState newBlockState = world.getBlockState(pos)
-                        .withProperty(BlockCutoffSwitch.ACTIVE, active);
+                        .withProperty(BlockCutoffSwitchBase.ACTIVE, active);
                 world.setBlockState(pos, newBlockState, 6);
 
                 // Notify the 6 immediate neighbours once for redstone propagation.
