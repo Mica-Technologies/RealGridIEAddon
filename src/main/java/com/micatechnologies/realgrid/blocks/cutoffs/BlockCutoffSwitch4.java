@@ -13,6 +13,6 @@ public class BlockCutoffSwitch4 extends BlockCutoffSwitchBase {
 
     @Override
     protected TileEntityCutoffSwitch createSwitchTE() {
-        return new TileEntityCutoffSwitch4();
+        return new TileEntityCutoffSwitch();
     }
 }

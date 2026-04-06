@@ -13,9 +13,6 @@ import com.micatechnologies.realgrid.blocks.insulators.TileEntityHendrixViseTopI
 import com.micatechnologies.realgrid.blocks.insulators.TileEntityPorcelainPostTopInsulator;
 import com.micatechnologies.realgrid.blocks.insulators.TileEntityPorcelainDeadEndInsulator;
 import com.micatechnologies.realgrid.blocks.cutoffs.TileEntityCutoffSwitch;
-import com.micatechnologies.realgrid.blocks.cutoffs.TileEntityCutoffSwitch2;
-import com.micatechnologies.realgrid.blocks.cutoffs.TileEntityCutoffSwitch3;
-import com.micatechnologies.realgrid.blocks.cutoffs.TileEntityCutoffSwitch4;
 import net.minecraft.util.ResourceLocation;
 import net.minecraftforge.fml.common.registry.GameRegistry;
 
@@ -49,11 +46,5 @@ public class ModTileEntities
 
         GameRegistry.registerTileEntity(TileEntityCutoffSwitch.class,
             new ResourceLocation(RealGrid.MODID, "cutoff_switch"));
-        GameRegistry.registerTileEntity(TileEntityCutoffSwitch2.class,
-            new ResourceLocation(RealGrid.MODID, "cutoff_switch_2"));
-        GameRegistry.registerTileEntity(TileEntityCutoffSwitch3.class,
-            new ResourceLocation(RealGrid.MODID, "cutoff_switch_3"));
-        GameRegistry.registerTileEntity(TileEntityCutoffSwitch4.class,
-            new ResourceLocation(RealGrid.MODID, "cutoff_switch_4"));
     }
 }
