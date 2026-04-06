@@ -30,13 +30,13 @@ tile.realgrid.large_maclean_porcelain_insulator_side_old.name=MacLean Porcelain 
 tile.realgrid.small_maclean_porcelain_insulator_side_new.name=MacLean Porcelain Insulator (Side Mount New, Small)
 tile.realgrid.small_maclean_porcelain_insulator_side_old.name=MacLean Porcelain Insulator (Side Mount Old, Small)
 
-Locke Porcelain Insulators
+# Locke Porcelain Insulators
 tile.realgrid.locke_2core_insulator_new.name=Locke Porcelain Insulators (2 Core, New)
 tile.realgrid.locke_2core_insulator_new.name=Locke Porcelain Insulators (2 Core, Old)
 tile.realgrid.locke_2core_insulator_new.name=Locke Porcelain Insulators (3 Core, New)
 tile.realgrid.locke_2core_insulator_new.name=Locke Porcelain Insulators (3 Core, Old)
 
-Locke Porcelain Insulators- Side Mount
+# Locke Porcelain Insulators- Side Mount
 tile.realgrid.locke_2core_insulator_side_new.name=Locke Porcelain Insulators (2 Core Side, New)
 tile.realgrid.locke_2core_insulator_side_new.name=Locke Porcelain Insulators (2 Core Side, Old)
 tile.realgrid.locke_2core_insulator_side_new.name=Locke Porcelain Insulators (3 Core Side, New)
@@ -67,14 +67,14 @@ tile.maclean_dei_8core.name=MacLean Fiberglass Dead End Insulator (8 Core)
 tile.realgrid.maclean_dei_9core.name=MacLean Fiberglass Dead End Insulator (9 Core)
 
 # Cutoffs
-tile.realgrid.maclean_cutoff_switch.name=MacLean Dual Action Cutoff Switch
-tile.realgrid.maclean_cutoff_switch_2.name=MacLean Single Action Cutoff Switch
-tile.realgrid.maclean_cutoff_switch_3.name=MacLean Porcelain Pin Cutoff Switch (New)
-tile.realgrid.maclean_cutoff_switch_4.name=MacLean Porcelain Pin Cutoff Switch (Old)
+tile.realgrid.maclean_cutoff_switch_closed.name=MacLean Dual Action Cutoff Switch
+tile.realgrid.maclean_cutoff_switch_closed_2.name=MacLean Single Action Cutoff Switch
+tile.realgrid.maclean_cutoff_switch_closed_3.name=MacLean Porcelain Pin Cutoff Switch (New)
+tile.realgrid.maclean_cutoff_switch_closed_4.name=MacLean Porcelain Pin Cutoff Switch (Old)
 
 # Info Messages
 realgrid.info.cutoff_status.open=Cutoff Switch is OPEN!
 realgrid.info.cutoff_status.closed=Cutoff Switch is CLOSED!
 
 # Creative Tab
-itemGroup.realgrid=RealGrid IE Addon
+itemGroup.realgrid=RealGrid
