@@ -5,28 +5,36 @@
     "custom": { "base": "realgrid:block/maclean_cutoff_switch_closed_3" }
   },
   "variants": {
-    "facing": {
-      "north": {},
-      "south": {
-        "y": 90
+    "facing,active": {
+      "north,false": {
+        "custom": { "base": "realgrid:block/maclean_cutoff_switch_closed_3" }
       },
-      "west": {
-        "y": 270
+      "south,false": {
+        "y": 180,
+        "custom": { "base": "realgrid:block/maclean_cutoff_switch_closed_3" }
       },
-      "east": {
-        "y": 180
-      }
-    },
-    "active": {
-      "true": {
-        "textures": {
-          "all": "realgrid:block/maclean_cutoff_switch_open_3"
-        }
+      "west,false": {
+        "y": 270,
+        "custom": { "base": "realgrid:block/maclean_cutoff_switch_closed_3" }
       },
-      "false": {
-        "textures": {
-          "all": "realgrid:block/maclean_cutoff_switch_closed_3"
-        }
+      "east,false": {
+        "y": 90,
+        "custom": { "base": "realgrid:block/maclean_cutoff_switch_closed_3" }
+      },
+      "north,true": {
+        "custom": { "base": "realgrid:block/maclean_cutoff_switch_open_3" }
+      },
+      "south,true": {
+        "y": 180,
+        "custom": { "base": "realgrid:block/maclean_cutoff_switch_open_3" }
+      },
+      "west,true": {
+        "y": 270,
+        "custom": { "base": "realgrid:block/maclean_cutoff_switch_open_3" }
+      },
+      "east,true": {
+        "y": 90,
+        "custom": { "base": "realgrid:block/maclean_cutoff_switch_open_3" }
       }
     }
   }

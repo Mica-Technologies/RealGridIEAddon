@@ -10,57 +10,24 @@ import blusunrize.immersiveengineering.common.blocks.IEBlockInterfaces.IBlockBou
 import blusunrize.immersiveengineering.common.blocks.IEBlockInterfaces.IDirectionalTile;
 import blusunrize.immersiveengineering.common.blocks.IEBlockInterfaces.IHammerInteraction;
 import blusunrize.immersiveengineering.common.blocks.IEBlockInterfaces.IRedstoneOutput;
+import blusunrize.immersiveengineering.common.util.IESounds;
 import net.minecraft.block.state.IBlockState;
 import net.minecraft.entity.EntityLivingBase;
 import net.minecraft.entity.player.EntityPlayer;
+import net.minecraft.item.ItemStack;
 import net.minecraft.nbt.NBTTagCompound;
 import net.minecraft.util.EnumFacing;
 import net.minecraft.util.ITickable;
+import net.minecraft.util.SoundCategory;
 import net.minecraft.util.math.BlockPos;
 import net.minecraft.util.math.Vec3d;
+import net.minecraft.world.World;
 
 /**
  * Cutoff Switch Tile Entity
  *
- * Supports up to 3 wire connections accepting any mix of HV, MV, and LV,
+ * <p>Supports up to 2 wire connections accepting any mix of HV, MV, and LV,
  * mirroring the IE MV/LV Breaker Switch model across all three voltage tiers.
- *
- * State-change design
- * -------------------
- * Three bugs were causing the right-click toggle to silently revert and the
- * block model to stay frozen:
- *
- * Bug 1 - update() overrode the manual toggle every tick.
- *   update() evaluated shouldBeActive = !redstonePowered on every single tick.
- *   A right-click set active = !active, but within one tick update() set it
- *   straight back. Fix: track lastRedstoneState (saved to NBT) and only act
- *   when the redstone level changes. When redstone is stable, update() is a
- *   no-op, so the manually set state persists indefinitely.
- *
- * Bug 2 - applyStateChange() never updated the stored block state.
- *   world.notifyBlockUpdate(pos, state, state, 2) passed the SAME stale
- *   IBlockState object as both oldState and newState. The ACTIVE property in
- *   that object still reflected the previous toggle. Clients received a packet
- *   saying "block state unchanged" and the model never switched. Fix: call
- *   world.setBlockState(pos, newState, 6) where newState carries the updated
- *   ACTIVE value. Flag 6 = flag 2 (send new state to clients) + flag 4
- *   (no observer cascade), so clients receive the correct ACTIVE property
- *   immediately and re-render the matching model variant.
- *
- * Bug 3 - getActualState raced against receiveClientEvent.
- *   When the chunk re-rendered before the block event was delivered, getActualState
- *   still read the old te.active value from the client TE and overrode the correct
- *   block state the client had just received. Fix: because setBlockState (Bug 2 fix)
- *   now keeps the stored block state in sync, the metadata-driven state is always
- *   correct. getActualState is retained as a safe fallback for chunk-load order
- *   differences but it can no longer produce a stale override.
- *
- * StackOverflow prevention (from previous pass)
- * ----------------------------------------------
- * applyStateChange() is guarded by a transient reentrant flag (stateChanging).
- * notifyNeighborsOfStateChange is called once for the switch's own position only
- * (6 neighbours). receiveClientEvent uses markBlockRangeForRenderUpdate, a pure
- * render hint that cannot trigger a neighbour notification cascade.
  */
 public class TileEntityCutoffSwitch extends TileEntityImmersiveConnectable
         implements IDirectionalTile, IBlockBounds, IHammerInteraction, IRedstoneOutput, ITickable {
@@ -70,52 +37,53 @@ public class TileEntityCutoffSwitch extends TileEntityImmersiveConnectable
     // -----------------------------------------------------------------------
 
     /** Maximum simultaneous wire connections. Accepts any mix of HV, MV, LV. */
-    public static final int MAX_WIRES = 3;
+    public static final int MAX_WIRES = 2;
+
+    /**
+     * Block event ID sent when the switch opens (active=false).
+     * Must not collide with IE's reserved IDs (-1, 254, 255).
+     */
+    private static final int EVENT_OPEN  = 10;
+
+    /**
+     * Block event ID sent when the switch closes (active=true).
+     * Must not collide with IE's reserved IDs (-1, 254, 255).
+     */
+    private static final int EVENT_CLOSE = 11;
 
     // -----------------------------------------------------------------------
     // Persistent state
     // -----------------------------------------------------------------------
 
-    public EnumFacing facing  = EnumFacing.NORTH;
-    public int        wires   = 0;
+    public EnumFacing facing = EnumFacing.NORTH;
+    public int wires = 0;
 
-    /**
-     * true  = switch closed (power flows through)
-     * false = switch open   (power blocked)
-     */
-    public boolean active   = true;
+    /** true = switch closed (power flows); false = switch open (power blocked). */
+    public boolean active = true;
 
     /**
      * When false (default): redstone HIGH opens the switch (stops power).
-     * When true (inverted): redstone HIGH closes the switch (allows power).
-     * Toggled by sneak + Engineer's Hammer.
+     * When true (inverted):  redstone HIGH closes the switch (allows power).
      */
     public boolean inverted = false;
 
     /**
-     * Tracks the redstone power state seen on the last update() tick in which
-     * redstone was evaluated. Saved to NBT so manual overrides survive a
-     * world reload.
-     *
-     * update() only changes the switch state when isRedstonePowered() differs
-     * from this value. While redstone is stable (no change), update() is a
-     * no-op, allowing right-click manual toggles to persist across ticks.
+     * Tracks the redstone power state seen on the last evaluated tick.
+     * Saved to NBT so manual overrides survive a world reload.
+     * update() only changes switch state when isRedstonePowered() differs
+     * from this value, so manual right-click toggles persist while redstone
+     * is stable.
      */
     private boolean lastRedstoneState = false;
 
     // -----------------------------------------------------------------------
-    // Reentrant guard (transient - never serialised)
+    // Reentrant guard (transient \u2014 never serialised)
     // -----------------------------------------------------------------------
 
-    /**
-     * Set for the duration of applyStateChange() to break any re-entrant call
-     * that could otherwise produce a StackOverflowError during notification
-     * cascade propagation.
-     */
     private transient boolean stateChanging = false;
 
     // -----------------------------------------------------------------------
-    // IImmersiveConnectable - voltage capability
+    // IImmersiveConnectable \u2014 voltage capability
     // -----------------------------------------------------------------------
 
     @Override protected boolean canTakeLV() { return true; }
@@ -123,8 +91,8 @@ public class TileEntityCutoffSwitch extends TileEntityImmersiveConnectable
     @Override protected boolean canTakeHV() { return true; }
     @Override protected boolean isRelay()   { return false; }
 
-    @Override public boolean canConnect()     { return true; }
-    @Override public boolean isEnergyOutput() { return false; }
+    @Override public boolean canConnect()      { return true;  }
+    @Override public boolean isEnergyOutput()  { return false; }
 
     @Override
     public int outputEnergy(int amount, boolean simulate, int energyType) { return 0; }
@@ -140,18 +108,18 @@ public class TileEntityCutoffSwitch extends TileEntityImmersiveConnectable
     public boolean canConnectCable(WireType cableType, TargetingInfo target) {
         if (cableType == null || !cableType.isEnergyWire()) return false;
         if (wires >= MAX_WIRES) return false;
-        return true; // accepts HV, MV, LV simultaneously — no limitType lock
+        return true; // accepts HV, MV, LV simultaneously
     }
 
     @Override
     public void connectCable(WireType cableType, TargetingInfo target,
-                              IImmersiveConnectable other) {
-        // limitType intentionally NOT set — all three voltage tiers can coexist
+                             IImmersiveConnectable other) {
+        // limitType intentionally NOT set \u2014 all three voltage tiers can coexist.
         wires++;
         markDirty();
         if (world != null) {
             IBlockState state = world.getBlockState(pos);
-            world.notifyBlockUpdate(pos, state, state, 2); // flag 2: clients only
+            world.notifyBlockUpdate(pos, state, state, 2);
         }
     }
 
@@ -160,54 +128,130 @@ public class TileEntityCutoffSwitch extends TileEntityImmersiveConnectable
         return null; // no per-voltage lock
     }
 
+    /**
+     * Called by IE's wire system when a wire is removed \u2014 either by the
+     * Engineer's Wire Cutters or by block destruction.
+     *
+     * <p>IE's flow: {@code ImmersiveNetHandler.removeConnection()} (or
+     * {@code clearAllConnectionsFor()}) removes the entry from its internal
+     * multimap <em>first</em>, then calls {@code removeCable()} on both
+     * endpoints as a notification. This method must <strong>not</strong> call
+     * back into the handler; doing so would recurse infinitely.
+     *
+     * <p>Calling {@code super.removeCable()} handles:
+     * <ol>
+     *   <li>Checking remaining connections and clearing {@code limitType} when
+     *       none remain.</li>
+     *   <li>{@code markDirty()} so the TE is saved.</li>
+     *   <li>{@code world.notifyBlockUpdate()} so clients re-render.</li>
+     * </ol>
+     * We then update our local {@code wires} counter on top of that.
+     */
     @Override
     public void removeCable(Connection connection) {
-        WireType type = connection != null ? connection.cableType : null;
-        if (type == null) {
+        // Delegate to IE's base implementation first (limitType, markDirty,
+        // notifyBlockUpdate).
+        super.removeCable(connection);
+
+        // Update our local counter.
+        // connection == null is the "bulk clear" signal emitted by
+        // clearAllConnectionsFor(); treat it as a full reset.
+        if (connection == null) {
             wires = 0;
         } else {
-            wires--;
+            wires = Math.max(0, wires - 1);
         }
+
+        // Belt-and-suspenders: ensure clean state when no wires remain.
         if (wires <= 0) {
             wires     = 0;
             limitType = null;
         }
+
         markDirty();
         if (world != null) {
             IBlockState state = world.getBlockState(pos);
-            world.notifyBlockUpdate(pos, state, state, 2); // flag 2: clients only
+            world.notifyBlockUpdate(pos, state, state, 2);
         }
     }
 
     // -----------------------------------------------------------------------
-    // ITickable - redstone polling
+    // Block destruction \u2014 clean up all IE wire connections
     // -----------------------------------------------------------------------
 
     /**
-     * Evaluates the switch state only when the redstone signal level has
-     * changed since the previous tick.
+     * Called by {@code BlockCutoffSwitchBase.breakBlock()} <em>before</em>
+     * {@code super.breakBlock()} so this TileEntity is still accessible at
+     * {@code pos}.
      *
-     * FIX (Bug 1): The previous implementation re-evaluated shouldBeActive on
-     * every single tick. A right-click set active = !active, but within one
-     * tick update() computed shouldBeActive = !redstonePowered and set it back,
-     * silently reverting the manual toggle. By comparing against lastRedstoneState
-     * and returning early when nothing has changed, update() is a no-op while
-     * redstone is stable. The manually toggled active value is never overridden
-     * unless the redstone signal actually changes.
+     * <p><b>Fix:</b> The previous code called
+     * {@code ImmersiveNetHandler.INSTANCE.removeAllWires(world, pos, true)},
+     * which does <em>not exist</em> in the IE API and caused a compile error.
+     * The correct method is
+     * {@link ImmersiveNetHandler#clearAllConnectionsFor(BlockPos, World, boolean)}.
+     *
+     * <p>{@code clearAllConnectionsFor(pos, world, true)} performs the
+     * following in a single call:
+     * <ol>
+     *   <li>Clears this node's own connection set from the handler's
+     *       multimap.</li>
+     *   <li>Calls {@code iic.removeCable(null)} on this block (the bulk-reset
+     *       signal \u2014 triggers our override above, setting
+     *       {@code wires = 0}).</li>
+     *   <li>Scans every other node's connection set and removes any entry
+     *       that references this position.</li>
+     *   <li>Calls {@code removeCable(con)} on both this block and the remote
+     *       endpoint for each removed entry, so connected blocks receive their
+     *       own removal callbacks and clean up their local state.</li>
+     *   <li>Spawns the wire-coil item drop at the remote end (when
+     *       {@code doDrops=true} and the {@code doTileDrops} game-rule is
+     *       enabled).</li>
+     *   <li>Fires IE's block event (id=\u221219) on every connected position so
+     *       clients stop rendering orphaned wire segments immediately.</li>
+     * </ol>
+     *
+     * <p>The explicit {@code wires = 0; limitType = null;} resets below are
+     * redundant (step 2 above already handles this via our
+     * {@link #removeCable(Connection)} override) but are kept as a defensive
+     * fallback.
+     */
+    public void onBlockDestroyed() {
+        if (world == null || world.isRemote) return;
+
+        // Tear down every wire attached to this position:
+        //   - notifies all remote endpoints via their removeCable() callbacks
+        //   - drops wire coils (doDrops = true)
+        //   - fires client render events so orphaned wire segments disappear
+        ImmersiveNetHandler.INSTANCE.clearAllConnectionsFor(pos, world, true);
+
+        // Defensive reset \u2014 clearAllConnectionsFor already triggers
+        // removeCable(null) which sets wires = 0, but guard here as well.
+        wires     = 0;
+        limitType = null;
+    }
+
+    // -----------------------------------------------------------------------
+    // ITickable \u2014 redstone polling
+    // -----------------------------------------------------------------------
+
+    /**
+     * Only acts when the redstone signal level actually changes since the
+     * previous evaluation. While redstone is stable this is a no-op, and any
+     * manually toggled state persists.
      */
     @Override
     public void update() {
-        if (world.isRemote || stateChanging) return;
+        if (world == null || world.isRemote || stateChanging) return;
 
         boolean redstonePowered = isRedstonePowered();
 
-        // No redstone change since last check - leave manually set state alone
+        // No change since last check \u2014 preserve manually set state.
         if (redstonePowered == lastRedstoneState) return;
         lastRedstoneState = redstonePowered;
 
-        // Redstone changed - let it drive the switch state
-        // Normal:   HIGH = open (blocks power)
-        // Inverted: HIGH = closed (allows power)
+        // Redstone changed \u2014 drive the switch state.
+        // Normal:   HIGH = open  (blocks power)
+        // Inverted: HIGH = close (allows power)
         boolean shouldBeActive = inverted ? redstonePowered : !redstonePowered;
         if (shouldBeActive != active) {
             active = shouldBeActive;
@@ -216,33 +260,28 @@ public class TileEntityCutoffSwitch extends TileEntityImmersiveConnectable
     }
 
     // -----------------------------------------------------------------------
-    // State change - single guarded notification pass
+    // State change \u2014 single guarded notification pass
     // -----------------------------------------------------------------------
 
     /**
-     * Applies a switch state change safely. This is the only point from which
-     * neighbour notifications and IE network resets are issued.
+     * Applies a switch-state change safely.
      *
-     * FIX (Bug 2): The previous implementation called
-     *   world.notifyBlockUpdate(pos, state, state, 2)
-     * passing the same IBlockState object for both oldState and newState. That
-     * object still carried the previous ACTIVE value, so the client received
-     * a "block state unchanged" packet and never switched the model.
-     *
-     * The fix uses world.setBlockState(pos, newState, 6) where newState has the
-     * updated ACTIVE property. Flag 6 = flag 2 (send to clients) + flag 4 (no
-     * observer cascade). Clients immediately receive the new block state, look up
-     * the matching model variant from the ACTIVE property, and re-render.
-     *
-     * Notification sequence (one pass, no recursion):
-     *   1. IE network indirect-connection cache reset (if more than one wire)
-     *   2. world.setBlockState with flag 6 — updates stored block state AND sends
-     *      it to clients with the correct ACTIVE property value
-     *   3. world.notifyNeighborsOfStateChange — one call, 6 adjacent blocks, for
-     *      redstone propagation only (no per-face offset loop)
-     *   4. markDirty — persist new state to disk
-     *   5. world.addBlockEvent — syncs the active flag to the client TE instance
-     *      so getActualState() and allowEnergyToPass() read correctly on the client
+     * <p>Notification sequence (one pass, no recursion):
+     * <ol>
+     *   <li>IE network cache reset (only when more than one wire is
+     *       attached).</li>
+     *   <li>{@code world.setBlockState} flag 6 \u2014 writes the updated
+     *       {@code ACTIVE} property and sends it to clients so the correct
+     *       open/closed model is rendered immediately.</li>
+     *   <li>{@code world.playSound} \u2014 broadcasts the lever-click audio.</li>
+     *   <li>{@code world.notifyNeighborsOfStateChange} \u2014 one pass for
+     *       redstone propagation.</li>
+     *   <li>{@code markDirty()} \u2014 persist new state to disk.</li>
+     *   <li>{@code world.notifyBlockUpdate} flag 2 \u2014 queues
+     *       {@code SPacketUpdateTileEntity} to clients.</li>
+     *   <li>{@code world.addBlockEvent} with safe IDs \u2014 secondary client
+     *       render guarantee.</li>
+     * </ol>
      */
     public void applyStateChange() {
         if (stateChanging) return;
@@ -251,27 +290,29 @@ public class TileEntityCutoffSwitch extends TileEntityImmersiveConnectable
             if (wires > 1) {
                 ImmersiveNetHandler.INSTANCE.resetCachedIndirectConnections();
             }
-
             if (world != null && !world.isRemote) {
-                // FIX (Bug 2): build a new IBlockState with the updated ACTIVE
-                // value and set it in the world. Flag 6 = flag 2 (send to
-                // clients) + flag 4 (suppress observer cascades). Clients
-                // receive the correct ACTIVE property and re-render the matching
-                // model variant immediately.
+                // Write the updated ACTIVE property into the block state.
+                // Flag 6 = flag 2 (send to clients) | flag 4 (suppress observers).
                 IBlockState newBlockState = world.getBlockState(pos)
                         .withProperty(BlockCutoffSwitchBase.ACTIVE, active);
                 world.setBlockState(pos, newBlockState, 6);
 
-                // Notify the 6 immediate neighbours once for redstone propagation.
-                // No per-face offset loop — that was the StackOverflow source.
+                // Play the IE switch sound (broadcast to nearby players).
+                world.playSound(null, getPos(), IESounds.direSwitch,
+                        SoundCategory.BLOCKS, 2.5F, active ? 1.0F : 0.85F);
+
+                // One neighbour-notification pass for redstone propagation.
                 world.notifyNeighborsOfStateChange(getPos(), getBlockType(), true);
 
                 markDirty();
 
-                // Sync the TE's active flag to the client TE instance.
-                // receiveClientEvent will update te.active and call
-                // markBlockRangeForRenderUpdate as a secondary render guarantee.
-                world.addBlockEvent(getPos(), getBlockType(), active ? 1 : 0, 0);
+                // Explicitly queue SPacketUpdateTileEntity to clients.
+                IBlockState syncState = world.getBlockState(pos);
+                world.notifyBlockUpdate(pos, syncState, syncState, 2);
+
+                // Secondary render guarantee using non-IE-reserved event IDs.
+                world.addBlockEvent(getPos(), getBlockType(),
+                        active ? EVENT_CLOSE : EVENT_OPEN, 0);
             }
         } finally {
             stateChanging = false;
@@ -282,18 +323,11 @@ public class TileEntityCutoffSwitch extends TileEntityImmersiveConnectable
     // IHammerInteraction
     // -----------------------------------------------------------------------
 
-    /**
-     * Sneak + Engineer's Hammer toggles the redstone inversion flag and
-     * immediately re-evaluates the switch state under the new flag.
-     */
     @Override
     public boolean hammerUseSide(EnumFacing side, EntityPlayer player,
-                                  float hitX, float hitY, float hitZ) {
+                                 float hitX, float hitY, float hitZ) {
         if (world.isRemote) return true;
         inverted = !inverted;
-        // Recompute active from the current (stable) redstone level under
-        // the new inversion flag so the switch responds without waiting for
-        // a redstone change to arrive.
         boolean redstonePowered = isRedstonePowered();
         boolean shouldBeActive  = inverted ? redstonePowered : !redstonePowered;
         active = shouldBeActive;
@@ -306,29 +340,24 @@ public class TileEntityCutoffSwitch extends TileEntityImmersiveConnectable
     // -----------------------------------------------------------------------
 
     /**
-     * Called on both server and client when a block event fired by
-     * applyStateChange() is processed.
+     * Handles block events fired by {@link #applyStateChange()}.
      *
-     * FIX (Bug 3): This method must NOT call applyStateChange() or any variant
-     * of world.notifyBlockUpdate() with flag 1. The only permitted action is to
-     * update te.active and schedule a render update via markBlockRangeForRenderUpdate,
-     * which is a pure render hint with no game-logic propagation.
-     *
-     * Because applyStateChange() now writes the correct block state via setBlockState
-     * (Bug 2 fix), the model is already correct by the time this is called. The
-     * markBlockRangeForRenderUpdate call here acts as a secondary guarantee that
-     * covers the rare case where a chunk re-render slipped in before this event
-     * was delivered.
+     * <p>Our event IDs ({@code EVENT_OPEN=10}, {@code EVENT_CLOSE=11}) are
+     * checked <em>before</em> delegating to {@code super} so IE's reserved
+     * IDs (-1, 254, 255) are never intercepted. The only actions taken here
+     * are updating {@code active} and scheduling a client render update \u2014
+     * no neighbour notifications or network callbacks.
      */
     @Override
     public boolean receiveClientEvent(int id, int arg) {
-        if (super.receiveClientEvent(id, arg)) return true;
-        this.active = (id == 1);
-        // Pure render hint — no neighbour notifications, no network callbacks
-        if (world != null) {
-            world.markBlockRangeForRenderUpdate(pos, pos);
+        if (id == EVENT_OPEN || id == EVENT_CLOSE) {
+            this.active = (id == EVENT_CLOSE);
+            if (world != null) {
+                world.markBlockRangeForRenderUpdate(pos, pos);
+            }
+            return true;
         }
-        return true;
+        return super.receiveClientEvent(id, arg);
     }
 
     // -----------------------------------------------------------------------
@@ -353,9 +382,6 @@ public class TileEntityCutoffSwitch extends TileEntityImmersiveConnectable
         nbt.setInteger("wires",             wires);
         nbt.setBoolean("active",            active);
         nbt.setBoolean("inverted",          inverted);
-        // Persist lastRedstoneState so manual overrides survive a world reload.
-        // Without this, the first tick after reload would see a redstone-state
-        // "change" from the default false and potentially override a manual toggle.
         nbt.setBoolean("lastRedstoneState", lastRedstoneState);
     }
 
@@ -377,18 +403,18 @@ public class TileEntityCutoffSwitch extends TileEntityImmersiveConnectable
     public Vec3d getRaytraceOffset(IImmersiveConnectable link) { return new Vec3d(0.5, 0.5, 0.5); }
 
     @Override
-    public Vec3d getConnectionOffset(Connection con)          { return new Vec3d(0.5, 0.5, 0.5); }
+    public Vec3d getConnectionOffset(Connection con) { return new Vec3d(0.5, 0.5, 0.5); }
 
     // -----------------------------------------------------------------------
     // IDirectionalTile
     // -----------------------------------------------------------------------
 
-    @Override public EnumFacing getFacing()    { return facing; }
+    @Override public EnumFacing getFacing()  { return facing; }
     @Override public void setFacing(EnumFacing f) { this.facing = f; }
     @Override public int getFacingLimitation() { return 2; } // horizontal only
     @Override public boolean mirrorFacingOnPlacement(EntityLivingBase placer) { return true; }
     @Override public boolean canHammerRotate(EnumFacing side, float hx, float hy,
-                                              float hz, EntityLivingBase entity) { return false; }
+                                             float hz, EntityLivingBase entity) { return false; }
     @Override public boolean canRotate(EnumFacing axis) { return false; }
 
     // -----------------------------------------------------------------------
