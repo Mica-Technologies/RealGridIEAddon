@@ -9,6 +9,7 @@ tile.realgrid.jumbo_transformer_1wire.name=Power Partners Jumbo Transformer (1 W
 tile.realgrid.jumbo_transformer_2wire.name=Power Partners Jumbo Transformer (2 Wire)
 
 # Insulators (Registered Blocks)
+# THIS SECTION IS A PLACEHOLDER FOR NOW
 tile.realgrid.hendrix_vise_top_insulator.name=Hendrix Vise Top Insulator
 tile.realgrid.maclean_fneck_insulator.name=MacLean F-Neck Post Insulator
 tile.realgrid.maclean_dead_end_insulator.name=MacLean Fiberglass Dead End Insulator
@@ -78,6 +79,8 @@ tile.realgrid.maclean_cutoff_switch_closed.name=MacLean Dual Action Cutoff Switc
 tile.realgrid.maclean_cutoff_switch_closed_2.name=MacLean Single Action Cutoff Switch
 tile.realgrid.maclean_cutoff_switch_closed_3.name=MacLean Porcelain Pin Cutoff Switch (New)
 tile.realgrid.maclean_cutoff_switch_closed_4.name=MacLean Porcelain Pin Cutoff Switch (Old)
+tile.realgrid.maclean_cutoff_switch_closed_5.name=MacLean Porcelain Cutoff Switch
+tile.realgrid.maclean_cutoff_switch_closed_6.name=MacLean Porcelain Transmission Cutoff Switch
 
 # Info Messages
 realgrid.info.cutoff_status.open=Cutoff Switch is OPEN!
