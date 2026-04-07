@@ -83,7 +83,7 @@ public abstract class BlockCutoffSwitchBase extends Block implements ITileEntity
         setResistance(15.0f);
         setDefaultState(blockState.getBaseState()
                 .withProperty(FACING, EnumFacing.NORTH)
-                .withProperty(ACTIVE, true));
+                .withProperty(ACTIVE, false));
     }
 
     // -----------------------------------------------------------------------
@@ -238,7 +238,7 @@ public abstract class BlockCutoffSwitchBase extends Block implements ITileEntity
             if (handled) {
                 ChatUtils.sendServerNoSpamMessages(player, new TextComponentTranslation(
                         RealGrid.MODID + ".info.switch_inverted."
-                                + (te.inverted ? "on" : "off")));
+                                + (te.inverted ? "off" : "on")));
             }
             return handled;
         }
