@@ -5,35 +5,17 @@
     "custom": { "base": "realgrid:block/maclean_cutoff_switch_closed_2" }
   },
   "variants": {
-    "facing,active": {
-      "north,false": {
+    "facing": {
+      "north": {},
+      "south": { "y": 180 },
+      "west": { "y": 270 },
+      "east": { "y": 90 }
+    },
+    "active": {
+      "false": {
         "custom": { "base": "realgrid:block/maclean_cutoff_switch_closed_2" }
       },
-      "south,false": {
-        "y": 180,
-        "custom": { "base": "realgrid:block/maclean_cutoff_switch_closed_2" }
-      },
-      "west,false": {
-        "y": 270,
-        "custom": { "base": "realgrid:block/maclean_cutoff_switch_closed_2" }
-      },
-      "east,false": {
-        "y": 90,
-        "custom": { "base": "realgrid:block/maclean_cutoff_switch_closed_2" }
-      },
-      "north,true": {
-        "custom": { "base": "realgrid:block/maclean_cutoff_switch_open_2" }
-      },
-      "south,true": {
-        "y": 180,
-        "custom": { "base": "realgrid:block/maclean_cutoff_switch_open_2" }
-      },
-      "west,true": {
-        "y": 270,
-        "custom": { "base": "realgrid:block/maclean_cutoff_switch_open_2" }
-      },
-      "east,true": {
-        "y": 90,
+      "true": {
         "custom": { "base": "realgrid:block/maclean_cutoff_switch_open_2" }
       }
     }
