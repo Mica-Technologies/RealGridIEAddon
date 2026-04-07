@@ -312,7 +312,7 @@ public class TileEntityCutoffSwitch extends TileEntityImmersiveConnectable
 
                 // Secondary render guarantee using non-IE-reserved event IDs.
                 world.addBlockEvent(getPos(), getBlockType(),
-                        active ? EVENT_CLOSE : EVENT_OPEN, 0);
+                        active ? EVENT_OPEN : EVENT_CLOSE, 0);
             }
         } finally {
             stateChanging = false;
@@ -351,7 +351,7 @@ public class TileEntityCutoffSwitch extends TileEntityImmersiveConnectable
     @Override
     public boolean receiveClientEvent(int id, int arg) {
         if (id == EVENT_OPEN || id == EVENT_CLOSE) {
-            this.active = (id == EVENT_CLOSE);
+            this.active = (id == EVENT_OPEN);
             if (world != null) {
                 world.markBlockRangeForRenderUpdate(pos, pos);
             }
