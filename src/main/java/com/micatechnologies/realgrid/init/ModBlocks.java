@@ -16,6 +16,8 @@ import com.micatechnologies.realgrid.blocks.cutoffs.BlockCutoffSwitch;
 import com.micatechnologies.realgrid.blocks.cutoffs.BlockCutoffSwitch2;
 import com.micatechnologies.realgrid.blocks.cutoffs.BlockCutoffSwitch3;
 import com.micatechnologies.realgrid.blocks.cutoffs.BlockCutoffSwitch4;
+import com.micatechnologies.realgrid.blocks.cutoffs.BlockCutoffSwitch5;
+import com.micatechnologies.realgrid.blocks.cutoffs.BlockCutoffSwitch6;
 import com.micatechnologies.realgrid.items.ItemBlockBase;
 import net.minecraft.block.Block;
 import net.minecraft.creativetab.CreativeTabs;
@@ -42,21 +44,23 @@ public class ModBlocks
     public static final BlockClassATransformer1Wire CLASS_A_TRANSFORMER_1WIRE = new BlockClassATransformer1Wire();
     public static final BlockClassCTransformer2Wire CLASS_C_TRANSFORMER_2WIRE = new BlockClassCTransformer2Wire();
     public static final BlockClassCTransformer1Wire CLASS_C_TRANSFORMER_1WIRE = new BlockClassCTransformer1Wire();
-public static final BlockJumboTransformer2Wire JUMBO_TRANSFORMER_2WIRE = new BlockJumboTransformer2Wire();
+    public static final BlockJumboTransformer2Wire JUMBO_TRANSFORMER_2WIRE = new BlockJumboTransformer2Wire();
     public static final BlockJumboTransformer1Wire JUMBO_TRANSFORMER_1WIRE = new BlockJumboTransformer1Wire();
 
-    // Insulators
+    // Insulators- MOST ARE PLACEHOLDERS FOR NOW
     public static final BlockMacLeanFNeckInsulator MACLEAN_FNECK_INSULATOR = new BlockMacLeanFNeckInsulator();
     public static final BlockMacLeanDeadEndInsulator MACLEAN_DEAD_END_INSULATOR = new BlockMacLeanDeadEndInsulator();
     public static final BlockHendrixViseTopInsulator HENDRIX_VISE_TOP_INSULATOR = new BlockHendrixViseTopInsulator();
     public static final BlockPorcelainPostTopInsulator PORCELAIN_POST_TOP_INSULATOR = new BlockPorcelainPostTopInsulator();
     public static final BlockPorcelainDeadEndInsulator PORCELAIN_DEAD_END_INSULATOR = new BlockPorcelainDeadEndInsulator();
 
-    // Switchgear
+    // Cutoffs
     public static final BlockCutoffSwitch CUTOFF_SWITCH = new BlockCutoffSwitch();
-public static final BlockCutoffSwitch2 CUTOFF_SWITCH_2 = new BlockCutoffSwitch2();
-public static final BlockCutoffSwitch3 CUTOFF_SWITCH_3 = new BlockCutoffSwitch3();
-public static final BlockCutoffSwitch4 CUTOFF_SWITCH_4 = new BlockCutoffSwitch4();
+    public static final BlockCutoffSwitch2 CUTOFF_SWITCH_2 = new BlockCutoffSwitch2();
+    public static final BlockCutoffSwitch3 CUTOFF_SWITCH_3 = new BlockCutoffSwitch3();
+    public static final BlockCutoffSwitch4 CUTOFF_SWITCH_4 = new BlockCutoffSwitch4();
+    public static final BlockCutoffSwitch5 CUTOFF_SWITCH_5 = new BlockCutoffSwitch5();
+    public static final BlockCutoffSwitch6 CUTOFF_SWITCH_6 = new BlockCutoffSwitch6();
 
     // Creative Tab
     public static final CreativeTabs CREATIVE_TAB = new CreativeTabs(RealGrid.MODID)
@@ -87,7 +91,9 @@ public static final BlockCutoffSwitch4 CUTOFF_SWITCH_4 = new BlockCutoffSwitch4(
             CUTOFF_SWITCH,
             CUTOFF_SWITCH_2,
             CUTOFF_SWITCH_3,
-            CUTOFF_SWITCH_4
+            CUTOFF_SWITCH_4,
+            CUTOFF_SWITCH_5,
+            CUTOFF_SWITCH_6
         };
 
         for (Block block : blocks)
