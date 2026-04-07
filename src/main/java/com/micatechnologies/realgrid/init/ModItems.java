@@ -1,6 +1,7 @@
 package com.micatechnologies.realgrid.init;
 
 import com.micatechnologies.realgrid.RealGrid;
+import com.micatechnologies.realgrid.blocks.insulators.BlockColoredInsulatorBase;
 import net.minecraft.client.renderer.block.model.ModelResourceLocation;
 import net.minecraft.item.Item;
 import net.minecraft.item.ItemBlock;
@@ -22,6 +23,12 @@ public class ModItems
                 itemBlock, 0,
                 new ModelResourceLocation(itemBlock.getRegistryName(), "inventory")
             );
+            if (itemBlock.getBlock() instanceof BlockColoredInsulatorBase) {
+                ModelLoader.setCustomModelResourceLocation(
+                    itemBlock, 1,
+                    new ModelResourceLocation(itemBlock.getRegistryName(), "inventory")
+                );
+            }
         }
     }
 }
