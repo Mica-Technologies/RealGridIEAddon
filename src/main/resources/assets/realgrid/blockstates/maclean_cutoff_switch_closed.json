@@ -5,35 +5,17 @@
     "custom": { "base": "realgrid:block/maclean_cutoff_switch_closed" }
   },
   "variants": {
-    "facing,active": {
-      "north,false": {
+    "facing": {
+      "north": {},
+      "south": { "y": 180 },
+      "west": { "y": 270 },
+      "east": { "y": 90 }
+    },
+    "active": {
+      "false": {
         "custom": { "base": "realgrid:block/maclean_cutoff_switch_closed" }
       },
-      "south,false": {
-        "y": 180,
-        "custom": { "base": "realgrid:block/maclean_cutoff_switch_closed" }
-      },
-      "west,false": {
-        "y": 270,
-        "custom": { "base": "realgrid:block/maclean_cutoff_switch_closed" }
-      },
-      "east,false": {
-        "y": 90,
-        "custom": { "base": "realgrid:block/maclean_cutoff_switch_closed" }
-      },
-      "north,true": {
-        "custom": { "base": "realgrid:block/maclean_cutoff_switch_open" }
-      },
-      "south,true": {
-        "y": 180,
-        "custom": { "base": "realgrid:block/maclean_cutoff_switch_open" }
-      },
-      "west,true": {
-        "y": 270,
-        "custom": { "base": "realgrid:block/maclean_cutoff_switch_open" }
-      },
-      "east,true": {
-        "y": 90,
+      "true": {
         "custom": { "base": "realgrid:block/maclean_cutoff_switch_open" }
       }
     }
