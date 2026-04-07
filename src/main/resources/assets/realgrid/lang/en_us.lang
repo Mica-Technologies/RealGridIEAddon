@@ -8,7 +8,14 @@ tile.realgrid.class_c_transformer_2wire.name=Power Partners Class C Transformer 
 tile.realgrid.jumbo_transformer_1wire.name=Power Partners Jumbo Transformer (1 Wire)
 tile.realgrid.jumbo_transformer_2wire.name=Power Partners Jumbo Transformer (2 Wire)
 
-# Hendrix Vise Top Insulators
+# Insulators (Registered Blocks)
+tile.realgrid.hendrix_vise_top_insulator.name=Hendrix Vise Top Insulator
+tile.realgrid.maclean_fneck_insulator.name=MacLean F-Neck Post Insulator
+tile.realgrid.maclean_dead_end_insulator.name=MacLean Fiberglass Dead End Insulator
+tile.realgrid.porcelain_post_top_insulator.name=Porcelain Post Top Insulator
+tile.realgrid.porcelain_dead_end_insulator.name=Porcelain Dead End Insulator
+
+# Hendrix Vise Top Insulators (Model Variants)
 tile.realgrid.hendrix_vti_2core.name=Hendrix Vise Top Insulator (2 Core)
 tile.realgrid.hendrix_vti_3core_small.name=Hendrix Vise Top Insulator (3 Core, Small Version)
 tile.realgrid.hendrix_vti_3core.name=Hendrix Vise Top Insulator (3 Core)
@@ -31,16 +38,16 @@ tile.realgrid.small_maclean_porcelain_insulator_side_new.name=MacLean Porcelain 
 tile.realgrid.small_maclean_porcelain_insulator_side_old.name=MacLean Porcelain Insulator (Side Mount Old, Small)
 
 # Locke Porcelain Insulators
-tile.realgrid.locke_2core_insulator_new.name=Locke Porcelain Insulators (2 Core, New)
-tile.realgrid.locke_2core_insulator_new.name=Locke Porcelain Insulators (2 Core, Old)
-tile.realgrid.locke_2core_insulator_new.name=Locke Porcelain Insulators (3 Core, New)
-tile.realgrid.locke_2core_insulator_new.name=Locke Porcelain Insulators (3 Core, Old)
+tile.realgrid.locke_2core_insulator_new.name=Locke Porcelain Insulator (2 Core, New)
+tile.realgrid.locke_2core_insulator_old.name=Locke Porcelain Insulator (2 Core, Old)
+tile.realgrid.locke_3core_insulator_new.name=Locke Porcelain Insulator (3 Core, New)
+tile.realgrid.locke_3core_insulator_old.name=Locke Porcelain Insulator (3 Core, Old)
 
 # Locke Porcelain Insulators- Side Mount
-tile.realgrid.locke_2core_insulator_side_new.name=Locke Porcelain Insulators (2 Core Side, New)
-tile.realgrid.locke_2core_insulator_side_new.name=Locke Porcelain Insulators (2 Core Side, Old)
-tile.realgrid.locke_2core_insulator_side_new.name=Locke Porcelain Insulators (3 Core Side, New)
-tile.realgrid.locke_2core_insulator_side_new.name=Locke Porcelain Insulators (3 Core Side, Old)
+tile.realgrid.locke_2core_insulator_side_new.name=Locke Porcelain Insulator (2 Core Side, New)
+tile.realgrid.locke_2core_insulator_side_old.name=Locke Porcelain Insulator (2 Core Side, Old)
+tile.realgrid.locke_3core_insulator_side_new.name=Locke Porcelain Insulator (3 Core Side, New)
+tile.realgrid.locke_3core_insulator_side_old.name=Locke Porcelain Insulator (3 Core Side, Old)
 
 # MacLean Fiberglass Insulators- Post Top
 tile.realgrid.maclean_pti_2core.name=MacLean Fiberglass Post Top Insulator (2 Core)
@@ -59,11 +66,11 @@ tile.realgrid.maclean_pti_side_6core.name=MacLean Fiberglass Post Top Insulator 
 tile.realgrid.maclean_dei_3core.name=MacLean Fiberglass Dead End Insulator (3 Core)
 tile.realgrid.maclean_dei_4core.name=MacLean Fiberglass Dead End Insulator (4 Core)
 tile.realgrid.maclean_dei_4core_2.name=MacLean Fiberglass Dead End Insulator (4 Core, Version 2)
-tile.maclean_dei_6core.name=MacLean Fiberglass Dead End Insulator (6 Core)
+tile.realgrid.maclean_dei_6core.name=MacLean Fiberglass Dead End Insulator (6 Core)
 tile.realgrid.maclean_dei_7core.name=MacLean Fiberglass Dead End Insulator (7 Core)
 tile.realgrid.maclean_dei_7core_2.name=MacLean Fiberglass Dead End Insulator (7 Core, Version 2)
-tile.realgrid.maclean_dei_7core.name=MacLean Fiberglass Dead End Insulator (7 Core, Version 3)
-tile.maclean_dei_8core.name=MacLean Fiberglass Dead End Insulator (8 Core)
+tile.realgrid.maclean_dei_7core_3.name=MacLean Fiberglass Dead End Insulator (7 Core, Version 3)
+tile.realgrid.maclean_dei_8core.name=MacLean Fiberglass Dead End Insulator (8 Core)
 tile.realgrid.maclean_dei_9core.name=MacLean Fiberglass Dead End Insulator (9 Core)
 
 # Cutoffs
