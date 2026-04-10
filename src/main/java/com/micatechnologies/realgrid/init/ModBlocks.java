@@ -51,6 +51,8 @@ import com.micatechnologies.realgrid.blocks.insulators.BlockLocke2CINewSide;
 import com.micatechnologies.realgrid.blocks.insulators.BlockLocke2CIOldSide;
 import com.micatechnologies.realgrid.blocks.insulators.BlockLocke3CINewSide;
 import com.micatechnologies.realgrid.blocks.insulators.BlockLocke3CIOldSide;
+import com.micatechnologies.realgrid.blocks.insulators.BlockyWireGuideInsulator;
+import com.micatechnologies.realgrid.blocks.insulators.BlockWireGuideInsulator2;
 import com.micatechnologies.realgrid.blocks.cutoffs.BlockCutoffSwitch;
 import com.micatechnologies.realgrid.blocks.cutoffs.BlockCutoffSwitch2;
 import com.micatechnologies.realgrid.blocks.cutoffs.BlockCutoffSwitch3;
@@ -132,6 +134,8 @@ public class ModBlocks
     public static final BlockLocke2CIOldSide LOCKE_2CI_OLD_SIDE = new BlockLocke2CIOldSide();
     public static final BlockLocke3CINewSide LOCKE_3CI_NEW_SIDE = new BlockLocke3CINewSide();
     public static final BlockLocke3CIOldSide LOCKE_3CI_OLD_SIDE = new BlockLocke3CIOldSide();
+    public static final BlockLocke3CINewSide WIRE_GUIDE_INSULATOR = new BlockyWireGuideInsulator();
+    public static final BlockLocke3CIOldSide WIRE_GUIDE_INSULATOR_2 = new BlockWireGuideInsulator2();
 
     // Cutoffs
     public static final BlockCutoffSwitch CUTOFF_SWITCH = new BlockCutoffSwitch();
@@ -207,6 +211,8 @@ public class ModBlocks
             LOCKE_2CI_OLD_SIDE,
             LOCKE_3CI_NEW_SIDE,
             LOCKE_3CI_OLD_SIDE,
+            WIRE_GUIDE_INSULATOR,
+            WIRE_GUIDE_INSULATOR_2,
             CUTOFF_SWITCH,
             CUTOFF_SWITCH_2,
             CUTOFF_SWITCH_3,
