@@ -9,17 +9,17 @@ import javax.annotation.Nullable;
  * MacLean F-Neck Distribution Line Post Insulator Block.
  * Sits on top of posts/poles. Acts as wire relay.
  */
-public class BlockMacLeanFNeckInsulator extends BlockInsulatorBase
+public class BlockLocke3CIOld extends BlockInsulatorBase
 {
-    public BlockMacLeanFNeckInsulator()
+    public BlockLocke3CIOld()
     {
-        super("maclean_fneck_insulator");
+        super("locke_insulator_3core_old");
     }
 
     @Nullable
     @Override
     public TileEntity createNewTileEntity(World world, int meta)
     {
-        return new TileEntityMacLeanFNeckInsulator();
+        return new TileEntityLocke3CIOld();
     }
 }

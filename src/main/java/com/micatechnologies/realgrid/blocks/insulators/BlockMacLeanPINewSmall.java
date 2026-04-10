@@ -5,14 +5,14 @@ package com.micatechnologies.realgrid.blocks.insulators;
  *
  * All color-variant block state logic lives in {@link BlockColoredInsulatorBase}.
  */
-public class BlockPorcelainPostTopInsulator extends BlockColoredInsulatorBase {
+public class BlockMacLeanPINewSmall extends BlockColoredInsulatorBase {
 
-    public BlockPorcelainPostTopInsulator() {
-        super("porcelain_post_top_insulator");
+    public BlockMacLeanPINewSmall() {
+        super("small_maclean_porcelain_insulator_new");
     }
 
     @Override
     protected TileEntityColoredInsulatorBase createColoredTE() {
-        return new TileEntityPorcelainPostTopInsulator();
+        return new TileEntityMacLeanPINewSmall();
     }
 }
