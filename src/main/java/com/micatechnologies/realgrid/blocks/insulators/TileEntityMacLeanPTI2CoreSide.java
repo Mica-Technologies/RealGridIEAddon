@@ -10,7 +10,7 @@ import net.minecraft.util.math.Vec3d;
  *
  * Color NBT persistence inherited from {@link TileEntityColoredInsulatorBase}.
  */
-public class TileEntityPorcelainDeadEndInsulator extends TileEntityColoredInsulatorBase {
+public class TileEntityMacLeanPTI2CoreSide extends TileEntityColoredInsulatorBase {
 
     @Override
     public Vec3d getConnectionOffset(Connection con) {

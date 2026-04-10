@@ -8,7 +8,7 @@ import net.minecraft.util.math.Vec3d;
  * Modern distribution line insulator.
  * Acts as a wire relay for HV/MV/LV.
  */
-public class TileEntityHendrixViseTopInsulator extends TileEntityInsulatorBase
+public class TileEntityHendrixVTI3CoreSmall extends TileEntityInsulatorBase
 {
     @Override
     public Vec3d getConnectionOffset(Connection con)

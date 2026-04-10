@@ -7,11 +7,50 @@ import com.micatechnologies.realgrid.blocks.transformers.BlockClassCTransformer2
 import com.micatechnologies.realgrid.blocks.transformers.BlockClassCTransformer1Wire;
 import com.micatechnologies.realgrid.blocks.transformers.BlockJumboTransformer1Wire;
 import com.micatechnologies.realgrid.blocks.transformers.BlockJumboTransformer2Wire;
-import com.micatechnologies.realgrid.blocks.insulators.BlockMacLeanFNeckInsulator;
-import com.micatechnologies.realgrid.blocks.insulators.BlockMacLeanDeadEndInsulator;
-import com.micatechnologies.realgrid.blocks.insulators.BlockHendrixViseTopInsulator;
-import com.micatechnologies.realgrid.blocks.insulators.BlockPorcelainPostTopInsulator;
-import com.micatechnologies.realgrid.blocks.insulators.BlockPorcelainDeadEndInsulator;
+import com.micatechnologies.realgrid.blocks.insulators.BlockHendrixVTI2CoreSide;
+import com.micatechnologies.realgrid.blocks.insulators.BlockHendrixVTI3CoreSide;
+import com.micatechnologies.realgrid.blocks.insulators.BlockHendrixVTI3CoreSideSmall;
+import com.micatechnologies.realgrid.blocks.insulators.BlockHendrixVTI2Core;
+import com.micatechnologies.realgrid.blocks.insulators.BlockHendrixVTI3Core;
+import com.micatechnologies.realgrid.blocks.insulators.BlockHendrixVTI3CoreSmall;
+import com.micatechnologies.realgrid.blocks.insulators.BlockLocke2CINew;
+import com.micatechnologies.realgrid.blocks.insulators.BlockLocke2CIOld;
+import com.micatechnologies.realgrid.blocks.insulators.BlockLocke3CINew;
+import com.micatechnologies.realgrid.blocks.insulators.BlockLocke3CIOld;
+import com.micatechnologies.realgrid.blocks.insulators.BlockMacLeanDEI1BellNew;
+import com.micatechnologies.realgrid.blocks.insulators.BlockMacLeanDEI1BellOld;
+import com.micatechnologies.realgrid.blocks.insulators.BlockMacLeanDEI2BellNew;
+import com.micatechnologies.realgrid.blocks.insulators.BlockMacLeanDEI2BellOld;
+import com.micatechnologies.realgrid.blocks.insulators.BlockMacLeanDEI3Core;
+import com.micatechnologies.realgrid.blocks.insulators.BlockMacLeanDEI4Core;
+import com.micatechnologies.realgrid.blocks.insulators.BlockMacLeanDEI4Core2;
+import com.micatechnologies.realgrid.blocks.insulators.BlockMacLeanDEI6Core;
+import com.micatechnologies.realgrid.blocks.insulators.BlockMacLeanDEI7Core;
+import com.micatechnologies.realgrid.blocks.insulators.BlockMacLeanDEI7Core2;
+import com.micatechnologies.realgrid.blocks.insulators.BlockMacLeanDEI7Core3;
+import com.micatechnologies.realgrid.blocks.insulators.BlockMacLeanDEI8Core;
+import com.micatechnologies.realgrid.blocks.insulators.BlockMacLeanDEI9Core;
+import com.micatechnologies.realgrid.blocks.insulators.BlockMacLeanPINew;
+import com.micatechnologies.realgrid.blocks.insulators.BlockMacLeanPINewSmall;
+import com.micatechnologies.realgrid.blocks.insulators.BlockMacLeanPIOld;
+import com.micatechnologies.realgrid.blocks.insulators.BlockMacLeanPIOldSmall;
+import com.micatechnologies.realgrid.blocks.insulators.BlockMacLeanPINewSide;
+import com.micatechnologies.realgrid.blocks.insulators.BlockMacLeanPINewSideSmall;
+import com.micatechnologies.realgrid.blocks.insulators.BlockMacLeanPIOldSide;
+import com.micatechnologies.realgrid.blocks.insulators.BlockMacLeanPIOldSideSmall;
+import com.micatechnologies.realgrid.blocks.insulators.BlockMacLeanPTI2Core;
+import com.micatechnologies.realgrid.blocks.insulators.BlockMacLeanPTI3Core;
+import com.micatechnologies.realgrid.blocks.insulators.BlockMacLeanPTI5Core;
+import com.micatechnologies.realgrid.blocks.insulators.BlockMacLeanPTI5Core2;
+import com.micatechnologies.realgrid.blocks.insulators.BlockMacLeanPTI5Core3;
+import com.micatechnologies.realgrid.blocks.insulators.BlockMacLeanPTI6Core;
+import com.micatechnologies.realgrid.blocks.insulators.BlockMacLeanPTI2CoreSide;
+import com.micatechnologies.realgrid.blocks.insulators.BlockMacLeanPTI3CoreSide;
+import com.micatechnologies.realgrid.blocks.insulators.BlockMacLeanPTI6CoreSide;
+import com.micatechnologies.realgrid.blocks.insulators.BlockLocke2CINewSide;
+import com.micatechnologies.realgrid.blocks.insulators.BlockLocke2CIOldSide;
+import com.micatechnologies.realgrid.blocks.insulators.BlockLocke3CINewSide;
+import com.micatechnologies.realgrid.blocks.insulators.BlockLocke3CIOldSide;
 import com.micatechnologies.realgrid.blocks.cutoffs.BlockCutoffSwitch;
 import com.micatechnologies.realgrid.blocks.cutoffs.BlockCutoffSwitch2;
 import com.micatechnologies.realgrid.blocks.cutoffs.BlockCutoffSwitch3;
@@ -47,12 +86,52 @@ public class ModBlocks
     public static final BlockJumboTransformer2Wire JUMBO_TRANSFORMER_2WIRE = new BlockJumboTransformer2Wire();
     public static final BlockJumboTransformer1Wire JUMBO_TRANSFORMER_1WIRE = new BlockJumboTransformer1Wire();
 
-    // Insulators- MOST ARE PLACEHOLDERS FOR NOW
-    public static final BlockMacLeanFNeckInsulator MACLEAN_FNECK_INSULATOR = new BlockMacLeanFNeckInsulator();
-    public static final BlockMacLeanDeadEndInsulator MACLEAN_DEAD_END_INSULATOR = new BlockMacLeanDeadEndInsulator();
-    public static final BlockHendrixViseTopInsulator HENDRIX_VISE_TOP_INSULATOR = new BlockHendrixViseTopInsulator();
-    public static final BlockPorcelainPostTopInsulator PORCELAIN_POST_TOP_INSULATOR = new BlockPorcelainPostTopInsulator();
-    public static final BlockPorcelainDeadEndInsulator PORCELAIN_DEAD_END_INSULATOR = new BlockPorcelainDeadEndInsulator();
+    // Insulators
+    public static final BlockHendrixVTI2CoreSide HENDRIX_VTI_2CORE_SIDE = new BlockHendrixVTI2CoreSide();
+    public static final BlockHendrixVTI3CoreSide HENDRIX_VTI_3CORE_SIDE = new BlockHendrixVTI3CoreSide();
+    public static final BlockHendrixVTI3CoreSideSmall HENDRIX_VTI_3CORE_SIDE_SMALL = new BlockHendrixVTI3CoreSideSmall();
+    public static final BlockHendrixVTI2Core HENDRIX_VTI_2CORE = new BlockHendrixVTI2Core();
+    public static final BlockHendrixVTI3Core HENDRIX_VTI_3CORE = new BlockHendrixVTI3Core();
+    public static final BlockHendrixVTI3CoreSmall HENDRIX_VTI_3CORE_SMALL = new BlockHendrixVTI3CoreSmall();
+    public static final BlockLocke2CINew LOCKE_2CI_NEW = new BlockLocke2CINew();
+    public static final BlockLocke2CINew LOCKE_2CI_OLD = new BlockLocke2CIOld();
+    public static final BlockLocke2CIOld LOCKE_3CI_NEW = new BlockLocke3CINew();
+    public static final BlockLocke3CIOld LOCKE_3CI_OLD = new BlockLocke3CIOld();
+    public static final BlockMacLeanDEI1BellNew MACLEAN_DEI_1BELL_NEW = new BlockMacLeanDEI1BellNew();
+    public static final BlockMacLeanDEI1BellOld MACLEAN_DEI_1BELL_OLD = new BlockMacLeanDEI1BellOld();
+    public static final BlockMacLeanDEI2BellNew MACLEAN_DEI_2BELL_NEW = new BlockMacLeanDEI2BellNew();
+    public static final BlockMacLeanDEI2BellOld MACLEAN_DEI_2BELL_OLD = new BlockMacLeanDEI2BellOld();
+    public static final BlockMacLeanDEI3Core MACLEAN_DEI_3CORE = new BlockMacLeanDEI3Core();
+    public static final BlockMacLeanDEI4Core MACLEAN_DEI_4CORE = new BlockMacLeanDEI4Core();
+    public static final BlockMacLeanDEI4Core2 MACLEAN_DEI_4CORE_2 = new  BlockMacLeanDEI4Core2();
+    public static final BlockMacLeanDEI6Core MACLEAN_DEI_6CORE = new BlockMacLeanDEI6Core();
+    public static final BlockMacLeanDEI7Core MACLEAN_DEI_7CORE = new BlockMacLeanDEI7Core();
+    public static final BlockMacLeanDEI7Core2 MACLEAN_DEI_7CORE_2 = new BlockMacLeanDEI7Core2();
+    public static final BlockMacLeanDEI7Core3 MACLEAN_DEI_7CORE_3 = new BlockMacLeanDEI7Core3();
+    public static final BlockMacLeanDEI8Core MACLEAN_DEI_8CORE = new BlockMacLeanDEI8Core();
+    public static final BlockMacLeanDEI9Core MACLEAN_DEI_9CORE = new BlockMacLeanDEI9Core();
+    public static final BlockMacLeanPINew MACLEAN_PI_NEW = new BlockMacLeanPINew();
+    public static final BlockMacLeanPINewSmall MACLEAN_PI_NEW_SMALL = new BlockMacLeanPINewSmall();
+    public static final BlockMacLeanPINewSmall2 MACLEAN_PI_NEW_SMALL_2 = new BlockMacLeanPINewSmall2();
+    public static final BlockMacLeanPIOld MACLEAN_PI_OLD = new BlockMacLeanPIOld();
+    public static final BlockMacLeanPIOldSmall MACLEAN_PI_OLD_SMALL = new BlockMacLeanPIOldSmall();
+    public static final BlockMacLeanPINewSide MACLEAN_PI_NEW_SIDE = new BlockMacLeanPINewSide();
+    public static final BlockMacLeanPINewSideSmall MACLEAN_PI_NEW_SIDE_SMALL = new BlockMacLeanPINewSideSmall();
+    public static final BlockMacLeanPIOldSide MACLEAN_PI_OLD_SIDE = new BlockMacLeanPIOldSide();
+    public static final BlockMacLeanPIOldSideSmall MACLEAN_PI_OLD_SIDE_SMALL = new BlockMacLeanPIOldSideSmall();
+    public static final BlockMacLeanPTI2Core MACLEAN_PTI_2CORE = new BlockMacLeanPTI2Core();
+    public static final BlockMacLeanPTI3Core MACLEAN_PTI_3CORE = new BlockMacLeanPTI3Core();
+    public static final BlockMacLeanPTI5Core MACLEAN_PTI_5CORE = new BlockMacLeanPTI5Core();
+    public static final BlockMacLeanPTI5Core2 MACLEAN_PTI_5CORE_2 = new BlockMacLeanPTI5Core2();
+    public static final BlockMacLeanPTI5Core3 MACLEAN_PTI_5CORE_3 = new BlockMacLeanPTI5Core3();
+    public static final BlockMacLeanPTI6Core MACLEAN_PTI_6CORE = new BlockMacLeanPTI6Core();
+    public static final BlockMacLeanPTI2CoreSide MACLEAN_PTI_2CORE_SIDE = new BlockMacLeanPTI2CoreSide();
+    public static final BlockMacLeanPTI3CoreSide MACLEAN_PTI_3CORE_SIDE = new BlockMacLeanPTI3CoreSide();
+    public static final BlockMacLeanPTI6CoreSide MACLEAN_PTI_6CORE_SIDE = new BlockMacLeanPTI6CoreSide();
+    public static final BlockLocke2CINewSide LOCKE_2CI_NEW_SIDE = new BlockLocke2CINewSide();
+    public static final BlockLocke2CIOldSide LOCKE_2CI_OLD_SIDE = new BlockLocke2CIOldSide();
+    public static final BlockLocke3CINewSide LOCKE_3CI_NEW_SIDE = new BlockLocke3CINewSide();
+    public static final BlockLocke3CIOldSide LOCKE_3CI_OLD_SIDE = new BlockLocke3CIOldSide();
 
     // Cutoffs
     public static final BlockCutoffSwitch CUTOFF_SWITCH = new BlockCutoffSwitch();
@@ -83,11 +162,51 @@ public class ModBlocks
             CLASS_C_TRANSFORMER_1WIRE,
             JUMBO_TRANSFORMER_2WIRE,
             JUMBO_TRANSFORMER_1WIRE,
-            MACLEAN_FNECK_INSULATOR,
-            MACLEAN_DEAD_END_INSULATOR,
-            HENDRIX_VISE_TOP_INSULATOR,
-            PORCELAIN_POST_TOP_INSULATOR,
-            PORCELAIN_DEAD_END_INSULATOR,
+            HENDRIX_VTI_2CORE_SIDE,
+            HENDRIX_VTI_3CORE_SIDE,
+            HENDRIX_VTI_3CORE_SIDE_SMALL,
+            HENDRIX_VTI_2CORE,
+            HENDRIX_VTI_3CORE,
+            HENDRIX_VTI_3CORE_SMALL,
+            LOCKE_2CI_NEW,
+            LOCKE_2CI_OLD,
+            LOCKE_3CI_NEW,
+            LOCKE_3CI_OLD,
+            MACLEAN_DEI_1BELL_NEW,
+            MACLEAN_DEI_1BELL_OLD,
+            MACLEAN_DEI_2BELL_NEW,
+            MACLEAN_DEI_2BELL_OLD,
+            MACLEAN_DEI_3CORE,
+            MACLEAN_DEI_4CORE,
+            MACLEAN_DEI_4CORE_2,
+            MACLEAN_DEI_6CORE,
+            MACLEAN_DEI_7CORE,
+            MACLEAN_DEI_7CORE_2,
+            MACLEAN_DEI_7CORE_3,
+            MACLEAN_DEI_8CORE,
+            MACLEAN_DEI_9CORE,
+            MACLEAN_PI_NEW,
+            MACLEAN_PI_NEW_SMALL,
+            MACLEAN_PI_NEW_SMALL_2,
+            MACLEAN_PI_OLD,
+            MACLEAN_PI_OLD_SMALL,
+            MACLEAN_PI_NEW_SIDE,
+            MACLEAN_PI_NEW_SIDE_SMALL,
+            MACLEAN_PI_OLD_SIDE,
+            MACLEAN_PI_OLD_SIDE_SMALL,
+            MACLEAN_PTI_2CORE,
+            MACLEAN_PTI_3CORE,
+            MACLEAN_PTI_5CORE,
+            MACLEAN_PTI_5CORE_2,
+            MACLEAN_PTI_5CORE_3,
+            MACLEAN_PTI_6CORE,
+            MACLEAN_PTI_2CORE_SIDE,
+            MACLEAN_PTI_3CORE_SIDE,
+            MACLEAN_PTI_6CORE_SIDE,
+            LOCKE_2CI_NEW_SIDE,
+            LOCKE_2CI_OLD_SIDE,
+            LOCKE_3CI_NEW_SIDE,
+            LOCKE_3CI_OLD_SIDE,
             CUTOFF_SWITCH,
             CUTOFF_SWITCH_2,
             CUTOFF_SWITCH_3,

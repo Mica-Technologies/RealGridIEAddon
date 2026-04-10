@@ -10,7 +10,7 @@ import net.minecraft.util.math.Vec3d;
  * Acts as a wire relay for HV/MV/LV wires.
  * Sits on top of posts/poles.
  */
-public class TileEntityMacLeanFNeckInsulator extends TileEntityInsulatorBase
+public class TileEntityMacLeanPTI5Core extends TileEntityInsulatorBase
 {
     @Override
     public Vec3d getConnectionOffset(Connection con)
