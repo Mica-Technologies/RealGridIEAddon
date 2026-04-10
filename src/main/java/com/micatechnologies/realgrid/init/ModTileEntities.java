@@ -51,6 +51,8 @@ import com.micatechnologies.realgrid.blocks.insulators.TileEntityLocke2CINewSide
 import com.micatechnologies.realgrid.blocks.insulators.TileEntityLocke2CIOldSide;
 import com.micatechnologies.realgrid.blocks.insulators.TileEntityLocke3CINewSide;
 import com.micatechnologies.realgrid.blocks.insulators.TileEntityLocke3CIOldSide;
+import com.micatechnologies.realgrid.blocks.insulators.TileEntityWireGuideInsulator;
+import com.micatechnologies.realgrid.blocks.insulators.TileEntityWireGuideInsulator2;
 import com.micatechnologies.realgrid.blocks.cutoffs.TileEntityCutoffSwitch;
 import net.minecraft.util.ResourceLocation;
 import net.minecraftforge.fml.common.registry.GameRegistry;
@@ -159,8 +161,10 @@ public class ModTileEntities
             new ResourceLocation(RealGrid.MODID, "LOCKE_2CI_OLD_SIDE"));
         GameRegistry.registerTileEntity(TileEntityLocke3CINewSide.class, 
             new ResourceLocation(RealGrid.MODID, "LOCKE_3CI_NEW_SIDE"));
-        GameRegistry.registerTileEntity(TileEntityLocke3CIOldSide.class, 
-            new ResourceLocation(RealGrid.MODID, "LOCKE_3CI_OLD_SIDE"));
+        GameRegistry.registerTileEntity(TileEntityWireGuideInsulator.class, 
+            new ResourceLocation(RealGrid.MODID, "WIRE_GUIDE_INSULATOR"));
+        GameRegistry.registerTileEntity(TileEntityWireGuideInsulator2.class, 
+            new ResourceLocation(RealGrid.MODID, "WIRE_GUIDE_INSULATOR_2"));        
         GameRegistry.registerTileEntity(TileEntityCutoffSwitch.class,
             new ResourceLocation(RealGrid.MODID, "cutoff_switch"));
     }
