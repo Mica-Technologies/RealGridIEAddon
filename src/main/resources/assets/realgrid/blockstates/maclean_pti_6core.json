@@ -1,0 +1,25 @@
+{
+  "forge_marker": 1,
+  "defaults": {
+    "model": "immersiveengineering:smartmodel/connector",
+    "custom": {
+      "base": "realgrid:block/maclean_pti_6core"
+    }
+  },
+  "variants": {
+    "facing": {
+      "north": {
+        "y": 180
+      },
+      "south": {
+        "y": 0
+      },
+      "west": {
+        "y": 90
+      },
+      "east": {
+        "y": 270
+      }
+    }
+  }
+}
