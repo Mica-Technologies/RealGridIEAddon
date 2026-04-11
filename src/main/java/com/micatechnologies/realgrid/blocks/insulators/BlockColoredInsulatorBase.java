@@ -37,7 +37,7 @@ public abstract class BlockColoredInsulatorBase extends BlockInsulatorBase {
     }
 
     /** Creates the TE for this color-variant insulator. Color is set separately. */
-    protected abstract TileEntityColoredInsulatorBase createColoredTE();
+    protected abstract TileEntityInsulatorBase createColoredTE();
 
     @Override
     @SuppressWarnings("rawtypes")
@@ -76,8 +76,8 @@ public abstract class BlockColoredInsulatorBase extends BlockInsulatorBase {
         super.onBlockPlacedBy(world, pos, state, placer, stack);
         if (!world.isRemote) {
             TileEntity te = world.getTileEntity(pos);
-            if (te instanceof TileEntityColoredInsulatorBase) {
-                ((TileEntityColoredInsulatorBase) te).colorVariant = state.getValue(COLOR);
+            if (te instanceof TileEntityInsulatorBase) {
+                ((TileEntityInsulatorBase) te).colorVariant = state.getValue(COLOR);
             }
         }
     }
@@ -96,7 +96,7 @@ public abstract class BlockColoredInsulatorBase extends BlockInsulatorBase {
     @Nullable
     @Override
     public TileEntity createNewTileEntity(World world, int meta) {
-        TileEntityColoredInsulatorBase te = createColoredTE();
+        TileEntityInsulatorBase te = createColoredTE();
         te.colorVariant = (meta >> 2) & 1;
         return te;
     }
