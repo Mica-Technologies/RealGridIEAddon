@@ -12,7 +12,7 @@ public class BlockMacLeanPIOld extends BlockColoredInsulatorBase {
     }
 
     @Override
-    protected TileEntityColoredInsulatorBase createColoredTE() {
+    protected TileEntityInsulatorBase createColoredTE() {
         return new TileEntityMacLeanPIOld();
     }
 }
