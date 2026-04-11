@@ -40,13 +40,13 @@ public class ModTileEntities
             new ResourceLocation(RealGrid.MODID, "HENDRIX_VTI_3CORE"));
         GameRegistry.registerTileEntity(TileEntityHendrixVTI3CoreSmall.class, 
             new ResourceLocation(RealGrid.MODID, "HENDRIX_VTI_3CORE_SMALL"));
-        GameRegistry.registerTileEntity(TileEntityLocke2CINew.class, 
+        GameRegistry.registerTileEntity(TileEntityLocke2CINew.class,
             new ResourceLocation(RealGrid.MODID, "LOCKE_2CI_NEW"));
-        GameRegistry.registerTileEntity(TileEntityLocke2CINew.class, 
+        GameRegistry.registerTileEntity(TileEntityLocke2CIOld.class,
             new ResourceLocation(RealGrid.MODID, "LOCKE_2CI_OLD"));
-        GameRegistry.registerTileEntity(TileEntityLocke2CIOld.class, 
+        GameRegistry.registerTileEntity(TileEntityLocke3CINew.class,
             new ResourceLocation(RealGrid.MODID, "LOCKE_3CI_NEW"));
-        GameRegistry.registerTileEntity(TileEntityLocke3CIOld.class, 
+        GameRegistry.registerTileEntity(TileEntityLocke3CIOld.class,
             new ResourceLocation(RealGrid.MODID, "LOCKE_3CI_OLD"));
         GameRegistry.registerTileEntity(TileEntityMacLeanDEI1BellNew.class, 
             new ResourceLocation(RealGrid.MODID, "MACLEAN_DEI_1BELL_NEW"));
