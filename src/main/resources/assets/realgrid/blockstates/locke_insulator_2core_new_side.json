@@ -3,7 +3,7 @@
   "defaults": {
     "model": "immersiveengineering:smartmodel/connector",
     "custom": {
-      "base": "realgrid:block/locke_insulator_2core_new_side"
+      "base": "realgrid:block/locke_insulator_2core_side_new"
     }
   },
   "variants": {
@@ -23,7 +23,7 @@
     },
     "inventory": [
       {
-        "y": 0
+        "model": "realgrid:locke_insulator_2core_side_new"
       }
     ]
   }
