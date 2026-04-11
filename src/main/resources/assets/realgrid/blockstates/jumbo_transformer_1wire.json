@@ -2,7 +2,9 @@
   "forge_marker": 1,
   "defaults": {
     "model": "immersiveengineering:smartmodel/connector",
-    "custom": { "base": "realgrid:block/class_c_transformer" }
+    "custom": {
+      "base": "realgrid:block/class_c_transformer"
+    }
   },
   "variants": {
     "facing": {
@@ -24,6 +26,68 @@
       "1": {
         "model": "realgrid:jumbo_transformer_top_1wire"
       }
-    }
+    },
+    "inventory": [
+      {
+        "model": "realgrid:class_c_transformer",
+        "transform": {
+          "gui": {
+            "rotation": [
+              30,
+              225,
+              0
+            ],
+            "translation": [
+              0,
+              0,
+              0
+            ],
+            "scale": 0.3
+          },
+          "thirdperson": {
+            "rotation": [
+              75,
+              45,
+              0
+            ],
+            "translation": [
+              0.0,
+              -5.5,
+              -1.0
+            ],
+            "scale": 0.1875
+          },
+          "firstperson": {
+            "rotation": [
+              0,
+              45,
+              0
+            ],
+            "translation": [
+              0.0,
+              -8.0,
+              -1.0
+            ],
+            "scale": 0.2
+          },
+          "ground": {
+            "translation": [
+              0.0,
+              -5.0,
+              -1.0
+            ],
+            "scale": 0.125
+          },
+          "fixed": {
+            "translation": [
+              0.0,
+              -8.0,
+              -1.0
+            ],
+            "scale": 0.25
+          }
+        }
+      }
+    ]
   }
 }

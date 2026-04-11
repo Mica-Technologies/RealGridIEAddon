@@ -2,7 +2,9 @@
   "forge_marker": 1,
   "defaults": {
     "model": "immersiveengineering:smartmodel/connector",
-    "custom": { "base": "realgrid:block/hendrix_vti_3core_small" }
+    "custom": {
+      "base": "realgrid:block/hendrix_vti_3core_small"
+    }
   },
   "variants": {
     "facing": {
@@ -18,6 +20,11 @@
       "east": {
         "y": 270
       }
-    }
+    },
+    "inventory": [
+      {
+        "y": 0
+      }
+    ]
   }
 }
