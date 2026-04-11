@@ -51,8 +51,8 @@ public class ModBlocks
     public static final BlockHendrixVTI3Core HENDRIX_VTI_3CORE = new BlockHendrixVTI3Core();
     public static final BlockHendrixVTI3CoreSmall HENDRIX_VTI_3CORE_SMALL = new BlockHendrixVTI3CoreSmall();
     public static final BlockLocke2CINew LOCKE_2CI_NEW = new BlockLocke2CINew();
-    public static final BlockLocke2CINew LOCKE_2CI_OLD = new BlockLocke2CINew();
-    public static final BlockLocke2CIOld LOCKE_3CI_NEW = new BlockLocke2CIOld();
+    public static final BlockLocke2CIOld LOCKE_2CI_OLD = new BlockLocke2CIOld();
+    public static final BlockLocke3CINew LOCKE_3CI_NEW = new BlockLocke3CINew();
     public static final BlockLocke3CIOld LOCKE_3CI_OLD = new BlockLocke3CIOld();
     public static final BlockMacLeanDEI1BellNew MACLEAN_DEI_1BELL_NEW = new BlockMacLeanDEI1BellNew();
     public static final BlockMacLeanDEI1BellOld MACLEAN_DEI_1BELL_OLD = new BlockMacLeanDEI1BellOld();
