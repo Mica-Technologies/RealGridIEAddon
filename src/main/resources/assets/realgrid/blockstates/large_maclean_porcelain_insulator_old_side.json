@@ -3,7 +3,7 @@
   "defaults": {
     "model": "immersiveengineering:smartmodel/connector",
     "custom": {
-      "base": "realgrid:block/large_maclean_porcelain_insulator_old_side"
+      "base": "realgrid:block/large_maclean_porcelain_insulator_side_old"
     }
   },
   "variants": {
