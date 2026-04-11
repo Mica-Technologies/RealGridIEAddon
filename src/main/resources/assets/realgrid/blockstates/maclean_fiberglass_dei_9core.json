@@ -23,7 +23,7 @@
     },
     "inventory": [
       {
-        "y": 0
+        "model": "realgrid:maclean_fiberglass_dei_9core"
       }
     ]
   }

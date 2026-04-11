@@ -23,7 +23,7 @@
     },
     "inventory": [
       {
-        "y": 0
+        "model": "realgrid:small_maclean_porcelain_insulator_side_new_2"
       }
     ]
   }
