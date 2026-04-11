@@ -9,9 +9,9 @@ import javax.annotation.Nullable;
  * MacLean Dead End Insulator Block.
  * For terminating wire runs on poles. Acts as wire relay.
  */
-public class BlockLocke2CINewSide extends BlockInsulatorBase
+public class BlockLocke2CIOldSide extends BlockInsulatorBase
 {
-    public BlockLocke2CINewSide()
+    public BlockLocke2CIOldSide()
     {
         super("locke_insulator_2core_old_side");
     }
@@ -20,6 +20,6 @@ public class BlockLocke2CINewSide extends BlockInsulatorBase
     @Override
     public TileEntity createNewTileEntity(World world, int meta)
     {
-        return new TileEntityLocke2CINewSide();
+        return new TileEntityLocke2CIOldSide();
     }
 }
