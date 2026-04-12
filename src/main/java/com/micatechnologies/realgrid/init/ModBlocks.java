@@ -27,8 +27,13 @@ import net.minecraftforge.fml.relauncher.Side;
 import net.minecraftforge.fml.relauncher.SideOnly;
 
 import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.List;
 
+// NOTE: @Mod.EventBusSubscriber auto-subscribes ALL static @SubscribeEvent methods.
+// Do NOT also call MinecraftForge.EVENT_BUS.register(ModBlocks.class) in your main
+// mod class — that would double-subscribe the handlers and cause every block and
+// item block to be passed to event.getRegistry().register() twice.
 @Mod.EventBusSubscriber(modid = RealGrid.MODID)
 public class ModBlocks
 {
@@ -62,7 +67,7 @@ public class ModBlocks
     public static final BlockMacLeanDEI3BellOld MACLEAN_DEI_3BELL_OLD = new BlockMacLeanDEI3BellOld();
     public static final BlockMacLeanDEI3Core MACLEAN_DEI_3CORE = new BlockMacLeanDEI3Core();
     public static final BlockMacLeanDEI4Core MACLEAN_DEI_4CORE = new BlockMacLeanDEI4Core();
-    public static final BlockMacLeanDEI4Core2 MACLEAN_DEI_4CORE_2 = new  BlockMacLeanDEI4Core2();
+    public static final BlockMacLeanDEI4Core2 MACLEAN_DEI_4CORE_2 = new BlockMacLeanDEI4Core2();
     public static final BlockMacLeanDEI6Core MACLEAN_DEI_6CORE = new BlockMacLeanDEI6Core();
     public static final BlockMacLeanDEI7Core MACLEAN_DEI_7CORE = new BlockMacLeanDEI7Core();
     public static final BlockMacLeanDEI7Core2 MACLEAN_DEI_7CORE_2 = new BlockMacLeanDEI7Core2();
@@ -102,21 +107,15 @@ public class ModBlocks
     public static final BlockCutoffSwitch5 CUTOFF_SWITCH_5 = new BlockCutoffSwitch5();
     public static final BlockCutoffSwitch6 CUTOFF_SWITCH_6 = new BlockCutoffSwitch6();
 
-    // Creative Tab
-    public static final CreativeTabs CREATIVE_TAB = new CreativeTabs(RealGrid.MODID)
+    // Both BLOCKS and ITEM_BLOCKS are populated here in the static initializer,
+    // which the JVM runs exactly once when this class is first loaded — guaranteed
+    // to never run more than once, regardless of how many times the Forge registry
+    // events fire. Each ItemBlockBase instance is created once, tied to its Block,
+    // and stored permanently. The event handlers below only call register() on these
+    // pre-built instances; they never create new objects or mutate either list.
+    static
     {
-        @Override
-        @SideOnly(Side.CLIENT)
-        public ItemStack createIcon()
-        {
-            return new ItemStack(CLASS_A_TRANSFORMER_2WIRE);
-        }
-    };
-
-    @SubscribeEvent
-    public static void registerBlocks(RegistryEvent.Register<Block> event)
-    {
-        Block[] blocks = {
+        BLOCKS.addAll(Arrays.asList(
             CLASS_A_TRANSFORMER_2WIRE,
             CLASS_A_TRANSFORMER_1WIRE,
             CLASS_C_TRANSFORMER_2WIRE,
@@ -178,25 +177,59 @@ public class ModBlocks
             CUTOFF_SWITCH_4,
             CUTOFF_SWITCH_5,
             CUTOFF_SWITCH_6
-        };
+        ));
 
-        for (Block block : blocks)
-        {
-            block.setCreativeTab(CREATIVE_TAB);
-            event.getRegistry().register(block);
-            BLOCKS.add(block);
-        }
-    }
-
-    @SubscribeEvent
-    public static void registerItemBlocks(RegistryEvent.Register<Item> event)
-    {
+        // Build each ItemBlockBase once from the finalized BLOCKS list.
+        // Crucially, the same instance is stored in ITEM_BLOCKS and later passed
+        // to event.getRegistry().register() — so the object in the Item registry
+        // and the object in ITEM_BLOCKS are always identical. This eliminates the
+        // previous bug where registerItemBlocks() called "new ItemBlockBase(block)"
+        // on every invocation, producing a fresh set of instances each time. When
+        // the event fired more than once, ITEM_BLOCKS.clear() discarded the first
+        // set (already registered) and replaced it with a second set of brand-new
+        // objects that were NOT the registered items — causing ModItems to map
+        // models to ghost instances and producing duplicate/missing inventory entries.
         for (Block block : BLOCKS)
         {
             ItemBlock itemBlock = new ItemBlockBase(block);
             itemBlock.setRegistryName(block.getRegistryName());
-            event.getRegistry().register(itemBlock);
             ITEM_BLOCKS.add(itemBlock);
+        }
+    }
+
+    // Creative Tab
+    public static final CreativeTabs CREATIVE_TAB = new CreativeTabs(RealGrid.MODID)
+    {
+        @Override
+        @SideOnly(Side.CLIENT)
+        public ItemStack createIcon()
+        {
+            return new ItemStack(CLASS_A_TRANSFORMER_2WIRE);
+        }
+    };
+
+    @SubscribeEvent
+    public static void registerBlocks(RegistryEvent.Register<Block> event)
+    {
+        for (Block block : BLOCKS)
+        {
+            block.setCreativeTab(CREATIVE_TAB);
+            event.getRegistry().register(block);
+        }
+    }
+
+    // registerItemBlocks now only calls register() on the pre-built instances
+    // from ITEM_BLOCKS. It never creates new ItemBlockBase objects and never
+    // touches the ITEM_BLOCKS list — both are already finalized at class load.
+    // ModItems.registerModels() will always iterate the exact same instances
+    // that were registered here, so model assignments can never point to
+    // unregistered "ghost" objects.
+    @SubscribeEvent
+    public static void registerItemBlocks(RegistryEvent.Register<Item> event)
+    {
+        for (ItemBlock itemBlock : ITEM_BLOCKS)
+        {
+            event.getRegistry().register(itemBlock);
         }
     }
 }
