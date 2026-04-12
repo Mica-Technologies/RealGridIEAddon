@@ -75,6 +75,8 @@ tile.realgrid.maclean_porcelain_dead_end_insulator_new.name=MacLean Porcelain De
 tile.realgrid.maclean_porcelain_dead_end_insulator_old.name=MacLean Porcelain Dead End Insulator (1 Bell, Old)
 tile.realgrid.maclean_porcelain_dead_end_insulator_new_2.name=MacLean Porcelain Dead End Insulator (2 Bell, New)
 tile.realgrid.maclean_porcelain_dead_end_insulator_old_2.name=MacLean Porcelain Dead End Insulator (2 Bell, Old)
+tile.realgrid.maclean_porcelain_dead_end_insulator_new_3.name=MacLean Porcelain Dead End Insulator (3 Bell, New)
+tile.realgrid.maclean_porcelain_dead_end_insulator_old_3.name=MacLean Porcelain Dead End Insulator (3 Bell, Old)
 
 # Wire Guide Insulators
 tile.realgrid.wire_guide_insulator.name=Wire Guide Insulator

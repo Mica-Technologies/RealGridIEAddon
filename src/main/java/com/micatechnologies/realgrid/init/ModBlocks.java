@@ -58,6 +58,8 @@ public class ModBlocks
     public static final BlockMacLeanDEI1BellOld MACLEAN_DEI_1BELL_OLD = new BlockMacLeanDEI1BellOld();
     public static final BlockMacLeanDEI2BellNew MACLEAN_DEI_2BELL_NEW = new BlockMacLeanDEI2BellNew();
     public static final BlockMacLeanDEI2BellOld MACLEAN_DEI_2BELL_OLD = new BlockMacLeanDEI2BellOld();
+    public static final BlockMacLeanDEI3BellNew MACLEAN_DEI_3BELL_NEW = new BlockMacLeanDEI3BellNew();
+    public static final BlockMacLeanDEI3BellOld MACLEAN_DEI_3BELL_OLD = new BlockMacLeanDEI3BellOld();
     public static final BlockMacLeanDEI3Core MACLEAN_DEI_3CORE = new BlockMacLeanDEI3Core();
     public static final BlockMacLeanDEI4Core MACLEAN_DEI_4CORE = new BlockMacLeanDEI4Core();
     public static final BlockMacLeanDEI4Core2 MACLEAN_DEI_4CORE_2 = new  BlockMacLeanDEI4Core2();
@@ -135,6 +137,8 @@ public class ModBlocks
             MACLEAN_DEI_1BELL_OLD,
             MACLEAN_DEI_2BELL_NEW,
             MACLEAN_DEI_2BELL_OLD,
+            MACLEAN_DEI_3BELL_NEW,
+            MACLEAN_DEI_3BELL_OLD,
             MACLEAN_DEI_3CORE,
             MACLEAN_DEI_4CORE,
             MACLEAN_DEI_4CORE_2,
