@@ -124,6 +124,8 @@ public class ModTileEntities
             new ResourceLocation(RealGrid.MODID, "LOCKE_2CI_OLD_SIDE"));
         GameRegistry.registerTileEntity(TileEntityLocke3CINewSide.class,
             new ResourceLocation(RealGrid.MODID, "LOCKE_3CI_NEW_SIDE"));
+        GameRegistry.registerTileEntity(TileEntityLocke3CIOldSide.class,
+                new ResourceLocation(RealGrid.MODID, "LOCKE_3CI_OLD_SIDE"));
         GameRegistry.registerTileEntity(TileEntityWireGuideInsulator.class,
             new ResourceLocation(RealGrid.MODID, "WIRE_GUIDE_INSULATOR"));
         GameRegistry.registerTileEntity(TileEntityWireGuideInsulator2.class,
