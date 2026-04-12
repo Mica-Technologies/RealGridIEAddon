@@ -336,11 +336,12 @@ public abstract class TileEntityRealTransformer extends TileEntityImmersiveConne
             }
         }
 
+        // Another double inventory block fix
         this.markDirty();
         if (world != null)
         {
             IBlockState state = world.getBlockState(pos);
-            world.notifyBlockUpdate(pos, state, state, 3);
+            world.notifyBlockUpdate(pos, state, state, 2);
         }
     }
 
