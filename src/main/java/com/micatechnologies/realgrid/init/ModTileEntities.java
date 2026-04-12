@@ -56,6 +56,10 @@ public class ModTileEntities
             new ResourceLocation(RealGrid.MODID, "MACLEAN_DEI_2BELL_NEW"));
         GameRegistry.registerTileEntity(TileEntityMacLeanDEI2BellOld.class, 
             new ResourceLocation(RealGrid.MODID, "MACLEAN_DEI_2BELL_OLD"));
+        GameRegistry.registerTileEntity(TileEntityMacLeanDEI3BellNew.class, 
+            new ResourceLocation(RealGrid.MODID, "MACLEAN_DEI_3BELL_NEW"));
+        GameRegistry.registerTileEntity(TileEntityMacLeanDEI3BellOld.class, 
+            new ResourceLocation(RealGrid.MODID, "MACLEAN_DEI_3BELL_OLD"));
         GameRegistry.registerTileEntity(TileEntityMacLeanDEI3Core.class, 
             new ResourceLocation(RealGrid.MODID, "MACLEAN_DEI_3CORE"));
         GameRegistry.registerTileEntity(TileEntityMacLeanDEI4Core.class, 
