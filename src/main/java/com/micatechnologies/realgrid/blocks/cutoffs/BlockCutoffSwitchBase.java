@@ -13,14 +13,17 @@ import net.minecraft.block.properties.PropertyBool;
 import net.minecraft.block.properties.PropertyDirection;
 import net.minecraft.block.state.BlockStateContainer;
 import net.minecraft.block.state.IBlockState;
+import net.minecraft.creativetab.CreativeTabs;
 import net.minecraft.entity.EntityLivingBase;
 import net.minecraft.entity.player.EntityPlayer;
+import net.minecraft.item.Item;
 import net.minecraft.item.ItemStack;
 import net.minecraft.tileentity.TileEntity;
 import net.minecraft.util.BlockRenderLayer;
 import net.minecraft.util.EnumBlockRenderType;
 import net.minecraft.util.EnumFacing;
 import net.minecraft.util.EnumHand;
+import net.minecraft.util.NonNullList;
 import net.minecraft.util.math.AxisAlignedBB;
 import net.minecraft.util.math.BlockPos;
 import net.minecraft.util.text.TextComponentTranslation;
@@ -47,14 +50,14 @@ import javax.annotation.Nullable;
  *
  * Concrete subclasses only need to provide a registry name and a TE factory.
  */
-public abstract class BlockCutoffSwitchBase extends Block implements ITileEntityProvider {
-
+public abstract class BlockCutoffSwitchBase extends Block implements ITileEntityProvider
+{
     // -----------------------------------------------------------------------
     // Block state properties
     // -----------------------------------------------------------------------
 
     public static final PropertyDirection FACING =
-            PropertyDirection.create("facing", EnumFacing.Plane.HORIZONTAL);
+        PropertyDirection.create("facing", EnumFacing.Plane.HORIZONTAL);
 
     /**
      * ACTIVE = true  → switch is CLOSED (power flows, closed model displayed).
@@ -69,21 +72,22 @@ public abstract class BlockCutoffSwitchBase extends Block implements ITileEntity
     public static final PropertyBool ACTIVE = PropertyBool.create("active");
 
     private static final AxisAlignedBB SWITCH_AABB =
-            new AxisAlignedBB(0.1875, 0.125, 0.1875, 0.8125, 0.875, 0.8125);
+        new AxisAlignedBB(0.1875, 0.125, 0.1875, 0.8125, 0.875, 0.8125);
 
     // -----------------------------------------------------------------------
     // Constructor
     // -----------------------------------------------------------------------
 
-    protected BlockCutoffSwitchBase(String registryName) {
+    protected BlockCutoffSwitchBase(String registryName)
+    {
         super(Material.IRON);
         setRegistryName(RealGrid.MODID, registryName);
         setTranslationKey(RealGrid.MODID + "." + registryName);
         setHardness(3.0f);
         setResistance(15.0f);
         setDefaultState(blockState.getBaseState()
-                .withProperty(FACING, EnumFacing.NORTH)
-                .withProperty(ACTIVE, false));
+            .withProperty(FACING, EnumFacing.NORTH)
+            .withProperty(ACTIVE, false));
     }
 
     // -----------------------------------------------------------------------
@@ -98,9 +102,31 @@ public abstract class BlockCutoffSwitchBase extends Block implements ITileEntity
     // -----------------------------------------------------------------------
 
     @Nullable
-    private TileEntityCutoffSwitch getSwitchTE(IBlockAccess world, BlockPos pos) {
+    private TileEntityCutoffSwitch getSwitchTE(IBlockAccess world, BlockPos pos)
+    {
         TileEntity te = world.getTileEntity(pos);
         return te instanceof TileEntityCutoffSwitch ? (TileEntityCutoffSwitch) te : null;
+    }
+
+    // -----------------------------------------------------------------------
+    // Creative / JEI inventory
+    // -----------------------------------------------------------------------
+
+    // FIX: Override getSubBlocks to show only a single canonical item (meta=0,
+    // FACING=NORTH, ACTIVE=false) in any inventory view.
+    //
+    // The ACTIVE property creates two sets of metadata values for this block:
+    //   meta 0-3  → ACTIVE=false (open switch, facing N/E/S/W)
+    //   meta 4-7  → ACTIVE=true  (closed switch, facing N/E/S/W)
+    //
+    // Inventory mods such as JEI iterate ALL valid metadata values and would
+    // display 8 separate entries — two for every facing direction. By returning
+    // a single ItemStack at damage=0 (the open/inactive default state) we
+    // guarantee exactly one creative/JEI entry per cutoff switch type.
+    @Override
+    public void getSubBlocks(CreativeTabs tab, NonNullList<ItemStack> items)
+    {
+        items.add(new ItemStack(Item.getItemFromBlock(this), 1, 0));
     }
 
     // -----------------------------------------------------------------------
@@ -109,41 +135,48 @@ public abstract class BlockCutoffSwitchBase extends Block implements ITileEntity
 
     @Override
     @SuppressWarnings("rawtypes")
-    protected BlockStateContainer createBlockState() {
+    protected BlockStateContainer createBlockState()
+    {
         return new ExtendedBlockState(this,
-                new IProperty[]{ FACING, ACTIVE },
-                new IUnlistedProperty[]{ IEProperties.CONNECTIONS });
+            new IProperty[]{ FACING, ACTIVE },
+            new IUnlistedProperty[]{ IEProperties.CONNECTIONS });
     }
 
     @Override
-    public IBlockState getExtendedState(IBlockState state, IBlockAccess world, BlockPos pos) {
-        if (state instanceof IExtendedBlockState) {
+    public IBlockState getExtendedState(IBlockState state, IBlockAccess world, BlockPos pos)
+    {
+        if (state instanceof IExtendedBlockState)
+        {
             TileEntity te = world.getTileEntity(pos);
-            if (te instanceof TileEntityImmersiveConnectable) {
+            if (te instanceof TileEntityImmersiveConnectable)
+            {
                 state = ((IExtendedBlockState) state).withProperty(
-                        IEProperties.CONNECTIONS,
-                        ((TileEntityImmersiveConnectable) te).genConnBlockstate());
+                    IEProperties.CONNECTIONS,
+                    ((TileEntityImmersiveConnectable) te).genConnBlockstate());
             }
         }
         return state;
     }
 
     @Override
-    public boolean canRenderInLayer(IBlockState state, BlockRenderLayer layer) {
+    public boolean canRenderInLayer(IBlockState state, BlockRenderLayer layer)
+    {
         return layer == BlockRenderLayer.SOLID || layer == BlockRenderLayer.TRANSLUCENT;
     }
 
     @Override
-    public IBlockState getStateFromMeta(int meta) {
+    public IBlockState getStateFromMeta(int meta)
+    {
         return getDefaultState()
-                .withProperty(FACING, EnumFacing.byHorizontalIndex(meta & 3))
-                .withProperty(ACTIVE, (meta & 4) != 0);
+            .withProperty(FACING, EnumFacing.byHorizontalIndex(meta & 3))
+            .withProperty(ACTIVE, (meta & 4) != 0);
     }
 
     @Override
-    public int getMetaFromState(IBlockState state) {
+    public int getMetaFromState(IBlockState state)
+    {
         return state.getValue(FACING).getHorizontalIndex()
-                | (state.getValue(ACTIVE) ? 4 : 0);
+            | (state.getValue(ACTIVE) ? 4 : 0);
     }
 
     /**
@@ -156,7 +189,8 @@ public abstract class BlockCutoffSwitchBase extends Block implements ITileEntity
      * for both "active=true" (closed) and "active=false" (open).
      */
     @Override
-    public IBlockState getActualState(IBlockState state, IBlockAccess world, BlockPos pos) {
+    public IBlockState getActualState(IBlockState state, IBlockAccess world, BlockPos pos)
+    {
         TileEntityCutoffSwitch te = getSwitchTE(world, pos);
         return te != null ? state.withProperty(ACTIVE, te.active) : state;
     }
@@ -169,16 +203,19 @@ public abstract class BlockCutoffSwitchBase extends Block implements ITileEntity
     public IBlockState getStateForPlacement(World world, BlockPos pos, EnumFacing facing,
                                             float hitX, float hitY, float hitZ,
                                             int meta, EntityLivingBase placer,
-                                            EnumHand hand) {
+                                            EnumHand hand)
+    {
         return getDefaultState()
-                .withProperty(FACING, placer.getHorizontalFacing().getOpposite())
-                .withProperty(ACTIVE, true);
+            .withProperty(FACING, placer.getHorizontalFacing().getOpposite())
+            .withProperty(ACTIVE, true);
     }
 
     @Override
     public void onBlockPlacedBy(World world, BlockPos pos, IBlockState state,
-                                EntityLivingBase placer, ItemStack stack) {
-        if (!world.isRemote) {
+                                EntityLivingBase placer, ItemStack stack)
+    {
+        if (!world.isRemote)
+        {
             TileEntityCutoffSwitch te = getSwitchTE(world, pos);
             if (te != null) te.facing = state.getValue(FACING);
         }
@@ -199,10 +236,13 @@ public abstract class BlockCutoffSwitchBase extends Block implements ITileEntity
      * the TileEntity itself.
      */
     @Override
-    public void breakBlock(World world, BlockPos pos, IBlockState state) {
-        if (!world.isRemote) {
+    public void breakBlock(World world, BlockPos pos, IBlockState state)
+    {
+        if (!world.isRemote)
+        {
             TileEntityCutoffSwitch te = getSwitchTE(world, pos);
-            if (te != null) {
+            if (te != null)
+            {
                 te.onBlockDestroyed();
             }
         }
@@ -225,7 +265,8 @@ public abstract class BlockCutoffSwitchBase extends Block implements ITileEntity
     public boolean onBlockActivated(World world, BlockPos pos, IBlockState state,
                                     EntityPlayer player, EnumHand hand,
                                     EnumFacing facing,
-                                    float hitX, float hitY, float hitZ) {
+                                    float hitX, float hitY, float hitZ)
+    {
         if (world.isRemote) return true;
 
         TileEntityCutoffSwitch te = getSwitchTE(world, pos);
@@ -233,23 +274,26 @@ public abstract class BlockCutoffSwitchBase extends Block implements ITileEntity
 
         ItemStack heldItem = player.getHeldItem(hand);
 
-        if (Utils.isHammer(heldItem) && player.isSneaking()) {
+        if (Utils.isHammer(heldItem) && player.isSneaking())
+        {
             boolean handled = te.hammerUseSide(facing, player, hitX, hitY, hitZ);
-            if (handled) {
+            if (handled)
+            {
                 ChatUtils.sendServerNoSpamMessages(player, new TextComponentTranslation(
-                        RealGrid.MODID + ".info.switch_inverted."
-                                + (te.inverted ? "off" : "on")));
+                    RealGrid.MODID + ".info.switch_inverted."
+                    + (te.inverted ? "off" : "on")));
             }
             return handled;
         }
 
         // Wire cutters are handled entirely by IE — do not intercept them here.
-        if (!Utils.isHammer(heldItem)) {
+        if (!Utils.isHammer(heldItem))
+        {
             te.active = !te.active;
             te.applyStateChange();
             ChatUtils.sendServerNoSpamMessages(player, new TextComponentTranslation(
-                    RealGrid.MODID + ".info.cutoff_status."
-                            + (te.active ? "closed" : "open")));
+                RealGrid.MODID + ".info.cutoff_status."
+                + (te.active ? "closed" : "open")));
             return true;
         }
 
@@ -262,7 +306,8 @@ public abstract class BlockCutoffSwitchBase extends Block implements ITileEntity
 
     @Override
     public void neighborChanged(IBlockState state, World world, BlockPos pos,
-                                Block blockIn, BlockPos fromPos) {
+                                Block blockIn, BlockPos fromPos)
+    {
         // Handled by TileEntityCutoffSwitch.update()
     }
 
@@ -270,14 +315,16 @@ public abstract class BlockCutoffSwitchBase extends Block implements ITileEntity
 
     @Override
     public int getWeakPower(IBlockState state, IBlockAccess world,
-                            BlockPos pos, EnumFacing side) {
+                            BlockPos pos, EnumFacing side)
+    {
         TileEntityCutoffSwitch te = getSwitchTE(world, pos);
         return te != null ? te.getWeakRSOutput(state, side) : 0;
     }
 
     @Override
     public int getStrongPower(IBlockState state, IBlockAccess world,
-                              BlockPos pos, EnumFacing side) {
+                              BlockPos pos, EnumFacing side)
+    {
         TileEntityCutoffSwitch te = getSwitchTE(world, pos);
         return te != null ? te.getStrongRSOutput(state, side) : 0;
     }
@@ -287,15 +334,17 @@ public abstract class BlockCutoffSwitchBase extends Block implements ITileEntity
     // -----------------------------------------------------------------------
 
     @Override
-    public AxisAlignedBB getBoundingBox(IBlockState state, IBlockAccess source, BlockPos pos) {
+    public AxisAlignedBB getBoundingBox(IBlockState state, IBlockAccess source, BlockPos pos)
+    {
         return SWITCH_AABB;
     }
 
     @Override public boolean isOpaqueCube(IBlockState state) { return false; }
-    @Override public boolean isFullCube(IBlockState state)   { return false; }
+    @Override public boolean isFullCube(IBlockState state) { return false; }
 
     @Override
-    public EnumBlockRenderType getRenderType(IBlockState state) {
+    public EnumBlockRenderType getRenderType(IBlockState state)
+    {
         return EnumBlockRenderType.MODEL;
     }
 
@@ -305,7 +354,8 @@ public abstract class BlockCutoffSwitchBase extends Block implements ITileEntity
 
     @Override
     public boolean eventReceived(IBlockState state, World world,
-                                 BlockPos pos, int id, int param) {
+                                 BlockPos pos, int id, int param)
+    {
         TileEntity te = world.getTileEntity(pos);
         return te != null && te.receiveClientEvent(id, param);
     }
@@ -319,7 +369,8 @@ public abstract class BlockCutoffSwitchBase extends Block implements ITileEntity
 
     @Nullable
     @Override
-    public TileEntity createNewTileEntity(World world, int meta) {
+    public TileEntity createNewTileEntity(World world, int meta)
+    {
         return createSwitchTE();
     }
 }

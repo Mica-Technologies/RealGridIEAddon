@@ -10,13 +10,16 @@ import net.minecraft.block.properties.IProperty;
 import net.minecraft.block.properties.PropertyDirection;
 import net.minecraft.block.state.BlockStateContainer;
 import net.minecraft.block.state.IBlockState;
+import net.minecraft.creativetab.CreativeTabs;
 import net.minecraft.entity.EntityLivingBase;
+import net.minecraft.item.Item;
 import net.minecraft.item.ItemStack;
 import net.minecraft.tileentity.TileEntity;
 import net.minecraft.util.BlockRenderLayer;
 import net.minecraft.util.EnumBlockRenderType;
 import net.minecraft.util.EnumFacing;
 import net.minecraft.util.EnumHand;
+import net.minecraft.util.NonNullList;
 import net.minecraft.util.math.AxisAlignedBB;
 import net.minecraft.util.math.BlockPos;
 import net.minecraft.world.IBlockAccess;
@@ -45,6 +48,19 @@ public abstract class BlockInsulatorBase extends Block implements ITileEntityPro
         setHardness(1.5f);
         setResistance(10.0f);
         setDefaultState(blockState.getBaseState().withProperty(FACING, EnumFacing.NORTH));
+    }
+
+    // FIX: Override getSubBlocks to add only the canonical meta=0 item (FACING=NORTH)
+    // to any inventory view. Without this override, inventory mods such as JEI iterate
+    // ALL valid metadata values for the block (meta 0-3, one per FACING direction) and
+    // display four separate entries for what is logically one block — causing the
+    // "duplicate inventory issue". By explicitly returning a single ItemStack at
+    // damage=0, we guarantee exactly one creative/JEI entry regardless of how many
+    // block-state permutations exist.
+    @Override
+    public void getSubBlocks(CreativeTabs tab, NonNullList<ItemStack> items)
+    {
+        items.add(new ItemStack(Item.getItemFromBlock(this), 1, 0));
     }
 
     @Override
@@ -127,22 +143,13 @@ public abstract class BlockInsulatorBase extends Block implements ITileEntityPro
     }
 
     @Override
-    public boolean isOpaqueCube(IBlockState state)
-    {
-        return false;
-    }
+    public boolean isOpaqueCube(IBlockState state) { return false; }
 
     @Override
-    public boolean isFullCube(IBlockState state)
-    {
-        return false;
-    }
+    public boolean isFullCube(IBlockState state) { return false; }
 
     @Override
-    public EnumBlockRenderType getRenderType(IBlockState state)
-    {
-        return EnumBlockRenderType.MODEL;
-    }
+    public EnumBlockRenderType getRenderType(IBlockState state) { return EnumBlockRenderType.MODEL; }
 
     @Override
     public boolean eventReceived(IBlockState state, World world, BlockPos pos, int id, int param)
@@ -152,8 +159,9 @@ public abstract class BlockInsulatorBase extends Block implements ITileEntityPro
     }
 
     @Override
-    public boolean hasTileEntity(IBlockState state)
-    {
-        return true;
-    }
+    public boolean hasTileEntity(IBlockState state) { return true; }
+
+    @Nullable
+    @Override
+    public abstract TileEntity createNewTileEntity(World world, int meta);
 }
