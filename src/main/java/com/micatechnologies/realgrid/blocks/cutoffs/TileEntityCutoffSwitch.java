@@ -7,6 +7,7 @@ import blusunrize.immersiveengineering.api.energy.wires.ImmersiveNetHandler.Conn
 import blusunrize.immersiveengineering.api.energy.wires.TileEntityImmersiveConnectable;
 import blusunrize.immersiveengineering.api.energy.wires.WireType;
 import blusunrize.immersiveengineering.common.blocks.IEBlockInterfaces.IBlockBounds;
+import blusunrize.immersiveengineering.common.blocks.IEBlockInterfaces.ICacheData;
 import blusunrize.immersiveengineering.common.blocks.IEBlockInterfaces.IDirectionalTile;
 import blusunrize.immersiveengineering.common.blocks.IEBlockInterfaces.IHammerInteraction;
 import blusunrize.immersiveengineering.common.blocks.IEBlockInterfaces.IRedstoneOutput;
@@ -30,7 +31,7 @@ import net.minecraft.world.World;
  * mirroring the IE MV/LV Breaker Switch model across all three voltage tiers.
  */
 public class TileEntityCutoffSwitch extends TileEntityImmersiveConnectable
-        implements IDirectionalTile, IBlockBounds, IHammerInteraction, IRedstoneOutput, ITickable {
+        implements IDirectionalTile, IBlockBounds, ICacheData, IHammerInteraction, IRedstoneOutput, ITickable {
 
     // -----------------------------------------------------------------------
     // Constants
@@ -407,6 +408,14 @@ public class TileEntityCutoffSwitch extends TileEntityImmersiveConnectable
     public Vec3d getConnectionOffset(Connection con) { return new Vec3d(0.5, 0.5, 0.5); }
 
     // -----------------------------------------------------------------------
+    // ICacheData
+
+    @Override
+    public Object[] getCacheData()
+    {
+        return new Object[]{ getClass().getName() };
+    }
+
     // IDirectionalTile
     // -----------------------------------------------------------------------
 

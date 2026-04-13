@@ -7,6 +7,7 @@ import blusunrize.immersiveengineering.api.energy.wires.ImmersiveNetHandler.Conn
 import blusunrize.immersiveengineering.api.energy.wires.TileEntityImmersiveConnectable;
 import blusunrize.immersiveengineering.api.energy.wires.WireType;
 import blusunrize.immersiveengineering.common.blocks.IEBlockInterfaces.IBlockBounds;
+import blusunrize.immersiveengineering.common.blocks.IEBlockInterfaces.ICacheData;
 import blusunrize.immersiveengineering.common.blocks.IEBlockInterfaces.IDirectionalTile;
 import net.minecraft.block.state.IBlockState;
 import net.minecraft.entity.EntityLivingBase;
@@ -23,7 +24,7 @@ import net.minecraft.util.math.Vec3d;
  * color-variant blocks can share this base without a separate class tier.
  */
 public abstract class TileEntityInsulatorBase extends TileEntityImmersiveConnectable
-    implements IDirectionalTile, IBlockBounds
+    implements IDirectionalTile, IBlockBounds, ICacheData
 {
     public EnumFacing facing = EnumFacing.NORTH;
     public int colorVariant = 0;
@@ -153,6 +154,14 @@ public abstract class TileEntityInsulatorBase extends TileEntityImmersiveConnect
         // Defensive reset
         wireCount = 0;
         limitType = null;
+    }
+
+    // === ICacheData ===
+
+    @Override
+    public Object[] getCacheData()
+    {
+        return new Object[]{ getClass().getName() };
     }
 
     // === IDirectionalTile ===

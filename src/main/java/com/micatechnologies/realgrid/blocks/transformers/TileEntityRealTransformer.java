@@ -7,9 +7,10 @@ import blusunrize.immersiveengineering.api.energy.wires.ImmersiveNetHandler;
 import blusunrize.immersiveengineering.api.energy.wires.ImmersiveNetHandler.Connection;
 import blusunrize.immersiveengineering.api.energy.wires.TileEntityImmersiveConnectable;
 import blusunrize.immersiveengineering.api.energy.wires.WireType;
+import blusunrize.immersiveengineering.common.blocks.IEBlockInterfaces.IBlockBounds;
+import blusunrize.immersiveengineering.common.blocks.IEBlockInterfaces.ICacheData;
 import blusunrize.immersiveengineering.common.blocks.IEBlockInterfaces.IDirectionalTile;
 import blusunrize.immersiveengineering.common.blocks.IEBlockInterfaces.IHasDummyBlocks;
-import blusunrize.immersiveengineering.common.blocks.IEBlockInterfaces.IBlockBounds;
 import com.google.common.collect.ImmutableSet;
 import net.minecraft.block.state.IBlockState;
 import net.minecraft.entity.EntityLivingBase;
@@ -30,7 +31,7 @@ import java.util.Set;
  * - Index 2: second HV connection (STEEL only, 2-wire variants only)
  */
 public abstract class TileEntityRealTransformer extends TileEntityImmersiveConnectable
-    implements IDirectionalTile, IHasDummyBlocks, IBlockBounds
+    implements IDirectionalTile, IHasDummyBlocks, IBlockBounds, ICacheData
 {
     public EnumFacing facing = EnumFacing.NORTH;
     public int dummy = 0;
@@ -471,6 +472,14 @@ public abstract class TileEntityRealTransformer extends TileEntityImmersiveConne
         {
             world.setBlockToAir(getPos().add(0, -dummy, 0).add(0, i, 0));
         }
+    }
+
+    // === ICacheData ===
+
+    @Override
+    public Object[] getCacheData()
+    {
+        return new Object[]{ getClass().getName() };
     }
 
     // === IBlockBounds ===

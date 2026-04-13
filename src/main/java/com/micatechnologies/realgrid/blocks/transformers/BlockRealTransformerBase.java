@@ -105,7 +105,8 @@ public abstract class BlockRealTransformerBase extends Block implements ITileEnt
     @Override
     protected BlockStateContainer createBlockState()
     {
-        return new ExtendedBlockState(this, new IProperty[]{FACING, DUMMY}, new IUnlistedProperty[]{IEProperties.CONNECTIONS});
+        return new ExtendedBlockState(this, new IProperty[]{FACING, DUMMY},
+            new IUnlistedProperty[]{IEProperties.CONNECTIONS, IEProperties.TILEENTITY_PASSTHROUGH});
     }
 
     @Override
@@ -116,8 +117,10 @@ public abstract class BlockRealTransformerBase extends Block implements ITileEnt
             TileEntity te = world.getTileEntity(pos);
             if (te instanceof TileEntityImmersiveConnectable)
             {
-                state = ((IExtendedBlockState) state).withProperty(IEProperties.CONNECTIONS,
-                    ((TileEntityImmersiveConnectable) te).genConnBlockstate());
+                state = ((IExtendedBlockState) state)
+                    .withProperty(IEProperties.CONNECTIONS,
+                        ((TileEntityImmersiveConnectable) te).genConnBlockstate())
+                    .withProperty(IEProperties.TILEENTITY_PASSTHROUGH, te);
             }
         }
         return state;
