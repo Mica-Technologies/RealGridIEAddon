@@ -11,27 +11,24 @@ import net.minecraftforge.fml.common.Mod;
 import net.minecraftforge.fml.common.eventhandler.SubscribeEvent;
 import net.minecraftforge.fml.relauncher.Side;
 
-// FIX: Class body braces were missing, rendering the class syntactically invalid.
-// Added the opening '{' after the class declaration and closing '}' at end of file.
-// Also added the missing '{' and '}' for the registerModels method body and
-// the for-loop body.
 @Mod.EventBusSubscriber(modid = RealGrid.MODID, value = Side.CLIENT)
 public class ModItems
 {
     @SubscribeEvent
     public static void registerModels(ModelRegistryEvent event)
     {
-        for (ItemBlock itemBlock : ModBlocks.ITEM_BLOCKS)
+        for (Item item : RealGridRegistry.getItems())
         {
             ModelLoader.setCustomModelResourceLocation(
-                itemBlock, 0,
-                new ModelResourceLocation(itemBlock.getRegistryName(), "inventory")
+                item, 0,
+                new ModelResourceLocation(item.getRegistryName(), "inventory")
             );
-            if (itemBlock.getBlock() instanceof BlockColoredInsulatorBase)
+            if (item instanceof ItemBlock
+                && ((ItemBlock) item).getBlock() instanceof BlockColoredInsulatorBase)
             {
                 ModelLoader.setCustomModelResourceLocation(
-                    itemBlock, 1,
-                    new ModelResourceLocation(itemBlock.getRegistryName(), "inventory")
+                    item, 1,
+                    new ModelResourceLocation(item.getRegistryName(), "inventory")
                 );
             }
         }
