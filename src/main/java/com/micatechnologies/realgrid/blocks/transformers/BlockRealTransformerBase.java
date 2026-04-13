@@ -3,6 +3,8 @@ package com.micatechnologies.realgrid.blocks.transformers;
 import blusunrize.immersiveengineering.api.IEProperties;
 import blusunrize.immersiveengineering.api.energy.wires.TileEntityImmersiveConnectable;
 import com.micatechnologies.realgrid.RealGrid;
+import com.micatechnologies.realgrid.init.IRealGridTileEntityProvider;
+import com.micatechnologies.realgrid.init.RealGridRegistry;
 import net.minecraft.block.Block;
 import net.minecraft.block.ITileEntityProvider;
 import net.minecraft.block.material.Material;
@@ -36,7 +38,8 @@ import javax.annotation.Nullable;
  * Abstract base block for all transformer variants.
  * 2 blocks tall, directional, has associated TileEntity.
  */
-public abstract class BlockRealTransformerBase extends Block implements ITileEntityProvider
+public abstract class BlockRealTransformerBase extends Block implements ITileEntityProvider,
+    IRealGridTileEntityProvider
 {
     public static final PropertyDirection FACING = PropertyDirection.create("facing", EnumFacing.Plane.HORIZONTAL);
     public static final PropertyInteger DUMMY = PropertyInteger.create("dummy", 0, 1);
@@ -54,6 +57,23 @@ public abstract class BlockRealTransformerBase extends Block implements ITileEnt
         setDefaultState(blockState.getBaseState()
             .withProperty(FACING, EnumFacing.NORTH)
             .withProperty(DUMMY, 0));
+        RealGridRegistry.registerBlock(this);
+    }
+
+    // -----------------------------------------------------------------------
+    // IRealGridTileEntityProvider
+    // -----------------------------------------------------------------------
+
+    @Override
+    public String getTileEntityName()
+    {
+        return getRegistryName().getPath();
+    }
+
+    @Override
+    public Class<? extends TileEntity> getTileEntityClass()
+    {
+        return createNewTileEntity(null, 0).getClass();
     }
 
     // -----------------------------------------------------------------------

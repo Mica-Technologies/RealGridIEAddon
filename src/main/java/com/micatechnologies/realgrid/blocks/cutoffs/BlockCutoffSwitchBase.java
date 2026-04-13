@@ -5,6 +5,8 @@ import blusunrize.immersiveengineering.api.energy.wires.TileEntityImmersiveConne
 import blusunrize.immersiveengineering.common.util.ChatUtils;
 import blusunrize.immersiveengineering.common.util.Utils;
 import com.micatechnologies.realgrid.RealGrid;
+import com.micatechnologies.realgrid.init.IRealGridTileEntityProvider;
+import com.micatechnologies.realgrid.init.RealGridRegistry;
 import net.minecraft.block.Block;
 import net.minecraft.block.ITileEntityProvider;
 import net.minecraft.block.material.Material;
@@ -50,7 +52,8 @@ import javax.annotation.Nullable;
  *
  * Concrete subclasses only need to provide a registry name and a TE factory.
  */
-public abstract class BlockCutoffSwitchBase extends Block implements ITileEntityProvider
+public abstract class BlockCutoffSwitchBase extends Block implements ITileEntityProvider,
+    IRealGridTileEntityProvider
 {
     // -----------------------------------------------------------------------
     // Block state properties
@@ -88,6 +91,23 @@ public abstract class BlockCutoffSwitchBase extends Block implements ITileEntity
         setDefaultState(blockState.getBaseState()
             .withProperty(FACING, EnumFacing.NORTH)
             .withProperty(ACTIVE, false));
+        RealGridRegistry.registerBlock(this);
+    }
+
+    // -----------------------------------------------------------------------
+    // IRealGridTileEntityProvider — all cutoff switch variants share one TE class
+    // -----------------------------------------------------------------------
+
+    @Override
+    public String getTileEntityName()
+    {
+        return "cutoff_switch";
+    }
+
+    @Override
+    public Class<? extends TileEntity> getTileEntityClass()
+    {
+        return TileEntityCutoffSwitch.class;
     }
 
     // -----------------------------------------------------------------------

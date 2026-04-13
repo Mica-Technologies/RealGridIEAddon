@@ -3,6 +3,8 @@ package com.micatechnologies.realgrid.blocks.insulators;
 import blusunrize.immersiveengineering.api.IEProperties;
 import blusunrize.immersiveengineering.api.energy.wires.TileEntityImmersiveConnectable;
 import com.micatechnologies.realgrid.RealGrid;
+import com.micatechnologies.realgrid.init.IRealGridTileEntityProvider;
+import com.micatechnologies.realgrid.init.RealGridRegistry;
 import net.minecraft.block.Block;
 import net.minecraft.block.ITileEntityProvider;
 import net.minecraft.block.material.Material;
@@ -34,7 +36,8 @@ import javax.annotation.Nullable;
  * Abstract base block for all insulator variants.
  * Single block, directional, with associated TileEntity.
  */
-public abstract class BlockInsulatorBase extends Block implements ITileEntityProvider
+public abstract class BlockInsulatorBase extends Block implements ITileEntityProvider,
+    IRealGridTileEntityProvider
 {
     public static final PropertyDirection FACING = PropertyDirection.create("facing", EnumFacing.Plane.HORIZONTAL);
 
@@ -48,6 +51,23 @@ public abstract class BlockInsulatorBase extends Block implements ITileEntityPro
         setHardness(1.5f);
         setResistance(10.0f);
         setDefaultState(blockState.getBaseState().withProperty(FACING, EnumFacing.NORTH));
+        RealGridRegistry.registerBlock(this);
+    }
+
+    // -----------------------------------------------------------------------
+    // IRealGridTileEntityProvider
+    // -----------------------------------------------------------------------
+
+    @Override
+    public String getTileEntityName()
+    {
+        return getRegistryName().getPath();
+    }
+
+    @Override
+    public Class<? extends TileEntity> getTileEntityClass()
+    {
+        return createNewTileEntity(null, 0).getClass();
     }
 
     // FIX: Override getSubBlocks to add only the canonical meta=0 item (FACING=NORTH)
