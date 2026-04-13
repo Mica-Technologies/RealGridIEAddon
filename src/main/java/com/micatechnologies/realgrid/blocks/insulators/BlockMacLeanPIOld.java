@@ -1,18 +1,22 @@
 package com.micatechnologies.realgrid.blocks.insulators;
 
+import net.minecraft.tileentity.TileEntity;
+import net.minecraft.world.World;
+
+import javax.annotation.Nullable;
+
 /**
- * Porcelain Post Top Insulator Block — color variants: white (0) and black (1).
- *
- * All color-variant block state logic lives in {@link BlockColoredInsulatorBase}.
+ * Porcelain Post Top Insulator Block (Old, Large).
  */
-public class BlockMacLeanPIOld extends BlockColoredInsulatorBase {
+public class BlockMacLeanPIOld extends BlockInsulatorBase {
 
     public BlockMacLeanPIOld() {
         super("large_maclean_porcelain_insulator_old");
     }
 
+    @Nullable
     @Override
-    protected TileEntityInsulatorBase createColoredTE() {
+    public TileEntity createNewTileEntity(World world, int meta) {
         return new TileEntityMacLeanPIOld();
     }
 }
