@@ -24,7 +24,8 @@
     "dummy": {
       "0": {},
       "1": {
-        "model": "realgrid:class_c_transformer_top_1wire"
+        "model": "realgrid:class_c_transformer_top_1wire",
+        "custom": {}
       }
     },
     "inventory": [

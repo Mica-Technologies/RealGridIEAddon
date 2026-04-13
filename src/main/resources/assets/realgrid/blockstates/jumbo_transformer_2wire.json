@@ -24,7 +24,8 @@
     "dummy": {
       "0": {},
       "1": {
-        "model": "realgrid:jumbo_transformer_top_2wire"
+        "model": "realgrid:jumbo_transformer_top_2wire",
+        "custom": {}
       }
     },
     "inventory": [
