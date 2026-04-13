@@ -59,7 +59,8 @@ public abstract class TileEntityInsulatorBase extends TileEntityImmersiveConnect
     public void readCustomNBT(NBTTagCompound nbt, boolean descPacket)
     {
         super.readCustomNBT(nbt, descPacket);
-        facing = EnumFacing.byIndex(nbt.getInteger("facing"));
+        EnumFacing loaded = EnumFacing.byIndex(nbt.getInteger("facing"));
+        facing = loaded.getAxis() != EnumFacing.Axis.Y ? loaded : EnumFacing.NORTH;
         wireCount = nbt.getInteger("wireCount");
         colorVariant = nbt.getInteger("colorVariant");
     }
