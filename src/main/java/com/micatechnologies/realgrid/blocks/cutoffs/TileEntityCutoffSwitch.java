@@ -388,7 +388,8 @@ public class TileEntityCutoffSwitch extends TileEntityImmersiveConnectable
     @Override
     public void readCustomNBT(NBTTagCompound nbt, boolean descPacket) {
         super.readCustomNBT(nbt, descPacket);
-        facing            = EnumFacing.byIndex(nbt.getInteger("facing"));
+        EnumFacing loaded  = EnumFacing.byIndex(nbt.getInteger("facing"));
+        facing             = loaded.getAxis() != EnumFacing.Axis.Y ? loaded : EnumFacing.NORTH;
         wires             = nbt.getInteger("wires");
         active            = nbt.getBoolean("active");
         inverted          = nbt.getBoolean("inverted");

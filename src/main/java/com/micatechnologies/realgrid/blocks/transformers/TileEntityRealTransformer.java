@@ -114,7 +114,8 @@ public abstract class TileEntityRealTransformer extends TileEntityImmersiveConne
     public void readCustomNBT(NBTTagCompound nbt, boolean descPacket)
     {
         super.readCustomNBT(nbt, descPacket);
-        facing = EnumFacing.byIndex(nbt.getInteger("facing"));
+        EnumFacing loaded = EnumFacing.byIndex(nbt.getInteger("facing"));
+        facing = loaded.getAxis() != EnumFacing.Axis.Y ? loaded : EnumFacing.NORTH;
         dummy = nbt.getInteger("dummy");
         hvCable1 = nbt.hasKey("hvCable1") ? ApiUtils.getWireTypeFromNBT(nbt, "hvCable1") : null;
         hvCable2 = nbt.hasKey("hvCable2") ? ApiUtils.getWireTypeFromNBT(nbt, "hvCable2") : null;
