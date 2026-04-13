@@ -128,6 +128,20 @@ public abstract class BlockInsulatorBase extends Block implements ITileEntityPro
     }
 
     @Override
+    public void breakBlock(World world, BlockPos pos, IBlockState state)
+    {
+        if (!world.isRemote)
+        {
+            TileEntity te = world.getTileEntity(pos);
+            if (te instanceof TileEntityInsulatorBase)
+            {
+                ((TileEntityInsulatorBase) te).onBlockDestroyed();
+            }
+        }
+        super.breakBlock(world, pos, state);
+    }
+
+    @Override
     public AxisAlignedBB getBoundingBox(IBlockState state, IBlockAccess source, BlockPos pos)
     {
         TileEntity te = source.getTileEntity(pos);

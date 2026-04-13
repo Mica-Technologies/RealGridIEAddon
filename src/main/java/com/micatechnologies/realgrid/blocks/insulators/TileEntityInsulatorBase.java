@@ -2,6 +2,7 @@ package com.micatechnologies.realgrid.blocks.insulators;
 
 import blusunrize.immersiveengineering.api.TargetingInfo;
 import blusunrize.immersiveengineering.api.energy.wires.IImmersiveConnectable;
+import blusunrize.immersiveengineering.api.energy.wires.ImmersiveNetHandler;
 import blusunrize.immersiveengineering.api.energy.wires.ImmersiveNetHandler.Connection;
 import blusunrize.immersiveengineering.api.energy.wires.TileEntityImmersiveConnectable;
 import blusunrize.immersiveengineering.api.energy.wires.WireType;
@@ -134,6 +135,23 @@ public abstract class TileEntityInsulatorBase extends TileEntityImmersiveConnect
     public float[] getBlockBounds()
     {
         return geometry.blockBounds(facing);
+    }
+
+    /**
+     * Called by {@link BlockInsulatorBase#breakBlock} before the TileEntity is
+     * removed from the world. Tears down all IE wire connections at this
+     * position, drops wire coils at remote endpoints, and fires client render
+     * events so orphaned wire segments disappear immediately.
+     */
+    public void onBlockDestroyed()
+    {
+        if (world == null || world.isRemote) return;
+
+        ImmersiveNetHandler.INSTANCE.clearAllConnectionsFor(pos, world, true);
+
+        // Defensive reset
+        wireCount = 0;
+        limitType = null;
     }
 
     // === IDirectionalTile ===
