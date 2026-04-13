@@ -80,7 +80,8 @@ public abstract class BlockInsulatorBase extends Block implements ITileEntityPro
     @Override
     protected BlockStateContainer createBlockState()
     {
-        return new ExtendedBlockState(this, new IProperty[]{FACING}, new IUnlistedProperty[]{IEProperties.CONNECTIONS});
+        return new ExtendedBlockState(this, new IProperty[]{FACING},
+            new IUnlistedProperty[]{IEProperties.CONNECTIONS, IEProperties.TILEENTITY_PASSTHROUGH});
     }
 
     @Override
@@ -91,8 +92,10 @@ public abstract class BlockInsulatorBase extends Block implements ITileEntityPro
             TileEntity te = world.getTileEntity(pos);
             if (te instanceof TileEntityImmersiveConnectable)
             {
-                state = ((IExtendedBlockState) state).withProperty(IEProperties.CONNECTIONS,
-                    ((TileEntityImmersiveConnectable) te).genConnBlockstate());
+                state = ((IExtendedBlockState) state)
+                    .withProperty(IEProperties.CONNECTIONS,
+                        ((TileEntityImmersiveConnectable) te).genConnBlockstate())
+                    .withProperty(IEProperties.TILEENTITY_PASSTHROUGH, te);
             }
         }
         return state;

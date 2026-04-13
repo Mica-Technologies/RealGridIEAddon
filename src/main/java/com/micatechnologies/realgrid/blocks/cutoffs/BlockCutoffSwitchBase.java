@@ -140,7 +140,7 @@ public abstract class BlockCutoffSwitchBase extends Block implements ITileEntity
     {
         return new ExtendedBlockState(this,
             new IProperty[]{ FACING, ACTIVE },
-            new IUnlistedProperty[]{ IEProperties.CONNECTIONS });
+            new IUnlistedProperty[]{ IEProperties.CONNECTIONS, IEProperties.TILEENTITY_PASSTHROUGH });
     }
 
     @Override
@@ -151,9 +151,10 @@ public abstract class BlockCutoffSwitchBase extends Block implements ITileEntity
             TileEntity te = world.getTileEntity(pos);
             if (te instanceof TileEntityImmersiveConnectable)
             {
-                state = ((IExtendedBlockState) state).withProperty(
-                    IEProperties.CONNECTIONS,
-                    ((TileEntityImmersiveConnectable) te).genConnBlockstate());
+                state = ((IExtendedBlockState) state)
+                    .withProperty(IEProperties.CONNECTIONS,
+                        ((TileEntityImmersiveConnectable) te).genConnBlockstate())
+                    .withProperty(IEProperties.TILEENTITY_PASSTHROUGH, te);
             }
         }
         return state;
