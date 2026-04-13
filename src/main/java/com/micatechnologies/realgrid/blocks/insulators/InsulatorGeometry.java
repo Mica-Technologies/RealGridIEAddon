@@ -1,5 +1,6 @@
 package com.micatechnologies.realgrid.blocks.insulators;
 
+import com.micatechnologies.realgrid.util.BoundsUtil;
 import net.minecraft.util.EnumFacing;
 import net.minecraft.util.math.Vec3d;
 
@@ -8,68 +9,50 @@ import net.minecraft.util.math.Vec3d;
  * {@link TileEntityInsulatorBase} so every leaf TE is just a
  * constructor-param wrapper instead of a bespoke subclass.
  *
- * Four presets cover all current insulators:
+ * <p>Top-mount presets use a fixed bounding box and offset (no rotation).
+ * Rotatable presets store NORTH-facing bounds and offset, then rotate
+ * dynamically via {@link BoundsUtil}.
+ *
+ * <p>Five presets cover all current insulators:
  *   VISE_TOP   - Hendrix compact top-mount
  *   F_NECK     - Locke and MacLean PTI tall top-mount
  *   POST_TOP   - MacLean PI full top-mount
  *   SIDE_MOUNT - every direction-dependent side-mount variant
+ *   DEAD_END   - dead-end insulators (elevated, direction-dependent)
  */
 public final class InsulatorGeometry
 {
-    private final boolean sideMount;
-    private final Vec3d topOffset;
-    private final float[] topBounds;
-    private final double sideY;
-    private final float[] sideBoundsNS;
-    private final float[] sideBoundsEW;
+    private final boolean usesRotation;
+    private final Vec3d northOffset;
+    private final float[] northBounds;
 
-    private InsulatorGeometry(Vec3d topOffset, float[] topBounds)
+    private InsulatorGeometry(boolean usesRotation, Vec3d northOffset, float[] northBounds)
     {
-        this.sideMount = false;
-        this.topOffset = topOffset;
-        this.topBounds = topBounds;
-        this.sideY = 0;
-        this.sideBoundsNS = null;
-        this.sideBoundsEW = null;
+        this.usesRotation = usesRotation;
+        this.northOffset = northOffset;
+        this.northBounds = northBounds;
     }
 
-    private InsulatorGeometry(double sideY, float[] nsBounds, float[] ewBounds)
-    {
-        this.sideMount = true;
-        this.topOffset = null;
-        this.topBounds = null;
-        this.sideY = sideY;
-        this.sideBoundsNS = nsBounds;
-        this.sideBoundsEW = ewBounds;
-    }
-
+    /** Creates a top-mount geometry with fixed (non-rotating) bounds and offset. */
     public static InsulatorGeometry top(Vec3d offset, float[] bounds)
     {
-        return new InsulatorGeometry(offset, bounds);
+        return new InsulatorGeometry(false, offset, bounds);
     }
 
-    public static InsulatorGeometry side(double y, float[] nsBounds, float[] ewBounds)
+    /** Creates a direction-dependent geometry that rotates bounds/offset by facing. */
+    public static InsulatorGeometry rotatable(Vec3d northOffset, float[] northBounds)
     {
-        return new InsulatorGeometry(y, nsBounds, ewBounds);
+        return new InsulatorGeometry(true, northOffset, northBounds);
     }
 
     public Vec3d connectionOffset(EnumFacing facing)
     {
-        if (!sideMount) return topOffset;
-        double dx = 0.5, dz = 0.5;
-        if (facing == EnumFacing.NORTH)      dz = 0.125;
-        else if (facing == EnumFacing.SOUTH) dz = 0.875;
-        else if (facing == EnumFacing.WEST)  dx = 0.125;
-        else if (facing == EnumFacing.EAST)  dx = 0.875;
-        return new Vec3d(dx, sideY, dz);
+        return usesRotation ? BoundsUtil.rotateOffset(northOffset, facing) : northOffset;
     }
 
     public float[] blockBounds(EnumFacing facing)
     {
-        if (!sideMount) return topBounds;
-        return (facing == EnumFacing.NORTH || facing == EnumFacing.SOUTH)
-            ? sideBoundsNS
-            : sideBoundsEW;
+        return usesRotation ? BoundsUtil.rotateBounds(northBounds, facing) : northBounds;
     }
 
     // === Presets ===
@@ -92,10 +75,21 @@ public final class InsulatorGeometry
         new float[]{0.25f, 0.0f, 0.25f, 0.75f, 0.9375f, 0.75f}
     );
 
-    /** Every direction-dependent side-mount insulator. */
-    public static final InsulatorGeometry SIDE_MOUNT = side(
-        0.5625,
-        new float[]{0.3125f, 0.0f, 0.0625f, 0.6875f, 0.6875f, 0.9375f},
-        new float[]{0.0625f, 0.0f, 0.3125f, 0.9375f, 0.6875f, 0.6875f}
+    /**
+     * Every direction-dependent side-mount insulator.
+     * NORTH-facing bounds: narrow in X, extends along Z toward the facing direction.
+     */
+    public static final InsulatorGeometry SIDE_MOUNT = rotatable(
+        new Vec3d(0.5, 0.5625, 0.125),
+        new float[]{0.3125f, 0.0f, 0.0625f, 0.6875f, 0.6875f, 0.9375f}
+    );
+
+    /**
+     * Dead-end insulators: elevated models that extend along the facing direction.
+     * Bounds are raised on Y to match the actual model position.
+     */
+    public static final InsulatorGeometry DEAD_END = rotatable(
+        new Vec3d(0.5, 0.6875, 0.125),
+        new float[]{0.25f, 0.375f, 0.0f, 0.75f, 0.8125f, 1.0f}
     );
 }

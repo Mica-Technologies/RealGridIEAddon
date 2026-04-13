@@ -4,6 +4,6 @@ public class TileEntityMacLeanDEI7Core extends TileEntityInsulatorBase
 {
     public TileEntityMacLeanDEI7Core()
     {
-        super(InsulatorGeometry.SIDE_MOUNT);
+        super(InsulatorGeometry.DEAD_END);
     }
 }

@@ -4,6 +4,6 @@ public class TileEntityMacLeanDEI1BellNew extends TileEntityInsulatorBase
 {
     public TileEntityMacLeanDEI1BellNew()
     {
-        super(InsulatorGeometry.SIDE_MOUNT);
+        super(InsulatorGeometry.DEAD_END);
     }
 }
