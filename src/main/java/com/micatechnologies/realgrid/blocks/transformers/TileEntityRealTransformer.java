@@ -492,4 +492,28 @@ public abstract class TileEntityRealTransformer extends TileEntityImmersiveConne
     {
         return ImmutableSet.of(pos, pos.up());
     }
+
+    /**
+     * Called by {@link BlockRealTransformerBase#breakBlock} before the TileEntity
+     * is removed from the world. Tears down all IE wire connections at this
+     * position via {@link ImmersiveNetHandler#clearAllConnectionsFor}.
+     *
+     * <p>{@code clearAllConnectionsFor(pos, world, true)} removes every
+     * connection referencing this position, calls {@code removeCable()} on all
+     * remote endpoints, drops wire coils (doDrops=true), and fires client render
+     * events so orphaned wire segments disappear immediately.
+     */
+    public void onBlockDestroyed()
+    {
+        if (world == null || world.isRemote) return;
+
+        ImmersiveNetHandler.INSTANCE.clearAllConnectionsFor(pos, world, true);
+
+        // Defensive reset -- clearAllConnectionsFor already triggers
+        // removeCable(null) which resets state, but guard here as well.
+        hvCable1 = null;
+        hvCable2 = null;
+        mvLvCableCount = 0;
+        mvLvLimitType = null;
+    }
 }

@@ -214,6 +214,21 @@ public abstract class BlockRealTransformerBase extends Block implements ITileEnt
             int myDummy  = transformer.dummy;
             BlockPos basePos = pos.add(0, -myDummy, 0);
 
+            // Clean up IE wire connections on both halves before removing blocks.
+            // Must happen while TileEntities still exist at their positions.
+            if (!world.isRemote)
+            {
+                for (int i = 0; i <= 1; i++)
+                {
+                    BlockPos cleanupPos = basePos.up(i);
+                    TileEntity cleanupTe = world.getTileEntity(cleanupPos);
+                    if (cleanupTe instanceof TileEntityRealTransformer)
+                    {
+                        ((TileEntityRealTransformer) cleanupTe).onBlockDestroyed();
+                    }
+                }
+            }
+
             for (int i = 0; i <= 1; i++)
             {
                 BlockPos targetPos = basePos.up(i);
