@@ -93,6 +93,8 @@ tile.realgrid.maclean_cutoff_switch_closed_6.name=MacLean Porcelain Transmission
 # Info Messages
 realgrid.info.cutoff_status.open=Cutoff Switch is OPEN!
 realgrid.info.cutoff_status.closed=Cutoff Switch is CLOSED!
+realgrid.info.switch_inverted.on=Cutoff Switch Inversion: ON
+realgrid.info.switch_inverted.off=Cutoff Switch Inversion: OFF
 
 # Creative Tab
 itemGroup.realgrid=RealGrid
