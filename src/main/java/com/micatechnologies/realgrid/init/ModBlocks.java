@@ -35,6 +35,14 @@ import net.minecraftforge.fml.relauncher.SideOnly;
 @Mod.EventBusSubscriber(modid = RealGrid.MODID)
 public class ModBlocks
 {
+    /**
+     * Calling this method forces the JVM to initialize this class, which
+     * triggers all static field initializers (block constructors) and
+     * populates {@link RealGridRegistry}. Must be called before
+     * {@link ModTileEntities#register()} iterates the registry.
+     */
+    public static void ensureLoaded() { /* class initialization does the work */ }
+
     // Transformers
     public static final BlockClassATransformer2Wire CLASS_A_TRANSFORMER_2WIRE = new BlockClassATransformer2Wire();
     public static final BlockClassATransformer1Wire CLASS_A_TRANSFORMER_1WIRE = new BlockClassATransformer1Wire();
