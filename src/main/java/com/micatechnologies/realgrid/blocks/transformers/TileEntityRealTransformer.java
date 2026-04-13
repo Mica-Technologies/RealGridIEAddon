@@ -336,7 +336,6 @@ public abstract class TileEntityRealTransformer extends TileEntityImmersiveConne
             }
         }
 
-        // Another double inventory block fix
         this.markDirty();
         if (world != null)
         {
