@@ -15,7 +15,6 @@ import net.minecraft.block.state.BlockStateContainer;
 import net.minecraft.block.state.IBlockState;
 import net.minecraft.creativetab.CreativeTabs;
 import net.minecraft.entity.EntityLivingBase;
-import net.minecraft.entity.player.EntityPlayer;
 import net.minecraft.item.Item;
 import net.minecraft.item.ItemStack;
 import net.minecraft.tileentity.TileEntity;
@@ -80,37 +79,14 @@ public abstract class BlockRealTransformerBase extends Block implements ITileEnt
     // Creative / JEI inventory
     // -----------------------------------------------------------------------
 
-    // FIX (duplicate inventory): The DUMMY property encodes two sets of metadata:
-    //   meta 0-3 → DUMMY=0, FACING=N/E/S/W  (base / bottom half — placeable item)
-    //   meta 4-7 → DUMMY=1, FACING=N/E/S/W  (upper dummy half — world-only, never an item)
-    //
-    // Without this override, inventory mods such as JEI iterate ALL valid metadata
-    // values and list 8 entries — including 4 "dummy upper" variants that look
-    // identical to the real transformer but place a broken half-block. This was the
-    // root cause of the duplicate inventory issue that persisted after ModBlocks fixes.
-    //
-    // By returning a single ItemStack at damage=0 (FACING=NORTH, DUMMY=0) we
-    // guarantee exactly one creative/JEI entry, matching the one registered in
-    // ModBlocks.ITEM_BLOCKS, and prevent the dummy states from ever appearing
-    // as pickable items.
+    // Only expose the base (DUMMY=0) variant in creative/JEI; hide the upper dummy half.
     @Override
     public void getSubBlocks(CreativeTabs tab, NonNullList<ItemStack> items)
     {
         items.add(new ItemStack(Item.getItemFromBlock(this), 1, 0));
     }
 
-    // FIX (duplicate item drop): Without this override, breaking the upper (DUMMY=1)
-    // block directly causes Minecraft's default harvestBlock() to drop one transformer
-    // item for that half. Combined with breakBlock() calling setBlockToAir() on the
-    // paired half (no drop), the net result is still one item total — but breaking
-    // the DUMMY=0 base block ALSO drops one item, so a two-step break (upper then
-    // lower before breakBlock removes both) could yield two drops. More importantly,
-    // creative players can obtain the "dummy upper half" item via middle-click, which
-    // creates a meta=4 ItemStack that places only the upper block state — a broken
-    // one-block transformer with no base.
-    //
-    // Returning 0 drops for DUMMY=1 completely prevents the dummy half from ever
-    // producing an item, matching how vanilla handles the upper half of a door.
+    // Only the base half (DUMMY=0) drops items; the upper dummy half drops nothing.
     @Override
     public void getDrops(NonNullList<ItemStack> drops, IBlockAccess world,
                          BlockPos pos, IBlockState state, int fortune)

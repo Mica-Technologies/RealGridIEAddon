@@ -62,16 +62,7 @@ public abstract class BlockCutoffSwitchBase extends Block implements ITileEntity
     public static final PropertyDirection FACING =
         PropertyDirection.create("facing", EnumFacing.Plane.HORIZONTAL);
 
-    /**
-     * ACTIVE = true  → switch is CLOSED (power flows, closed model displayed).
-     * ACTIVE = false → switch is OPEN   (power blocked, open model displayed).
-     *
-     * FIX (model not changing): The block model variants in the blockstates JSON
-     * must be keyed on this property. The property is read by getActualState()
-     * from te.active on every chunk render, and the block state is also updated
-     * in world storage by applyStateChange() via setBlockState(flag=6). Both
-     * paths now agree, so the renderer always selects the correct variant.
-     */
+    /** true = switch CLOSED (power flows); false = switch OPEN (power blocked). */
     public static final PropertyBool ACTIVE = PropertyBool.create("active");
 
     private static final AxisAlignedBB SWITCH_AABB =
@@ -132,17 +123,7 @@ public abstract class BlockCutoffSwitchBase extends Block implements ITileEntity
     // Creative / JEI inventory
     // -----------------------------------------------------------------------
 
-    // FIX: Override getSubBlocks to show only a single canonical item (meta=0,
-    // FACING=NORTH, ACTIVE=false) in any inventory view.
-    //
-    // The ACTIVE property creates two sets of metadata values for this block:
-    //   meta 0-3  → ACTIVE=false (open switch, facing N/E/S/W)
-    //   meta 4-7  → ACTIVE=true  (closed switch, facing N/E/S/W)
-    //
-    // Inventory mods such as JEI iterate ALL valid metadata values and would
-    // display 8 separate entries — two for every facing direction. By returning
-    // a single ItemStack at damage=0 (the open/inactive default state) we
-    // guarantee exactly one creative/JEI entry per cutoff switch type.
+    // Only expose meta=0 in creative/JEI to prevent duplicate entries.
     @Override
     public void getSubBlocks(CreativeTabs tab, NonNullList<ItemStack> items)
     {
@@ -245,16 +226,6 @@ public abstract class BlockCutoffSwitchBase extends Block implements ITileEntity
     // Block destruction — clean up IE wire connections
     // -----------------------------------------------------------------------
 
-    /**
-     * FIX (wire events on block destroy): The previous implementation had no
-     * breakBlock() override, so destroying the block left all its wire
-     * connections in IE's network without firing the proper wire-removal events.
-     * IE's own connectable blocks always tear down wires in breakBlock().
-     *
-     * We call te.onBlockDestroyed() first (while the TileEntity still exists
-     * at pos), then delegate to super.breakBlock() to let IE and Forge clean up
-     * the TileEntity itself.
-     */
     @Override
     public void breakBlock(World world, BlockPos pos, IBlockState state)
     {
@@ -273,14 +244,6 @@ public abstract class BlockCutoffSwitchBase extends Block implements ITileEntity
     // Player interaction
     // -----------------------------------------------------------------------
 
-    /**
-     * FIX (wire cutters): IE's engineer's wire cutters work through
-     * IImmersiveConnectable.removeCable(), which is called by IE when the player
-     * right-clicks a wire with the cutters. Because TileEntityCutoffSwitch
-     * extends TileEntityImmersiveConnectable and now properly delegates to
-     * super.removeCable(), the cutters work without any special handling here.
-     * The hammer-interaction path below is separate and unchanged.
-     */
     @Override
     public boolean onBlockActivated(World world, BlockPos pos, IBlockState state,
                                     EntityPlayer player, EnumHand hand,

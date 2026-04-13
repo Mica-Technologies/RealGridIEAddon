@@ -70,13 +70,7 @@ public abstract class BlockInsulatorBase extends Block implements ITileEntityPro
         return createNewTileEntity(null, 0).getClass();
     }
 
-    // FIX: Override getSubBlocks to add only the canonical meta=0 item (FACING=NORTH)
-    // to any inventory view. Without this override, inventory mods such as JEI iterate
-    // ALL valid metadata values for the block (meta 0-3, one per FACING direction) and
-    // display four separate entries for what is logically one block — causing the
-    // "duplicate inventory issue". By explicitly returning a single ItemStack at
-    // damage=0, we guarantee exactly one creative/JEI entry regardless of how many
-    // block-state permutations exist.
+    // Only expose meta=0 (FACING=NORTH) in creative/JEI to prevent duplicate entries.
     @Override
     public void getSubBlocks(CreativeTabs tab, NonNullList<ItemStack> items)
     {
