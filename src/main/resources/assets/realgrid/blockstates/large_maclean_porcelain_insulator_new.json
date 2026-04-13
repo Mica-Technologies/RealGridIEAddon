@@ -21,10 +21,6 @@
         "y": 270
       }
     },
-    "color": {
-      "0": {},
-      "1": {}
-    },
     "inventory": [
       {
         "model": "realgrid:large_maclean_porcelain_insulator_new"
