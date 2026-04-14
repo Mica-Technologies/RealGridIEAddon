@@ -368,40 +368,81 @@ public abstract class TileEntityRealTransformer extends TileEntityImmersiveConne
     }
 
     /**
-     * Gets the 3D offset for an HV connection. Subclasses may override for fine-tuning.
+     * Determines whether the given connection belongs to HV slot 1 by querying
+     * IE's live connection list and sorting the two HV wires deterministically
+     * by their remote endpoint position. The wire whose remote end has the
+     * smaller packed-long position is assigned to slot 1.
+     */
+    private boolean isHvSlot1(Connection con)
+    {
+        if (world == null)
+            return true;
+
+        BlockPos myPos = getPos();
+        BlockPos otherEnd = con.start.equals(myPos) ? con.end : con.start;
+        Set<Connection> conns = ImmersiveNetHandler.INSTANCE.getConnections(world, myPos);
+        if (conns != null)
+        {
+            for (Connection c : conns)
+            {
+                if (c.cableType != WireType.STEEL)
+                    continue;
+                // Skip the same logical connection (same remote endpoint)
+                BlockPos cOtherEnd = c.start.equals(myPos) ? c.end : c.start;
+                if (cOtherEnd.equals(otherEnd))
+                    continue;
+                // Found a different HV connection -- the one whose remote
+                // endpoint has the smaller packed-long goes to slot 1
+                return otherEnd.toLong() < cOtherEnd.toLong();
+            }
+        }
+        // Only one HV connection -- slot 1
+        return true;
+    }
+
+    /**
+     * Gets the 3D offset for an HV connection. Offsets are derived from the
+     * block model bushing positions so wires attach at the visual connection
+     * points rather than inside the transformer body.
      */
     protected Vec3d getHvConnectionOffset(Connection con)
     {
+        boolean isFirst = isHvSlot1(con);
+
         if (isHvOnSide())
         {
-            // Class A: HV on the sides of the upper block
-            // Determine if this is the first or second HV cable
-            boolean isFirst = (hvCable1 != null && con.cableType == hvCable1);
-            double sideOffset = isFirst ? 0.125 : 0.875;
+            // Class A / Jumbo: HV on the side arms of the upper block.
+            // Model bushing centers (default SOUTH orientation):
+            //   left arm  X = -3.5px = -0.21875,  Y = 26px = 1.625
+            //   right arm X = 19.5px =  1.21875,  Y = 26px = 1.625
+            double sideOffset = isFirst ? -0.21875 : 1.21875;
 
             if (facing == EnumFacing.NORTH)
-                return new Vec3d(sideOffset, 1.5, 0.5);
+                return new Vec3d(sideOffset, 1.625, 0.5);
             else if (facing == EnumFacing.SOUTH)
-                return new Vec3d(1.0 - sideOffset, 1.5, 0.5);
+                return new Vec3d(1.0 - sideOffset, 1.625, 0.5);
             else if (facing == EnumFacing.WEST)
-                return new Vec3d(0.5, 1.5, 1.0 - sideOffset);
+                return new Vec3d(0.5, 1.625, 1.0 - sideOffset);
             else // EAST
-                return new Vec3d(0.5, 1.5, sideOffset);
+                return new Vec3d(0.5, 1.625, sideOffset);
         }
         else
         {
-            // Class C: HV on the top of the upper block
-            boolean isFirst = (hvCable1 != null && con.cableType == hvCable1);
-            double sideOffset = isFirst ? 0.1875 : 0.8125;
+            // Class C: HV on the top bushings.
+            // The top model renders at the upper block position; bushing cap
+            // tops are at model Y=29, so Y = 1.0 + 29/16 = 2.8125 from base.
+            // Cap center X: left ~4px = 0.25, right ~12px = 0.75.
+            double sideOffset = isFirst ? 0.25 : 0.75;
+            double y = 2.8125;
 
             if (facing == EnumFacing.NORTH)
-                return new Vec3d(sideOffset, 2.0, 0.5);
+                return new Vec3d(sideOffset, y, 0.5);
             else if (facing == EnumFacing.SOUTH)
-                return new Vec3d(1.0 - sideOffset, 2.0, 0.5);
+                return new Vec3d(1.0 - sideOffset, y, 0.5);
             else if (facing == EnumFacing.WEST)
-                return new Vec3d(0.5, 2.0, 1.0 - sideOffset);
+                return new Vec3d(0.5, y, 1.0 - sideOffset);
             else // EAST
-                return new Vec3d(0.5, 2.0, sideOffset);
+                return new Vec3d(0.5, y, sideOffset);
         }
     }
 
