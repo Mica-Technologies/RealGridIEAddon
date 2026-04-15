@@ -219,7 +219,16 @@ public abstract class BlockCutoffSwitchBase extends Block implements ITileEntity
         if (!world.isRemote)
         {
             TileEntityCutoffSwitch te = getSwitchTE(world, pos);
-            if (te != null) te.facing = state.getValue(FACING);
+            if (te != null)
+            {
+                te.facing = state.getValue(FACING);
+                // FIX 1: Sync te.active to the intended initial state (CLOSED = true) that
+                // getStateForPlacement declared.  Without this, te.active stays at its Java
+                // default of false (OPEN), and getActualState() — which is the rendering
+                // authority — immediately shows the switch as permanently open.
+                te.active = state.getValue(ACTIVE);
+                te.applyStateChange();
+            }
         }
     }
 
@@ -292,17 +301,39 @@ public abstract class BlockCutoffSwitchBase extends Block implements ITileEntity
     public void neighborChanged(IBlockState state, World world, BlockPos pos,
                                 Block blockIn, BlockPos fromPos)
     {
-        // Handled by TileEntityCutoffSwitch.update()
+        // FIX 2: Propagate a block-update notification so the render state stays
+        // coherent after any neighbour change.  We deliberately do NOT modify
+        // te.active here — the mere placement of an adjacent block (even another
+        // cutoff switch) must never change this switch's open/closed state.
+        // Redstone-driven state changes remain the sole responsibility of
+        // TileEntityCutoffSwitch.update().
+        if (!world.isRemote)
+        {
+            world.notifyBlockUpdate(pos, state, state, 3);
+        }
     }
 
     @Override public boolean canProvidePower(IBlockState state) { return true; }
 
+    /**
+     * FIX 3: Only emit redstone power along the switch's facing axis (the two
+     * faces the switch is "wired through").  Previously, power was emitted on
+     * all six sides.  Because canProvidePower is true, any block adjacent on a
+     * perpendicular face — including another cutoff switch — would receive this
+     * signal via world.isBlockPowered().  The TE's update() loop reads that
+     * value to implement redstone control, so the spurious side-face power was
+     * fighting the manual toggle and forcing the switch permanently open.
+     * Restricting emission to the facing axis eliminates the cross-talk.
+     */
     @Override
     public int getWeakPower(IBlockState state, IBlockAccess world,
                             BlockPos pos, EnumFacing side)
     {
         TileEntityCutoffSwitch te = getSwitchTE(world, pos);
-        return te != null ? te.getWeakRSOutput(state, side) : 0;
+        if (te == null) return 0;
+        EnumFacing facing = state.getValue(FACING);
+        if (side != facing && side != facing.getOpposite()) return 0;
+        return te.getWeakRSOutput(state, side);
     }
 
     @Override
@@ -310,7 +341,10 @@ public abstract class BlockCutoffSwitchBase extends Block implements ITileEntity
                               BlockPos pos, EnumFacing side)
     {
         TileEntityCutoffSwitch te = getSwitchTE(world, pos);
-        return te != null ? te.getStrongRSOutput(state, side) : 0;
+        if (te == null) return 0;
+        EnumFacing facing = state.getValue(FACING);
+        if (side != facing && side != facing.getOpposite()) return 0;
+        return te.getStrongRSOutput(state, side);
     }
 
     // -----------------------------------------------------------------------
