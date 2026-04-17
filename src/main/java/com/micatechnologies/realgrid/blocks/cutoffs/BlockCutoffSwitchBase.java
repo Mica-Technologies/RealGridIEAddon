@@ -81,7 +81,7 @@ public abstract class BlockCutoffSwitchBase extends Block implements ITileEntity
         setResistance(15.0f);
         setDefaultState(blockState.getBaseState()
             .withProperty(FACING, EnumFacing.NORTH)
-            .withProperty(ACTIVE, false));
+            .withProperty(ACTIVE, true));
         RealGridRegistry.registerBlock(this);
     }
 

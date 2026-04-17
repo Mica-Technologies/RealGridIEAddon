@@ -313,7 +313,7 @@ public class TileEntityCutoffSwitch extends TileEntityImmersiveConnectable
 
                 // Secondary render guarantee using non-IE-reserved event IDs.
                 world.addBlockEvent(getPos(), getBlockType(),
-                        active ? EVENT_OPEN : EVENT_CLOSE, 0);
+                        active ? EVENT_CLOSE : EVENT_OPEN, 0);
             }
         } finally {
             stateChanging = false;
@@ -352,7 +352,7 @@ public class TileEntityCutoffSwitch extends TileEntityImmersiveConnectable
     @Override
     public boolean receiveClientEvent(int id, int arg) {
         if (id == EVENT_OPEN || id == EVENT_CLOSE) {
-            this.active = (id == EVENT_OPEN);
+            this.active = (id == EVENT_CLOSE);
             if (world != null) {
                 world.markBlockRangeForRenderUpdate(pos, pos);
             }
@@ -366,7 +366,12 @@ public class TileEntityCutoffSwitch extends TileEntityImmersiveConnectable
     // -----------------------------------------------------------------------
 
     public boolean isRedstonePowered() {
+        // Only poll the four faces that are NOT the switch's output faces (facing /
+        // facing.getOpposite()).  Polling those two faces reads back the switch's own
+        // redstone output (canProvidePower=true), creating a feedback loop that forces
+        // the switch permanently open on every tick.
         for (EnumFacing side : EnumFacing.VALUES) {
+            if (side == facing || side == facing.getOpposite()) continue;
             if (world.getRedstonePower(pos.offset(side), side) > 0) return true;
         }
         return false;
