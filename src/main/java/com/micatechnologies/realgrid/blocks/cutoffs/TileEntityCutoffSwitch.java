@@ -83,6 +83,16 @@ public class TileEntityCutoffSwitch extends TileEntityImmersiveConnectable
 
     private transient boolean stateChanging = false;
 
+    /**
+     * When true the sound in {@link #applyStateChange()} is suppressed.
+     * Set to true for the very first state evaluation that happens
+     * immediately after the block is placed (world-load tick), so the
+     * IE direSwitch sound is NOT played just from placing the block.
+     * Cleared to false after that first evaluation so all subsequent
+     * open/close events do play the sound normally.
+     */
+    private transient boolean suppressPlacementSound = true;
+
     // -----------------------------------------------------------------------
     // IImmersiveConnectable \u2014 voltage capability
     // -----------------------------------------------------------------------
@@ -299,8 +309,14 @@ public class TileEntityCutoffSwitch extends TileEntityImmersiveConnectable
                 world.setBlockState(pos, newBlockState, 6);
 
                 // Play the IE switch sound (broadcast to nearby players).
-                world.playSound(null, getPos(), IESounds.direSwitch,
-                        SoundCategory.BLOCKS, 2.5F, active ? 1.0F : 0.85F);
+                // suppressPlacementSound is true only on the very first
+                // evaluation tick after block placement; skip the sound then
+                // and clear the flag so all real open/close events play it.
+                if (!suppressPlacementSound) {
+                    world.playSound(null, getPos(), IESounds.direSwitch,
+                            SoundCategory.BLOCKS, 2.5F, active ? 1.0F : 0.85F);
+                }
+                suppressPlacementSound = false;
 
                 // One neighbour-notification pass for redstone propagation.
                 world.notifyNeighborsOfStateChange(getPos(), getBlockType(), true);
