@@ -19,4 +19,20 @@ public class TileEntityClassATransformer2Wire extends TileEntityRealTransformer
     {
         return true;
     }
+
+    /**
+     * class_a_transformer.json models the insulator stacks at X = -4.5px / -2.5px on the left arm and
+     * 18.5px / 20.5px on the right; the midpoint of each pair is the attachment point.
+     */
+    @Override
+    protected double[] getHvBushingOffsets()
+    {
+        return new double[]{ CLASS_A_ARM_LEFT, CLASS_A_ARM_RIGHT };
+    }
+
+    @Override
+    protected double getHvBushingHeight()
+    {
+        return CLASS_A_ARM_HEIGHT;
+    }
 }

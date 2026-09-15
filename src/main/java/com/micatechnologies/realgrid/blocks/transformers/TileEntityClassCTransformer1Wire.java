@@ -19,4 +19,19 @@ public class TileEntityClassCTransformer1Wire extends TileEntityRealTransformer
     {
         return false;
     }
+
+    /**
+     * class_c_transformer_top_1wire.json models a single cap centred on X = 8px.
+     */
+    @Override
+    protected double[] getHvBushingOffsets()
+    {
+        return new double[]{ 0.5 };
+    }
+
+    @Override
+    protected double getHvBushingHeight()
+    {
+        return CLASS_C_BUSHING_HEIGHT;
+    }
 }
