@@ -102,21 +102,36 @@ public abstract class TileEntityInsulatorBase extends TileEntityImmersiveConnect
     }
 
     /**
-     * Takes the wire count from the connections IE actually holds for this block. The stored count used to drift:
-     * a pasted insulator keeps the count of the one it was copied from, wires cleaned up after a world edit never
-     * told it, and the IE build this pack uses once reported every removed wire twice. A stale count or wire type
+     * Takes both the wire count and the wire type from the connections IE actually holds for this block. The stored
+     * pair used to drift: a pasted insulator keeps the values of the one it was copied from, wires cleaned up after a
+     * world edit never told it, and the IE build this pack uses once reported every removed wire twice. A stale count
      * turns away cable the insulator should take.
+     *
+     * <p>A stale type is worse, and it is why the Engineer's Wire Cutters worked on some insulators and not others.
+     * The cutters ask {@link #getCableLimiter(TargetingInfo)} for the type to cut and give up without touching
+     * anything when the answer is null, and they only cut wires whose type matches the answer. An insulator holding
+     * wires but no recorded type -- or the wrong one -- was therefore impossible to cut, permanently, while the
+     * insulator beside it cut normally. Recovering the type from the wires themselves repairs those.
      */
     private void recountWires()
     {
         if (world == null || world.isRemote || isInvalid())
             return;
-        int actual = liveWireCount();
-        if (actual == wireCount && (actual > 0 || limitType == null))
+        Set<Connection> conns = ImmersiveNetHandler.INSTANCE.getConnections(world, pos);
+        int actual = conns == null ? 0 : conns.size();
+        // Insulators hold a single type, so any attached wire names it. No wires means no type.
+        WireType actualType = null;
+        if (conns != null)
+            for (Connection c : conns)
+            {
+                actualType = c.cableType;
+                break;
+            }
+
+        if (actual == wireCount && actualType == limitType)
             return;
         wireCount = actual;
-        if (wireCount == 0)
-            limitType = null;
+        limitType = actualType;
         markDirty();
     }
 
@@ -128,10 +143,21 @@ public abstract class TileEntityInsulatorBase extends TileEntityImmersiveConnect
         return conns == null ? 0 : conns.size();
     }
 
+    /**
+     * The Engineer's Wire Cutters ask this for the type to cut and do nothing at all when the answer is null, so an
+     * insulator that lost its recorded type became impossible to cut. {@link #recountWires()} repairs that, but only
+     * when the chunk next loads; answering from the live wires in the meantime means the cutters work on the spot.
+     */
     @Override
     public WireType getCableLimiter(TargetingInfo target)
     {
-        return limitType;
+        if (limitType != null || world == null || world.isRemote)
+            return limitType;
+        Set<Connection> conns = ImmersiveNetHandler.INSTANCE.getConnections(world, pos);
+        if (conns != null)
+            for (Connection c : conns)
+                return c.cableType;
+        return null;
     }
 
     @Override
