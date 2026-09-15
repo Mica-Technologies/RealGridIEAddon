@@ -45,6 +45,21 @@ jobs:
           preReleaseVersion=$(date -u +'%Y.%m.%d-pre.%H%M.%Z%z')"+$calculatedSha"
           echo "PRE_TAG=$preReleaseVersion" >> $GITHUB_ENV
 
+      # Which tag this run actually publishes. Every later step asks this step rather
+      # than re-deriving it, so the tag that is pushed, the version that is built and
+      # the release that is created cannot drift apart.
+      - name: Decide which tag this run publishes
+        id: publish_tag
+        run: |
+          if [ "${{ github.event.inputs.release }}" = "true" ]; then
+            chosen="${{ env.REL_TAG }}"
+          else
+            chosen="${{ env.PRE_TAG }}"
+          fi
+          echo "tag=$chosen" >> $GITHUB_OUTPUT
+          echo "PUBLISH_TAG=$chosen" >> $GITHUB_ENV
+          echo "This run publishes: $chosen"
+
       - name: Create Release Tag
         if: ${{ github.event.inputs.release == 'true' && github.event.inputs.release }}
         run: |
@@ -56,6 +71,36 @@ jobs:
         run: |
           git tag "${{ env.PRE_TAG }}" "${{ github.sha }}"
           git push origin "${{ env.PRE_TAG }}"
+
+      # Two tags can sit on one commit: a push tags a pre-release, and a later dispatch
+      # tags the release on that same commit. 'git describe' then chooses between them
+      # by its own ordering, which happens to land on the release tag within a UTC day
+      # and on the pre-release tag across midnight. Worth keeping even though the
+      # version is pinned below, because the generated changelog asks git the same
+      # ambiguous question.
+      #
+      # The '|| true' is load-bearing: grep exits non-zero when the chosen tag is the
+      # only tag on the commit, which is the ordinary pre-release case.
+      - name: Leave only the tag being built on this commit
+        run: |
+          chosen="${{ steps.publish_tag.outputs.tag }}"
+          others="$(git tag --points-at "${{ github.sha }}" | grep -vxF "$chosen" || true)"
+          if [ -n "$others" ]; then
+            echo "$others" | xargs git tag -d
+          fi
+          echo "Local tags now on this commit:"
+          git tag --points-at "${{ github.sha }}"
+
+      # State the version instead of letting the build infer it from git at all.
+      # '-PmodVersion' does not work here: loadProjectProperties copies every key of
+      # buildscript.properties over the project properties, so the empty 'modVersion'
+      # in that file overwrites whatever the flag supplied. Writing the value into that
+      # file is the supported way in. CI-only, never committed.
+      - name: Pin the mod version to the tag being published
+        run: |
+          chosen="${{ steps.publish_tag.outputs.tag }}"
+          sed -i "s|^modVersion =.*|modVersion = $chosen|" buildscript.properties
+          grep -n '^modVersion' buildscript.properties
 
       - name: Assemble Mod with Gradle
         run: ./gradlew build -Dhttp.socketTimeout=60000 -Dhttp.connectionTimeout=60000 -Dorg.gradle.internal.http.socketTimeout=60000 -Dorg.gradle.internal.http.connectionTimeout=60000
@@ -69,6 +114,19 @@ jobs:
         run: |
           modVersion=$(${{github.workspace}}/gradlew -q printModVersion)
           echo "MOD_VERSION=$modVersion" >> $GITHUB_ENV
+
+      # Shape validation cannot catch this: a pre-release string is perfectly well
+      # formed, it is just not the version being published. Only comparing against the
+      # intended tag catches it, and this runs before anything is uploaded.
+      - name: Fail if the built version is not the tag being published
+        run: |
+          built="${{ env.MOD_VERSION }}"
+          chosen="${{ steps.publish_tag.outputs.tag }}"
+          if [ "$built" != "$chosen" ]; then
+            echo "::error::Built version '$built' does not match the published tag '$chosen'. The jar and every asset named after it would be stamped '$built'. Refusing to publish."
+            exit 1
+          fi
+          echo "Built version matches the published tag: $built"
 
       - name: Save Mod Archive Base Name to GITHUB_ENV
         run: |
