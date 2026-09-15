@@ -144,6 +144,43 @@ public abstract class BlockInsulatorBase extends Block implements ITileEntityPro
         }
     }
 
+    /**
+     * Drops the insulator once nothing is left holding it up. Without this an insulator whose pole was
+     * mined stayed floating in the air, keeping its wires with it.
+     *
+     * <p>The test is deliberately weak: any solid neighbour on any of the six sides counts. Insulators
+     * do not record which side they mount to, and the variants differ -- the top-mount presets rest on
+     * the block below while the side-mount and dead-end ones reach out from a pole beside them -- so a
+     * rule that named one required side would have to guess it. Guessing wrongly would drop every
+     * insulator already built on that guess the moment a neighbour updated. This catches the case the
+     * issue describes, an insulator left hanging in mid air, and leaves anything still touching a block
+     * alone.
+     */
+    @Override
+    public void neighborChanged(IBlockState state, World world, BlockPos pos, Block block, BlockPos fromPos)
+    {
+        super.neighborChanged(state, world, pos, block, fromPos);
+        if (world.isRemote || hasAnySupport(world, pos))
+            return;
+
+        // breakBlock runs from setBlockToAir and drops the attached wires as coils.
+        dropBlockAsItem(world, pos, state, 0);
+        world.setBlockToAir(pos);
+    }
+
+    /**
+     * @return true if any of the six neighbouring blocks is solid enough to hold an insulator
+     */
+    private static boolean hasAnySupport(World world, BlockPos pos)
+    {
+        for (EnumFacing side : EnumFacing.VALUES)
+        {
+            if (world.getBlockState(pos.offset(side)).getMaterial().isSolid())
+                return true;
+        }
+        return false;
+    }
+
     @Override
     public void breakBlock(World world, BlockPos pos, IBlockState state)
     {
