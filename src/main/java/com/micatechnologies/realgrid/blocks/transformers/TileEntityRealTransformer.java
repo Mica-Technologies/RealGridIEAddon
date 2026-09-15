@@ -245,7 +245,9 @@ public abstract class TileEntityRealTransformer extends TileEntityImmersiveConne
                 // First HV connection - STEEL only
                 if (cableType != WireType.STEEL)
                     return false;
-                return hvCable1 == null;
+                // The slots are occupancy, not identity: which bushing a wire draws to is worked out from the
+                // wires themselves (isHvSlot1), so either side takes a wire while there is room for one.
+                return isTwoWire() ? hvCable2 == null : hvCable1 == null;
             case 2:
                 // Second HV connection - STEEL only (2-wire only)
                 if (!isTwoWire())
@@ -269,21 +271,8 @@ public abstract class TileEntityRealTransformer extends TileEntityImmersiveConne
             return;
         }
 
-        int tc = getTargetedConnector(target);
-        switch (tc)
-        {
-            case 0:
-                mvLvCableCount++;
-                if (mvLvLimitType == null)
-                    mvLvLimitType = cableType;
-                break;
-            case 1:
-                hvCable1 = cableType;
-                break;
-            case 2:
-                hvCable2 = cableType;
-                break;
-        }
+        // IE registers the connection before telling either end, so the live wires already include it.
+        syncCablesFromConnections();
         this.markDirty();
         if (world != null)
         {
@@ -311,31 +300,19 @@ public abstract class TileEntityRealTransformer extends TileEntityImmersiveConne
     @Override
     public void removeCable(Connection connection)
     {
-        WireType type = connection != null ? connection.cableType : null;
-        if (type == null)
+        if (connection == null)
         {
+            // IE's "clearing everything" call, made before the connections are gone.
             hvCable1 = null;
             hvCable2 = null;
             mvLvCableCount = 0;
             mvLvLimitType = null;
         }
-        else if (type == WireType.STEEL)
-        {
-            // Remove HV cable - try hvCable1 first, then hvCable2
-            if (hvCable1 != null)
-                hvCable1 = null;
-            else if (hvCable2 != null)
-                hvCable2 = null;
-        }
         else
         {
-            // Remove MV/LV cable
-            mvLvCableCount--;
-            if (mvLvCableCount <= 0)
-            {
-                mvLvCableCount = 0;
-                mvLvLimitType = null;
-            }
+            // The wire has already left IE's tables. Counting down instead cleared both HV slots whenever IE
+            // reported one removal twice, and could never recover from a pasted or edited transformer.
+            syncCablesFromConnections();
         }
 
         this.markDirty();
@@ -344,6 +321,54 @@ public abstract class TileEntityRealTransformer extends TileEntityImmersiveConne
             IBlockState state = world.getBlockState(pos);
             world.notifyBlockUpdate(pos, state, state, 2);
         }
+    }
+
+    @Override
+    public void validate()
+    {
+        super.validate();
+        if (world != null && !world.isRemote)
+            ApiUtils.addFutureServerTask(world, () -> {
+                if (!isInvalid() && syncCablesFromConnections())
+                    markDirty();
+            });
+    }
+
+    /**
+     * Rebuilds the slot tracking from the wires IE actually holds for this transformer. A pasted transformer
+     * otherwise keeps the slots of the one it was copied from and refuses every HV wire, and wires cleaned up after a
+     * world edit never reach it.
+     *
+     * @return whether anything changed
+     */
+    private boolean syncCablesFromConnections()
+    {
+        if (world == null || world.isRemote || dummy != 0)
+            return false;
+        int steel = 0, mvLv = 0;
+        WireType mvLvType = null;
+        Set<Connection> conns = ImmersiveNetHandler.INSTANCE.getConnections(world, getPos());
+        if (conns != null)
+            for (Connection c : conns)
+            {
+                if (c.cableType == WireType.STEEL)
+                    steel++;
+                else
+                {
+                    mvLv++;
+                    if (mvLvType == null)
+                        mvLvType = c.cableType;
+                }
+            }
+        WireType h1 = steel >= 1 ? WireType.STEEL : null;
+        WireType h2 = steel >= 2 ? WireType.STEEL : null;
+        if (h1 == hvCable1 && h2 == hvCable2 && mvLv == mvLvCableCount && mvLvType == mvLvLimitType)
+            return false;
+        hvCable1 = h1;
+        hvCable2 = h2;
+        mvLvCableCount = mvLv;
+        mvLvLimitType = mvLvType;
+        return true;
     }
 
     @Override

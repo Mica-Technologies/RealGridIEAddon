@@ -1,5 +1,6 @@
 package com.micatechnologies.realgrid.blocks.insulators;
 
+import blusunrize.immersiveengineering.api.ApiUtils;
 import blusunrize.immersiveengineering.api.TargetingInfo;
 import blusunrize.immersiveengineering.api.energy.wires.IImmersiveConnectable;
 import blusunrize.immersiveengineering.api.energy.wires.ImmersiveNetHandler;
@@ -14,6 +15,8 @@ import net.minecraft.entity.EntityLivingBase;
 import net.minecraft.nbt.NBTTagCompound;
 import net.minecraft.util.EnumFacing;
 import net.minecraft.util.math.Vec3d;
+
+import java.util.Set;
 
 /**
  * Base tile entity for all insulator variants. Acts as a wire relay: energy passes through
@@ -85,8 +88,44 @@ public abstract class TileEntityInsulatorBase extends TileEntityImmersiveConnect
     {
         if (this.limitType == null)
             this.limitType = cableType;
-        wireCount++;
+        // IE registers the connection before telling either end, so the live count already includes it.
+        wireCount = liveWireCount();
         markDirtyAndNotify();
+    }
+
+    @Override
+    public void validate()
+    {
+        super.validate();
+        if (world != null && !world.isRemote)
+            ApiUtils.addFutureServerTask(world, this::recountWires);
+    }
+
+    /**
+     * Takes the wire count from the connections IE actually holds for this block. The stored count used to drift:
+     * a pasted insulator keeps the count of the one it was copied from, wires cleaned up after a world edit never
+     * told it, and the IE build this pack uses once reported every removed wire twice. A stale count or wire type
+     * turns away cable the insulator should take.
+     */
+    private void recountWires()
+    {
+        if (world == null || world.isRemote || isInvalid())
+            return;
+        int actual = liveWireCount();
+        if (actual == wireCount && (actual > 0 || limitType == null))
+            return;
+        wireCount = actual;
+        if (wireCount == 0)
+            limitType = null;
+        markDirty();
+    }
+
+    private int liveWireCount()
+    {
+        if (world == null)
+            return wireCount;
+        Set<Connection> conns = ImmersiveNetHandler.INSTANCE.getConnections(world, pos);
+        return conns == null ? 0 : conns.size();
     }
 
     @Override
@@ -98,11 +137,9 @@ public abstract class TileEntityInsulatorBase extends TileEntityImmersiveConnect
     @Override
     public void removeCable(Connection connection)
     {
-        WireType type = connection != null ? connection.cableType : null;
-        if (type == null)
-            wireCount = 0;
-        else
-            wireCount--;
+        // A null connection is IE's "clearing everything" call, made before the connections are gone. Otherwise the
+        // wire has already left IE's tables, so the live count is the truth.
+        wireCount = connection == null ? 0 : liveWireCount();
         if (wireCount <= 0)
         {
             wireCount = 0;
