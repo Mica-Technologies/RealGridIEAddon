@@ -84,3 +84,6 @@ local.properties
 run/
 
 logs/
+
+# local-only agent/dev plans (kept private, not published)
+docs/agent-plans/
