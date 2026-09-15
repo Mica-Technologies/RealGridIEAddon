@@ -27,14 +27,14 @@ This file provides guidance to Claude Code (claude.ai/code) when working with co
 ./gradlew updateBuildScript
 ```
 
-**Requirements:** Java 17 (Azul Zulu Community recommended). The project uses Jabel to allow modern Java syntax while targeting JVM 8. Heap is set to `-Xmx3G` in `gradle.properties` for decompilation.
+**Requirements:** Java 21 or newer to run Gradle (Azul Zulu Community recommended). RetroFuturaGradle warns on anything older and is dropping support for it; CI uses 21. This governs the Gradle process only -- the project uses Jabel to allow modern Java syntax while targeting JVM 8, and the mod itself still builds for Java 8. Heap is set to `-Xmx3G` in `gradle.properties` for decompilation.
 
-**JDK Location:** The JDK is managed via IntelliJ's toolchain and located at `C:\Users\<username>\.jdks\azul-17.0.18`. When running Gradle from the CLI, set `JAVA_HOME` to this path:
+**JDK Location:** The JDK is managed via IntelliJ's toolchain and lives under `C:\Users\<username>\.jdks\`. When running Gradle from the CLI, set `JAVA_HOME` to a 21+ JDK there:
 ```bash
-JAVA_HOME="C:/Users/<username>/.jdks/azul-17.0.18" ./gradlew build
+JAVA_HOME="C:/Users/<username>/.jdks/azul-25.0.1" ./gradlew build
 ```
 
-**IDE Setup:** IntelliJ IDEA is the primary IDE. The GregTech buildscript auto-generates run configurations (Setup Workspace, Run Client, Run Server, Build Jars, Update Buildscript, FAQ) via the `idea` plugin block in `build.gradle`. These appear automatically when the project is opened -- no XML run configuration files are stored in the repo. If IntelliJ cannot find the JDK, go to **File > Project Structure > SDKs** and add `C:\Users\<username>\.jdks\azul-17.0.18`. The Gradle JVM should also be set to this JDK under **File > Settings > Build, Execution, Deployment > Build Tools > Gradle**.
+**IDE Setup:** IntelliJ IDEA is the primary IDE. The GregTech buildscript auto-generates run configurations (Setup Workspace, Run Client, Run Server, Build Jars, Update Buildscript, FAQ) via the `idea` plugin block in `build.gradle`. These appear automatically when the project is opened -- no XML run configuration files are stored in the repo. If IntelliJ cannot find the JDK, go to **File > Project Structure > SDKs** and add a 21+ JDK from `C:\Users\<username>\.jdks\`. The Gradle JVM should also be set to this JDK under **File > Settings > Build, Execution, Deployment > Build Tools > Gradle**.
 
 ## Architecture Overview
 
