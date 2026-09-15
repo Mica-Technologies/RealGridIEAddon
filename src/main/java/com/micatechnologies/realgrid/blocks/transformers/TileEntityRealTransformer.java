@@ -44,15 +44,59 @@ public abstract class TileEntityRealTransformer extends TileEntityImmersiveConne
     protected int mvLvCableCount = 0;
     protected WireType mvLvLimitType = null;
 
+    // Attachment geometry taken from the block models, in block units. Each is the point the wire
+    // should visually meet, so a model edit has to be reflected here.
+
+    /** Class A arms: midpoint of the insulator stack pair on each overhanging arm. */
+    protected static final double CLASS_A_ARM_LEFT = -0.21875;  // model X = -3.5px
+    protected static final double CLASS_A_ARM_RIGHT = 1.21875;  // model X = 19.5px
+    /** Class A arms sit on the upper block, model Y = 26px. */
+    protected static final double CLASS_A_ARM_HEIGHT = 1.625;
+    /** Class C bushing cap tops: upper block (1.0) plus model Y = 29px. */
+    protected static final double CLASS_C_BUSHING_HEIGHT = 2.8125;
+    /** Jumbo bushing cap tops: upper block (1.0) plus model Y = 32px. */
+    protected static final double JUMBO_BUSHING_HEIGHT = 3.0;
+
     /**
      * @return true if this transformer has 2 HV connection points
      */
     public abstract boolean isTwoWire();
 
     /**
-     * @return true if HV connections are on the side (Class A) vs top (Class C)
+     * Whether HV attaches to arms that overhang the block's sides (Class A) rather than to bushings
+     * rising from its top (Class C, Jumbo). This governs click regions only -- where the wire actually
+     * lands comes from {@link #getHvBushingOffsets()} and {@link #getHvBushingHeight()}, so a variant
+     * can never again inherit another model's attachment points by sharing this flag.
+     *
+     * @return true if HV is on the side arms
      */
     public abstract boolean isHvOnSide();
+
+    /**
+     * Lateral centre of each HV bushing, in block units along the model's authored (SOUTH-facing) X
+     * axis. 0.0 and 1.0 are the block's own edges; values outside that range are arms overhanging it.
+     * <p>
+     * One entry means a single bushing serving every HV wire -- the 1-wire tops model exactly one, in
+     * the centre. Two entries are a pair, index 0 being HV slot 1.
+     *
+     * @return the bushing centres, length 1 or 2
+     */
+    protected abstract double[] getHvBushingOffsets();
+
+    /**
+     * Height of the HV attachment point, in blocks above the master (lower) block.
+     *
+     * @return the attachment height
+     */
+    protected abstract double getHvBushingHeight();
+
+    /**
+     * @return true if a single bushing serves every HV wire on this variant
+     */
+    protected final boolean hasSingleHvBushing()
+    {
+        return getHvBushingOffsets().length == 1;
+    }
 
     @Override
     protected boolean canTakeLV()
@@ -176,7 +220,19 @@ public abstract class TileEntityRealTransformer extends TileEntityImmersiveConne
         }
         else
         {
-            // Class C: HV on top, MV/LV also on top but center
+            // Top-mounted HV, with the MV/LV relay also on top.
+            // Where there is only one bushing it stands in the centre, so the centre band has to be
+            // the HV point: reserving it for the relay, as the two-bushing layout does, left the
+            // single bushing impossible to click and HV reachable only off the model. The relay is
+            // invisible and accepts a click anywhere, so it gives up the centre here instead.
+            if (hasSingleHvBushing())
+            {
+                boolean onCentre = (facing == EnumFacing.NORTH || facing == EnumFacing.SOUTH)
+                        ? target.hitX > 0.35 && target.hitX < 0.65
+                        : target.hitZ > 0.35 && target.hitZ < 0.65;
+                return onCentre ? 1 : 0;
+            }
+
             // Use horizontal position to determine target
             if (facing == EnumFacing.NORTH || facing == EnumFacing.SOUTH)
             {
@@ -432,43 +488,20 @@ public abstract class TileEntityRealTransformer extends TileEntityImmersiveConne
      */
     protected Vec3d getHvConnectionOffset(Connection con)
     {
-        boolean isFirst = isHvSlot1(con);
+        double[] bushings = getHvBushingOffsets();
+        // A lone bushing takes every HV wire; a pair splits them by slot.
+        double lateral = bushings.length == 1 ? bushings[0] : (isHvSlot1(con) ? bushings[0] : bushings[1]);
+        double y = getHvBushingHeight();
 
-        if (isHvOnSide())
-        {
-            // Class A / Jumbo: HV on the side arms of the upper block.
-            // Model bushing centers (default SOUTH orientation):
-            //   left arm  X = -3.5px = -0.21875,  Y = 26px = 1.625
-            //   right arm X = 19.5px =  1.21875,  Y = 26px = 1.625
-            double sideOffset = isFirst ? -0.21875 : 1.21875;
-
-            if (facing == EnumFacing.NORTH)
-                return new Vec3d(sideOffset, 1.625, 0.5);
-            else if (facing == EnumFacing.SOUTH)
-                return new Vec3d(1.0 - sideOffset, 1.625, 0.5);
-            else if (facing == EnumFacing.WEST)
-                return new Vec3d(0.5, 1.625, 1.0 - sideOffset);
-            else // EAST
-                return new Vec3d(0.5, 1.625, sideOffset);
-        }
-        else
-        {
-            // Class C: HV on the top bushings.
-            // The top model renders at the upper block position; bushing cap
-            // tops are at model Y=29, so Y = 1.0 + 29/16 = 2.8125 from base.
-            // Cap center X: left ~4px = 0.25, right ~12px = 0.75.
-            double sideOffset = isFirst ? 0.25 : 0.75;
-            double y = 2.8125;
-
-            if (facing == EnumFacing.NORTH)
-                return new Vec3d(sideOffset, y, 0.5);
-            else if (facing == EnumFacing.SOUTH)
-                return new Vec3d(1.0 - sideOffset, y, 0.5);
-            else if (facing == EnumFacing.WEST)
-                return new Vec3d(0.5, y, 1.0 - sideOffset);
-            else // EAST
-                return new Vec3d(0.5, y, sideOffset);
-        }
+        // The models are authored facing SOUTH, and the blockstate turns them from there.
+        if (facing == EnumFacing.NORTH)
+            return new Vec3d(lateral, y, 0.5);
+        else if (facing == EnumFacing.SOUTH)
+            return new Vec3d(1.0 - lateral, y, 0.5);
+        else if (facing == EnumFacing.WEST)
+            return new Vec3d(0.5, y, 1.0 - lateral);
+        else // EAST
+            return new Vec3d(0.5, y, lateral);
     }
 
     // === IDirectionalTile ===

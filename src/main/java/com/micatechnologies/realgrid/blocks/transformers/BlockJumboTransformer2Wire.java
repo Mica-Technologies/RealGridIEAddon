@@ -8,7 +8,7 @@ import javax.annotation.Nullable;
 
 /**
  * Jumbo Transformer - 2-Wire Variant Block
- * 2 HV connections on the SIDE, 1 invisible MV/LV relay point on top center.
+ * 2 HV connections on the TOP bushings, 1 invisible MV/LV relay point on top center.
  */
 public class BlockJumboTransformer2Wire extends BlockRealTransformerBase
 {
