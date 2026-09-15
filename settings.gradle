@@ -14,6 +14,20 @@ pluginManagement {
         mavenCentral()
         mavenLocal()
     }
+
+    resolutionStrategy {
+        eachPlugin {
+            // build.gradle pins RetroFuturaGradle 1.4.0, whose jar is no longer served -- the
+            // GTNH maven returns 404 for it -- so a fresh checkout cannot configure the project
+            // at all. The override lives here rather than in build.gradle because that file is
+            // generated: 'gradlew updateBuildScript' rewrites it from upstream and did revert an
+            // earlier edit of exactly this line. settings.gradle is not generated, so this holds.
+            // Drop it once upstream pins a version that still exists.
+            if (requested.id.id == 'com.gtnewhorizons.retrofuturagradle') {
+                useVersion '1.4.9'
+            }
+        }
+    }
 }
 
 plugins {
