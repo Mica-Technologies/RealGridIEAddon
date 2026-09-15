@@ -1,5 +1,6 @@
 package com.micatechnologies.realgrid.blocks.cutoffs;
 
+import blusunrize.immersiveengineering.api.ApiUtils;
 import blusunrize.immersiveengineering.api.TargetingInfo;
 import blusunrize.immersiveengineering.api.energy.wires.IImmersiveConnectable;
 import blusunrize.immersiveengineering.api.energy.wires.ImmersiveNetHandler;
@@ -23,6 +24,8 @@ import net.minecraft.util.SoundCategory;
 import net.minecraft.util.math.BlockPos;
 import net.minecraft.util.math.Vec3d;
 import net.minecraft.world.World;
+
+import java.util.Set;
 
 /**
  * Cutoff Switch Tile Entity
@@ -116,7 +119,8 @@ public class TileEntityCutoffSwitch extends TileEntityImmersiveConnectable
     public void connectCable(WireType cableType, TargetingInfo target,
                              IImmersiveConnectable other) {
         // limitType intentionally NOT set \u2014 all three voltage tiers can coexist.
-        wires++;
+        // IE registers the connection before telling either end, so the live count already includes it.
+        wires = liveWireCount();
         markDirty();
         if (world != null) {
             IBlockState state = world.getBlockState(pos);
@@ -157,11 +161,9 @@ public class TileEntityCutoffSwitch extends TileEntityImmersiveConnectable
         // Update our local counter.
         // connection == null is the "bulk clear" signal emitted by
         // clearAllConnectionsFor(); treat it as a full reset.
-        if (connection == null) {
-            wires = 0;
-        } else {
-            wires = Math.max(0, wires - 1);
-        }
+        // connection == null is made before the connections are gone; otherwise the wire has already left
+        // IE's tables, so the live count is the truth.
+        wires = connection == null ? 0 : liveWireCount();
 
         // Belt-and-suspenders: ensure clean state when no wires remain.
         if (wires <= 0) {
@@ -174,6 +176,34 @@ public class TileEntityCutoffSwitch extends TileEntityImmersiveConnectable
             IBlockState state = world.getBlockState(pos);
             world.notifyBlockUpdate(pos, state, state, 2);
         }
+    }
+
+    @Override
+    public void validate() {
+        super.validate();
+        if (world != null && !world.isRemote)
+            ApiUtils.addFutureServerTask(world, this::recountWires);
+    }
+
+    /**
+     * Takes the wire count from the connections IE actually holds for this switch. The stored count used to drift:
+     * a pasted switch keeps the count of the one it was copied from, wires cleaned up after a world edit never told
+     * it, and the IE build this pack uses once reported every removed wire twice. A switch that believes it is full
+     * refuses wire it has room for.
+     */
+    private void recountWires() {
+        if (world == null || world.isRemote || isInvalid()) return;
+        int actual = liveWireCount();
+        if (actual == wires) return;
+        wires = actual;
+        if (wires == 0) limitType = null;
+        markDirty();
+    }
+
+    private int liveWireCount() {
+        if (world == null) return wires;
+        Set<Connection> conns = ImmersiveNetHandler.INSTANCE.getConnections(world, pos);
+        return conns == null ? 0 : conns.size();
     }
 
     // -----------------------------------------------------------------------
@@ -288,8 +318,10 @@ public class TileEntityCutoffSwitch extends TileEntityImmersiveConnectable
         if (stateChanging) return;
         stateChanging = true;
         try {
-            if (wires > 1) {
-                ImmersiveNetHandler.INSTANCE.resetCachedIndirectConnections();
+            // Only this switch's own network can route differently now. The no-argument reset threw away the
+            // routes of every network on the server each time any switch moved.
+            if (world != null && !world.isRemote) {
+                ImmersiveNetHandler.INSTANCE.resetCachedIndirectConnections(world, pos);
             }
             if (world != null && !world.isRemote) {
                 // Write the updated ACTIVE property into the block state.
