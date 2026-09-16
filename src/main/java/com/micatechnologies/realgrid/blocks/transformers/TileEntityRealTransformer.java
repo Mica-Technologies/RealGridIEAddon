@@ -317,14 +317,14 @@ public abstract class TileEntityRealTransformer extends TileEntityImmersiveConne
                     return false;
                 // The slots are occupancy, not identity: which bushing a wire draws to is worked out from the
                 // wires themselves (getHvConnectionOffset), so either side takes a wire while there is room for one.
-                return isTwoWire() ? hvCable2 == null : hvCable1 == null;
+                return isTwoWire() ? hvCable1 == null || hvCable2 == null : hvCable1 == null;
             case 2:
                 // Second HV connection - STEEL only (2-wire only)
                 if (!isTwoWire())
                     return false;
                 if (cableType != WireType.STEEL)
                     return false;
-                return hvCable2 == null;
+                return hvCable1 == null || hvCable2 == null;
             default:
                 return false;
         }
@@ -341,11 +341,19 @@ public abstract class TileEntityRealTransformer extends TileEntityImmersiveConne
             return;
         }
 
-        // Establish the relay's type immediately.  On some IE paths the handler's connection table is not
-        // observable until after this callback returns; relying on the subsequent sync alone left a window in
-        // which a copper relay could accept an electrum wire (or vice versa).
-        if (getTargetedConnector(target) == 0 && mvLvLimitType == null)
+        // Establish connector state immediately. On some IE paths the handler's connection table is not observable
+        // until after this callback returns; relying on the subsequent sync alone left a window in which a copper
+        // relay could accept electrum, or a one-wire transformer could accept a second HV wire.
+        int targetedConnector = getTargetedConnector(target);
+        if (targetedConnector == 0 && mvLvLimitType == null)
             mvLvLimitType = cableType;
+        else if (targetedConnector == 1 || targetedConnector == 2)
+        {
+            if (hvCable1 == null)
+                hvCable1 = cableType;
+            else if (isTwoWire() && hvCable2 == null)
+                hvCable2 = cableType;
+        }
 
         // IE normally registers the connection before telling either end, so refresh counts/slots from the
         // authoritative live set when it is available.
