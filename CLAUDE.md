@@ -1,120 +1,123 @@
-# CLAUDE.md
+# RealGrid IE Addon: Project Guide
 
-This file provides guidance to Claude Code (claude.ai/code) when working with code in this repository.
+This is the central project guide for humans and coding agents. The source code and Gradle configuration are authoritative when this document becomes stale.
 
-## Build Commands
+## Project at a glance
 
-```bash
-# Setup workspace (required first time, or after clean)
-./gradlew setupDecompWorkspace
+RealGrid is a **Minecraft 1.12.2 Forge** mod (mod ID: `realgrid`) that adds realistic electrical-grid components for **Immersive Engineering**. It is built with GregTechCEu Buildscripts and RetroFuturaGradle.
 
-# Build the mod
-./gradlew build
+- Java package: `com.micatechnologies.realgrid`
+- Main mod class: `RealGrid.java`
+- Build artifact base name: `real-grid-ie`
+- Required runtime dependency: Immersive Engineering `0.12+`
+- Source target: JVM 8; modern Java syntax is enabled through Jabel
+- Test platform: JUnit 5 is enabled, though gameplay/wire behavior also needs in-game validation.
 
-# Run Minecraft client in dev
-./gradlew runClient
+## Build and run
 
-# Run Minecraft server in dev
-./gradlew runServer
+Use a modern JDK for Gradle. Java 21+ is the established local/CI baseline; the build configuration also supports the modern Java 17 run tasks.
 
-# Clean build artifacts
-./gradlew clean
+```powershell
+# First setup, or after a clean that removes the workspace
+.\gradlew.bat setupDecompWorkspace
 
-# Run tests (JUnit 5)
-./gradlew test
+# Compile, test, and package
+.\gradlew.bat build
+.\gradlew.bat test
 
-# Update build.gradle to latest buildscript version
-./gradlew updateBuildScript
+# Development Minecraft instances
+.\gradlew.bat runClient
+.\gradlew.bat runServer
+
+# Maintenance
+.\gradlew.bat clean
+.\gradlew.bat updateBuildScript
 ```
 
-**Requirements:** Java 21 or newer to run Gradle (Azul Zulu Community recommended). RetroFuturaGradle warns on anything older and is dropping support for it; CI uses 21. This governs the Gradle process only -- the project uses Jabel to allow modern Java syntax while targeting JVM 8, and the mod itself still builds for Java 8. Heap is set to `-Xmx3G` in `gradle.properties` for decompilation.
+Set `JAVA_HOME` to a suitable JDK if Gradle cannot find one. Do not hand-edit the auto-managed `build.gradle`; change mod settings in `buildscript.properties`, dependencies in `dependencies.gradle`, repositories in `repositories.gradle`, and optional project Gradle customizations in `addon.gradle`.
 
-**JDK Location:** The JDK is managed via IntelliJ's toolchain and lives under `C:\Users\<username>\.jdks\`. When running Gradle from the CLI, set `JAVA_HOME` to a 21+ JDK there:
-```bash
-JAVA_HOME="C:/Users/<username>/.jdks/azul-25.0.1" ./gradlew build
-```
-
-**IDE Setup:** IntelliJ IDEA is the primary IDE. The GregTech buildscript auto-generates run configurations (Setup Workspace, Run Client, Run Server, Build Jars, Update Buildscript, FAQ) via the `idea` plugin block in `build.gradle`. These appear automatically when the project is opened -- no XML run configuration files are stored in the repo. If IntelliJ cannot find the JDK, go to **File > Project Structure > SDKs** and add a 21+ JDK from `C:\Users\<username>\.jdks\`. The Gradle JVM should also be set to this JDK under **File > Settings > Build, Execution, Deployment > Build Tools > Gradle**.
-
-## Architecture Overview
-
-This is a **Minecraft 1.12.2 Forge mod** (mod ID: `realgrid`) that adds realistic power grid components as an addon for [Immersive Engineering](https://www.curseforge.com/minecraft/mc-mods/immersive-engineering). The build system is GregTechCEu Buildscripts (RetroFuturaGradle wrapper).
-
-### Source Layout
+## Source layout
 
 ```
-src/main/java/com/micatechnologies/realgridaddon/
-├── RealGrid.java           # Main @Mod class; lifecycle events delegate to proxy
-├── proxy/
-│   ├── CommonProxy.java         # Server-side: registers tile entities in preInit
-│   └── ClientProxy.java         # Client-side: extends CommonProxy
+src/main/java/com/micatechnologies/realgrid/
+├── RealGrid.java                    # @Mod entry point and lifecycle delegation
+├── proxy/                           # Common/client setup
 ├── init/
-│   ├── ModBlocks.java           # Block registration via @SubscribeEvent + creative tab
-│   ├── ModItems.java            # Item model registration (ModelLoader)
-│   └── ModTileEntities.java     # TileEntity registration (GameRegistry)
-├── items/
-│   └── ItemBlockBase.java       # Generic ItemBlock wrapper with metadata support
-└── blocks/
-    ├── transformers/            # 4 transformer variants (2 classes x 2 wire counts)
-    │   ├── BlockRealTransformerBase.java      # Abstract base block
-    │   ├── TileEntityRealTransformer.java     # Abstract base TE
-    │   └── ...concrete variants
-    ├── insulators/              # 5 insulator variants
-    │   ├── BlockInsulatorBase.java            # Abstract base block
-    │   ├── TileEntityInsulatorBase.java       # Abstract base TE
-    │   └── ...concrete variants
-    └── switchgear/              # 1 distribution switch
-        ├── BlockDistributionSwitch.java
-        └── TileEntityDistributionSwitch.java
-
-src/main/resources/assets/realgridaddon/
-├── blockstates/      # One JSON per block (vanilla format)
-├── models/block/     # Block model JSONs
-├── models/item/      # Item model JSONs (reference block models)
-├── textures/blocks/  # Block textures (PNG)
-└── lang/en_us.lang   # Language strings
+│   ├── ModBlocks.java               # Static block declarations and Forge registration handlers
+│   ├── RealGridRegistry.java        # Central ordered block/item registry
+│   ├── ModTileEntities.java         # TE discovery and deduplicated registration
+│   └── ModItems.java                # Client item-model registration
+├── blocks/
+│   ├── transformers/                # Six transformer variants and shared TE/block bases
+│   ├── insulators/                  # Forty-nine insulator variants and shared geometry/base TE
+│   └── cutoffs/                     # Six cutoff-switch variants and shared TE/block base
+├── items/                           # Generic ItemBlock wrapper
+└── util/BoundsUtil.java             # Horizontal rotation of bounds and wire offsets
 ```
 
-### Key Dependencies
+Assets are under `src/main/resources/assets/realgrid/`. Models are authored facing south for transformers and are rotated through blockstate/model handling; insulator side/dead-end geometry is defined as north-facing then rotated by `BoundsUtil`.
 
-- **Immersive Engineering** (`required-after`): Provides `TileEntityImmersiveConnectable`, `WireType`, `ImmersiveNetHandler`, and IE block interfaces (`IDirectionalTile`, `IHasDummyBlocks`, etc.)
-- Dependency declared in `dependencies.gradle` via `api rfg.deobf("blusunrize:ImmersiveEngineering:0.12-+")`
-- Repository configured in `repositories.gradle` (Blusunrize Maven)
+## Registration and lifecycle
 
-### Block Categories
+`RealGrid` delegates Forge lifecycle events to the sided proxy. During `CommonProxy.preInit()`:
 
-| Category | Count | Base Classes | IE Integration |
-|---|---|---|---|
-| Transformers | 4 blocks | `BlockRealTransformerBase` + `TileEntityRealTransformer` | HV/MV/LV wire connections, 2-block tall dummy system |
-| Insulators | 5 blocks | `BlockInsulatorBase` + `TileEntityInsulatorBase` | Wire relay, type-limiting, all wire types |
-| Switchgear | 1 block | Direct implementation | Redstone-controlled energy relay, invertible |
+1. `ModBlocks.ensureLoaded()` forces static block construction.
+2. Each block base constructor registers itself with `RealGridRegistry`, which also creates its `ItemBlockBase`.
+3. `ModTileEntities.register()` iterates that registry and registers each unique TE type.
+4. Forge registry events register the collected blocks/items, and the client-only model event registers item models.
 
-### Registration Flow
+There are currently **61 registered blocks**: **6 transformers**, **49 insulators**, and **6 cutoff switches**. Do not maintain a second manual registration list; add a block through the established base-class/self-registration pattern.
 
-1. **`RealGridAddon.java`** -- Main `@Mod` class; `preInit`/`init`/`postInit` delegate to proxy
-2. **`CommonProxy.preInit()`** -- Calls `ModTileEntities.register()` for all tile entities
-3. **`ModBlocks`** (`@Mod.EventBusSubscriber`) -- Registers blocks and ItemBlocks via Forge events
-4. **`ModItems`** (`@Mod.EventBusSubscriber`) -- Registers item models via `ModelRegistryEvent`
+## Immersive Engineering wire integration
 
-### Version
+The major behavioral contract of the mod is implemented in three shared tile-entity bases, all extending IE's `TileEntityImmersiveConnectable`.
 
-Version is derived from Git tags. The `Tags` class is auto-generated by the buildscript with `MODID`, `MODNAME`, and `VERSION` fields.
+### Transformers
 
-## Build Configuration
+`TileEntityRealTransformer` represents two-block-tall, master/dummy multiblocks.
 
-- **`build.gradle`**: Auto-managed by GregTechCEu Buildscripts. Do NOT edit manually. Update via `./gradlew updateBuildScript`.
-- **`buildscript.properties`**: All mod-specific configuration (name, ID, group, features).
-- **`gradle.properties`**: Gradle JVM settings only.
-- **`dependencies.gradle`**: Mod dependencies (Immersive Engineering).
-- **`repositories.gradle`**: Maven repositories for dependencies (Blusunrize Maven).
+- Connector `0`: invisible top-centre MV/LV relay; accepts multiple connections of exactly one type, copper or electrum.
+- Connectors `1` and `2`: HV bushings; steel only. One-wire variants have one bushing/one connection; two-wire variants have two.
+- `getTargetedConnector(TargetingInfo)` maps click location and horizontal facing to a connector.
+- `getConnectionOffset(Connection)` must agree with the physical model. Per-variant bushing offsets/heights are transformed from the model's authored south-facing coordinate system.
+- With two HV bushings, the renderer assigns wires to the nearer bushing based on remote endpoints, keeping the pair uncrossed where possible.
+- Cable state is reconstructed from IE's live connection set after placement/load/removal to avoid stale slot/type state from world edits, copying, or duplicate callbacks.
 
-## IE Wire System Integration
+### Insulators
 
-All blocks extend `TileEntityImmersiveConnectable` and implement:
-- `IDirectionalTile` -- Horizontal facing (N/S/E/W)
-- `IHasDummyBlocks` -- Multi-block support (transformers are 2 blocks tall)
-- `IBlockBounds` -- Custom bounding boxes
+`TileEntityInsulatorBase` is an energy relay accepting copper, electrum, or steel. It permits multiple wires but only a single wire type per insulator at a time.
 
-Wire connections use `ConnectionPoint` with `TargetingInfo` for click-position-based connection point selection. Wire types: `WireType.COPPER` (LV), `WireType.ELECTRUM` (MV), `WireType.STEEL` (HV).
+`InsulatorGeometry` provides each leaf TE's bounding box and attachment point. The five geometry presets are `VISE_TOP`, `F_NECK`, `POST_TOP`, `SIDE_MOUNT`, and `DEAD_END`; the rotating presets use `BoundsUtil`. The base TE reconstructs both wire count and `limitType` from IE's live connection set, including a live fallback in `getCableLimiter` so IE wire cutters continue to work when saved state was stale.
 
-Type-limiting relays enforce single wire type per connector via `limitType` / `getCableLimiter()`.
+### Cutoff switches
+
+`TileEntityCutoffSwitch` is a relay/switch shared by six visual block variants.
+
+- It accepts up to three attached wires and intentionally allows mixed LV/MV/HV types.
+- The switch state controls whether energy may pass; redstone transitions and hammer inversion are handled by the TE.
+- Redstone output is limited to the facing axis to avoid the switch reading its own output as input.
+- Its present rendered connection offset is the block centre (`0.5, 0.5, 0.5`).
+
+### Wire lifecycle rules
+
+When modifying any connectable block, preserve the full IE lifecycle: attachment checks, `connectCable`, `getCableLimiter`, `removeCable`, NBT persistence, client notification, and block-break cleanup. Block destruction must use IE's `clearAllConnectionsFor(...)` while the TE is still available so remote endpoints and client wire rendering are also cleaned up.
+
+## Wire-attachment testing checklist
+
+For MCMCP or manual gameplay testing, validate every affected variant in all four horizontal facings:
+
+1. Click each visible attachment point and each intended invisible relay region; verify the selected connector and accepted/rejected wire types.
+2. Confirm the rendered wire ends precisely on the model's insulator/bushing rather than the block centre or an unrotated position.
+3. Test occupancy limits, same-type relay rules, and mixed-type rejection/acceptance as described above.
+4. Attach, cut, and reattach wires; break the block; reload the chunk/world; and verify no ghost wires or stale cable limiter remains.
+5. For two-bushing transformers, attach two wires from asymmetric endpoints and confirm they take separate, non-crossing bushings.
+
+Treat the model JSON and the relevant `getConnectionOffset`/geometry values as a coupled change: modifying one normally requires validating the other in-game.
+
+## Coding conventions and practical notes
+
+- Follow the existing Java style and use shared bases rather than duplicating IE integration in leaf variants.
+- Keep package and asset namespaces `com.micatechnologies.realgrid` and `realgrid`; older documentation that uses `realgridaddon` is obsolete.
+- Preserve client/server separation: model registration is client-only; world/network mutations must not run on the client.
+- `Tags` is generated by the buildscript; do not add or manually maintain it.
+- Check `git status` before editing. Preserve unrelated work in a dirty tree.
