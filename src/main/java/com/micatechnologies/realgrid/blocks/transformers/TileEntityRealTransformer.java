@@ -47,11 +47,13 @@ public abstract class TileEntityRealTransformer extends TileEntityImmersiveConne
     // Attachment geometry taken from the block models, in block units. Each is the point the wire
     // should visually meet, so a model edit has to be reflected here.
 
-    /** Class A arms: midpoint of the insulator stack pair on each overhanging arm. */
+    /** Class A arm bushings: midpoint of the insulator fin pair on each overhanging arm. */
     protected static final double CLASS_A_ARM_LEFT = -0.21875;  // model X = -3.5px
     protected static final double CLASS_A_ARM_RIGHT = 1.21875;  // model X = 19.5px
-    /** Class A arms sit on the upper block, model Y = 26px. */
-    protected static final double CLASS_A_ARM_HEIGHT = 1.625;
+    /** Top of the Class A arm bushings, model Y = 29px: the wire rests on the bushing, not through it. */
+    protected static final double CLASS_A_ARM_HEIGHT = 1.8125;
+    /** Class A arms are centred on model Z = 9px, one pixel behind the block centre. */
+    protected static final double CLASS_A_ARM_DEPTH = 0.5625;
     /** Class C bushing cap tops: upper block (1.0) plus model Y = 29px. */
     protected static final double CLASS_C_BUSHING_HEIGHT = 2.8125;
     /** Jumbo bushing cap tops: upper block (1.0) plus model Y = 32px. */
@@ -77,7 +79,8 @@ public abstract class TileEntityRealTransformer extends TileEntityImmersiveConne
      * axis. 0.0 and 1.0 are the block's own edges; values outside that range are arms overhanging it.
      * <p>
      * One entry means a single bushing serving every HV wire -- the 1-wire tops model exactly one, in
-     * the centre. Two entries are a pair, index 0 being HV slot 1.
+     * the centre. Two entries are a pair; which wire goes to which is decided by where the wires come
+     * from, see {@link #getHvConnectionOffset(Connection)}.
      *
      * @return the bushing centres, length 1 or 2
      */
@@ -89,6 +92,17 @@ public abstract class TileEntityRealTransformer extends TileEntityImmersiveConne
      * @return the attachment height
      */
     protected abstract double getHvBushingHeight();
+
+    /**
+     * Depth of the HV attachment point along the model's authored Z axis. The top-mounted bushings sit
+     * on the block's centre line; a variant whose bushings are modelled off it overrides this.
+     *
+     * @return the attachment depth, 0.5 by default
+     */
+    protected double getHvBushingDepth()
+    {
+        return 0.5;
+    }
 
     /**
      * @return true if a single bushing serves every HV wire on this variant
@@ -302,7 +316,7 @@ public abstract class TileEntityRealTransformer extends TileEntityImmersiveConne
                 if (cableType != WireType.STEEL)
                     return false;
                 // The slots are occupancy, not identity: which bushing a wire draws to is worked out from the
-                // wires themselves (isHvSlot1), so either side takes a wire while there is room for one.
+                // wires themselves (getHvConnectionOffset), so either side takes a wire while there is room for one.
                 return isTwoWire() ? hvCable2 == null : hvCable1 == null;
             case 2:
                 // Second HV connection - STEEL only (2-wire only)
@@ -437,71 +451,108 @@ public abstract class TileEntityRealTransformer extends TileEntityImmersiveConne
     public Vec3d getConnectionOffset(Connection con)
     {
         if (con.cableType == WireType.STEEL)
-        {
-            // HV connections
             return getHvConnectionOffset(con);
-        }
-        else
-        {
-            // MV/LV connection - invisible relay on top center
-            return new Vec3d(0.5, 2.0, 0.5);
-        }
+        // MV/LV connection - invisible relay on top centre
+        return new Vec3d(0.5, 2.0, 0.5);
     }
 
     /**
-     * Determines whether the given connection belongs to HV slot 1 by querying
-     * IE's live connection list and sorting the two HV wires deterministically
-     * by their remote endpoint position. The wire whose remote end has the
-     * smaller packed-long position is assigned to slot 1.
-     */
-    private boolean isHvSlot1(Connection con)
-    {
-        if (world == null)
-            return true;
-
-        BlockPos myPos = getPos();
-        BlockPos otherEnd = con.start.equals(myPos) ? con.end : con.start;
-        Set<Connection> conns = ImmersiveNetHandler.INSTANCE.getConnections(world, myPos);
-        if (conns != null)
-        {
-            for (Connection c : conns)
-            {
-                if (c.cableType != WireType.STEEL)
-                    continue;
-                // Skip the same logical connection (same remote endpoint)
-                BlockPos cOtherEnd = c.start.equals(myPos) ? c.end : c.start;
-                if (cOtherEnd.equals(otherEnd))
-                    continue;
-                // Found a different HV connection -- the one whose remote
-                // endpoint has the smaller packed-long goes to slot 1
-                return otherEnd.toLong() < cOtherEnd.toLong();
-            }
-        }
-        // Only one HV connection -- slot 1
-        return true;
-    }
-
-    /**
-     * Gets the 3D offset for an HV connection. Offsets are derived from the
-     * block model bushing positions so wires attach at the visual connection
-     * points rather than inside the transformer body.
+     * Where an HV wire meets this transformer, relative to the master block.
+     *
+     * <p>A lone bushing takes every wire. With a pair, a wire goes to the bushing nearer its far end, and when
+     * two wires are attached they are shared out so that neither crosses the body to reach its bushing. The rule
+     * this replaces sorted the wires by the packed position of their far end and knew nothing of where the
+     * bushings were, so a wire arriving from the east was routinely sent to the west arm: it ran straight through
+     * the tank and looked, from outside, as though it ended at the top centre of the body.
      */
     protected Vec3d getHvConnectionOffset(Connection con)
     {
         double[] bushings = getHvBushingOffsets();
-        // A lone bushing takes every HV wire; a pair splits them by slot.
-        double lateral = bushings.length == 1 ? bushings[0] : (isHvSlot1(con) ? bushings[0] : bushings[1]);
         double y = getHvBushingHeight();
+        double depth = getHvBushingDepth();
+        if (bushings.length == 1)
+            return modelToWorld(bushings[0], y, depth);
 
-        // The models are authored facing SOUTH, and the blockstate turns them from there.
-        if (facing == EnumFacing.NORTH)
-            return new Vec3d(lateral, y, 0.5);
-        else if (facing == EnumFacing.SOUTH)
-            return new Vec3d(1.0 - lateral, y, 0.5);
-        else if (facing == EnumFacing.WEST)
-            return new Vec3d(0.5, y, 1.0 - lateral);
-        else // EAST
-            return new Vec3d(0.5, y, lateral);
+        Vec3d first = modelToWorld(bushings[0], y, depth);
+        Vec3d second = modelToWorld(bushings[1], y, depth);
+        BlockPos remote = remoteEndOf(con);
+        Vec3d here = centreOf(remote);
+        BlockPos otherRemote = otherHvRemoteEnd(remote);
+        if (otherRemote == null)
+            return here.distanceTo(first) <= here.distanceTo(second) ? first : second;
+
+        Vec3d other = centreOf(otherRemote);
+        double straight = here.distanceTo(first) + other.distanceTo(second);
+        double crossed = here.distanceTo(second) + other.distanceTo(first);
+        if (straight != crossed)
+            return straight < crossed ? first : second;
+        // Both far ends are equidistant from both bushings (stacked directly above, say). Any split is as good
+        // as any other, so take a stable one that the other wire's call will agree with.
+        return remote.toLong() < otherRemote.toLong() ? first : second;
+    }
+
+    /**
+     * The far end of a connection attached to this transformer.
+     */
+    private BlockPos remoteEndOf(Connection con)
+    {
+        return con.start.equals(getPos()) ? con.end : con.start;
+    }
+
+    /**
+     * The centre of a block, relative to the master block, in the same frame as the bushing offsets.
+     */
+    private Vec3d centreOf(BlockPos target)
+    {
+        return new Vec3d(target.getX() - getPos().getX() + 0.5,
+                target.getY() - getPos().getY() + 0.5,
+                target.getZ() - getPos().getZ() + 0.5);
+    }
+
+    /**
+     * The far end of the other HV wire on this transformer, if there is one.
+     *
+     * @param remote the far end of the wire being placed, which is skipped
+     */
+    private BlockPos otherHvRemoteEnd(BlockPos remote)
+    {
+        if (world == null)
+            return null;
+        Set<Connection> conns = ImmersiveNetHandler.INSTANCE.getConnections(world, getPos());
+        if (conns == null)
+            return null;
+        for (Connection c : conns)
+        {
+            if (c.cableType != WireType.STEEL)
+                continue;
+            BlockPos end = remoteEndOf(c);
+            if (!end.equals(remote))
+                return end;
+        }
+        return null;
+    }
+
+    /**
+     * Turns a point in the model's own frame into an offset from the master block in the world. The models are
+     * authored facing SOUTH, the blockstates leave south unrotated and turn the model from there, and this applies
+     * the same turn -- so a point read off the model lands on the model however the block is placed. The previous
+     * arithmetic mirrored the model left-to-right for every facing, which went unnoticed only because every
+     * bushing pair is symmetric about the centre line.
+     */
+    protected Vec3d modelToWorld(double x, double y, double z)
+    {
+        switch (facing)
+        {
+            case NORTH:
+                return new Vec3d(1.0 - x, y, 1.0 - z);
+            case WEST:
+                return new Vec3d(1.0 - z, y, x);
+            case EAST:
+                return new Vec3d(z, y, 1.0 - x);
+            case SOUTH:
+            default:
+                return new Vec3d(x, y, z);
+        }
     }
 
     // === IDirectionalTile ===
