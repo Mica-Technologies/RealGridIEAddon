@@ -26,6 +26,9 @@
       "1": {
         "model": "realgrid:class_c_transformer_top_2wire",
         "custom": {}
+      },
+      "2": {
+        "model": "realgrid:dummyair"
       }
     },
     "inventory": [

@@ -41,7 +41,7 @@ public abstract class BlockRealTransformerBase extends Block implements ITileEnt
     IRealGridTileEntityProvider
 {
     public static final PropertyDirection FACING = PropertyDirection.create("facing", EnumFacing.Plane.HORIZONTAL);
-    public static final PropertyInteger DUMMY = PropertyInteger.create("dummy", 0, 1);
+    public static final PropertyInteger DUMMY = PropertyInteger.create("dummy", 0, 2);
 
     protected static final AxisAlignedBB BASE_AABB  = new AxisAlignedBB(0.0,    0.0, 0.0,    1.0,    1.0, 1.0);
     protected static final AxisAlignedBB UPPER_AABB = new AxisAlignedBB(0.0625, 0.0, 0.0625, 0.9375, 0.875, 0.9375);
@@ -136,7 +136,8 @@ public abstract class BlockRealTransformerBase extends Block implements ITileEnt
     public IBlockState getStateFromMeta(int meta)
     {
         int facingIndex = meta & 3;
-        int dummyVal    = (meta >> 2) & 1;
+        int dummyVal    = (meta >> 2) & 3;
+        if (dummyVal > 2) dummyVal = 0;
         EnumFacing facing = EnumFacing.byHorizontalIndex(facingIndex);
         return getDefaultState().withProperty(FACING, facing).withProperty(DUMMY, dummyVal);
     }
@@ -176,7 +177,8 @@ public abstract class BlockRealTransformerBase extends Block implements ITileEnt
                 transformer.facing = facing;
                 transformer.dummy  = 0;
 
-                // Place dummy block above
+                // Place the visible upper half. Top-mounted variants also need an invisible proxy in the third
+                // block cell: their bushing caps are rendered there, and Minecraft only raytraces real cells.
                 BlockPos upperPos = pos.up();
                 if (world.isAirBlock(upperPos))
                 {
@@ -189,6 +191,17 @@ public abstract class BlockRealTransformerBase extends Block implements ITileEnt
                         ((TileEntityRealTransformer) upperTe).facing = facing;
                     }
                 }
+                if (!transformer.isHvOnSide() && world.isAirBlock(upperPos.up()))
+                {
+                    IBlockState proxyState = state.withProperty(DUMMY, 2);
+                    world.setBlockState(upperPos.up(), proxyState);
+                    TileEntity proxyTe = world.getTileEntity(upperPos.up());
+                    if (proxyTe instanceof TileEntityRealTransformer)
+                    {
+                        ((TileEntityRealTransformer) proxyTe).dummy = 2;
+                        ((TileEntityRealTransformer) proxyTe).facing = facing;
+                    }
+                }
             }
         }
     }
@@ -196,7 +209,12 @@ public abstract class BlockRealTransformerBase extends Block implements ITileEnt
     @Override
     public boolean canPlaceBlockAt(World world, BlockPos pos)
     {
-        return super.canPlaceBlockAt(world, pos) && world.isAirBlock(pos.up());
+        if (!super.canPlaceBlockAt(world, pos) || !world.isAirBlock(pos.up()))
+            return false;
+        TileEntity transformer = createNewTileEntity(world, 0);
+        return !(transformer instanceof TileEntityRealTransformer)
+            || ((TileEntityRealTransformer) transformer).isHvOnSide()
+            || world.isAirBlock(pos.up(2));
     }
 
     // -----------------------------------------------------------------------
@@ -217,7 +235,8 @@ public abstract class BlockRealTransformerBase extends Block implements ITileEnt
             // Must happen while TileEntities still exist at their positions.
             if (!world.isRemote)
             {
-                for (int i = 0; i <= 1; i++)
+                int height = transformer.isHvOnSide() ? 1 : 2;
+                for (int i = 0; i <= height; i++)
                 {
                     BlockPos cleanupPos = basePos.up(i);
                     TileEntity cleanupTe = world.getTileEntity(cleanupPos);
@@ -228,7 +247,8 @@ public abstract class BlockRealTransformerBase extends Block implements ITileEnt
                 }
             }
 
-            for (int i = 0; i <= 1; i++)
+            int height = transformer.isHvOnSide() ? 1 : 2;
+            for (int i = 0; i <= height; i++)
             {
                 BlockPos targetPos = basePos.up(i);
                 if (!targetPos.equals(pos) && world.getBlockState(targetPos).getBlock() == this)
@@ -250,9 +270,59 @@ public abstract class BlockRealTransformerBase extends Block implements ITileEnt
         TileEntity te = source.getTileEntity(pos);
         if (te instanceof TileEntityRealTransformer)
         {
-            if (((TileEntityRealTransformer) te).dummy == 1) return UPPER_AABB;
+            TileEntityRealTransformer transformer = (TileEntityRealTransformer) te;
+            if (transformer.dummy == 2)
+                return BASE_AABB;
+            if (transformer.dummy == 1)
+                return getUpperSelectionBounds(transformer);
         }
         return BASE_AABB;
+    }
+
+    /**
+     * The upper half owns the visible transformer connectors. Its old 14px-tall box ended below the Class C and
+     * Jumbo bushing caps, so raytracing could never reach the place a wire visibly attaches. This is deliberately
+     * a selection box only: {@link #getCollisionBoundingBox(IBlockState, IBlockAccess, BlockPos)} keeps the compact
+     * physical collision shape so the connector affordance does not turn into an invisible wall.
+     */
+    private AxisAlignedBB getUpperSelectionBounds(TileEntityRealTransformer transformer)
+    {
+        double top = UPPER_AABB.maxY;
+        if (!transformer.isHvOnSide())
+            return new AxisAlignedBB(0, 0, 0, 1, top, 1);
+
+        // Class A's arms project along the model X axis. Rotate the narrow arm corridor with the transformer so
+        // a click on either visible bushing reaches the upper dummy in every horizontal facing.
+        double[] bushings = transformer.getHvBushingOffsets();
+        double min = Math.min(bushings[0], bushings[bushings.length - 1]) - .20;
+        double max = Math.max(bushings[0], bushings[bushings.length - 1]) + .20;
+        double depth = transformer.getHvBushingDepth();
+        double near = depth - .30;
+        double far = depth + .30;
+
+        switch (transformer.getFacing())
+        {
+            case EAST:
+            case WEST:
+                return new AxisAlignedBB(near, 0, min, far, top, max);
+            case NORTH:
+            case SOUTH:
+            default:
+                return new AxisAlignedBB(min, 0, near, max, top, far);
+        }
+    }
+
+    @Nullable
+    @Override
+    public AxisAlignedBB getCollisionBoundingBox(IBlockState state, IBlockAccess world, BlockPos pos)
+    {
+        TileEntity te = world.getTileEntity(pos);
+        if (!(te instanceof TileEntityRealTransformer))
+            return BASE_AABB;
+        int dummy = ((TileEntityRealTransformer) te).dummy;
+        if (dummy == 2)
+            return null;
+        return dummy == 1 ? UPPER_AABB : BASE_AABB;
     }
 
     @Override public boolean isOpaqueCube(IBlockState state) { return false; }

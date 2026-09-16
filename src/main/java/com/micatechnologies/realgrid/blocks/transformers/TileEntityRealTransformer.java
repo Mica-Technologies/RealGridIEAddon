@@ -24,7 +24,8 @@ import java.util.Set;
 
 /**
  * Abstract base class for all Real Grid Addon transformers.
- * Two blocks tall (dummy=0 base, dummy=1 upper).
+ * Two blocks tall for Class A (dummy=0 base, dummy=1 upper) and three cells tall for top-mounted variants
+ * (dummy=2 is an invisible, clickable bushing proxy above the rendered upper half).
  * Connection points:
  * - Index 0: invisible MV/LV relay point on top center (accepts multiple connections)
  * - Index 1: first HV connection (STEEL only)
@@ -647,7 +648,7 @@ public abstract class TileEntityRealTransformer extends TileEntityImmersiveConne
     @Override
     public void placeDummies(BlockPos pos, IBlockState state, EnumFacing side, float hitX, float hitY, float hitZ)
     {
-        // Place the upper dummy block
+        // Place the visible upper dummy block.
         world.setBlockState(pos.up(), state);
         TileEntity te = world.getTileEntity(pos.up());
         if (te instanceof TileEntityRealTransformer)
@@ -655,13 +656,23 @@ public abstract class TileEntityRealTransformer extends TileEntityImmersiveConne
             ((TileEntityRealTransformer) te).dummy = 1;
             ((TileEntityRealTransformer) te).facing = this.facing;
         }
+        if (!isHvOnSide() && world.isAirBlock(pos.up(2)))
+        {
+            world.setBlockState(pos.up(2), state.withProperty(BlockRealTransformerBase.DUMMY, 2));
+            TileEntity proxy = world.getTileEntity(pos.up(2));
+            if (proxy instanceof TileEntityRealTransformer)
+            {
+                ((TileEntityRealTransformer) proxy).dummy = 2;
+                ((TileEntityRealTransformer) proxy).facing = this.facing;
+            }
+        }
     }
 
     @Override
     public void breakDummies(BlockPos pos, IBlockState state)
     {
         // Remove both blocks of the 2-tall structure
-        for (int i = 0; i <= 1; i++)
+        for (int i = 0; i <= (isHvOnSide() ? 1 : 2); i++)
         {
             world.setBlockToAir(getPos().add(0, -dummy, 0).add(0, i, 0));
         }
@@ -680,6 +691,8 @@ public abstract class TileEntityRealTransformer extends TileEntityImmersiveConne
     @Override
     public float[] getBlockBounds()
     {
+        if (dummy == 2)
+            return new float[]{0, 0, 0, 1, 1, 1};
         if (dummy == 1)
         {
             // Upper block - slightly smaller
