@@ -317,14 +317,14 @@ public abstract class TileEntityRealTransformer extends TileEntityImmersiveConne
                     return false;
                 // The slots are occupancy, not identity: which bushing a wire draws to is worked out from the
                 // wires themselves (getHvConnectionOffset), so either side takes a wire while there is room for one.
-                return isTwoWire() ? hvCable1 == null || hvCable2 == null : hvCable1 == null;
+                return hasHvCapacity();
             case 2:
                 // Second HV connection - STEEL only (2-wire only)
                 if (!isTwoWire())
                     return false;
                 if (cableType != WireType.STEEL)
                     return false;
-                return hvCable1 == null || hvCable2 == null;
+                return hasHvCapacity();
             default:
                 return false;
         }
@@ -345,8 +345,12 @@ public abstract class TileEntityRealTransformer extends TileEntityImmersiveConne
         // until after this callback returns; relying on the subsequent sync alone left a window in which a copper
         // relay could accept electrum, or a one-wire transformer could accept a second HV wire.
         int targetedConnector = getTargetedConnector(target);
-        if (targetedConnector == 0 && mvLvLimitType == null)
-            mvLvLimitType = cableType;
+        if (targetedConnector == 0)
+        {
+            if (mvLvLimitType == null)
+                mvLvLimitType = cableType;
+            mvLvCableCount++;
+        }
         else if (targetedConnector == 1 || targetedConnector == 2)
         {
             if (hvCable1 == null)
@@ -355,9 +359,9 @@ public abstract class TileEntityRealTransformer extends TileEntityImmersiveConne
                 hvCable2 = cableType;
         }
 
-        // IE normally registers the connection before telling either end, so refresh counts/slots from the
-        // authoritative live set when it is available.
-        syncCablesFromConnections();
+        // Do not sync here. This IE version can call us before inserting the connection in its table; a sync at
+        // that instant erases the reservation above and makes a just-connected one-wire transformer accept a
+        // second HV coil. validate() reconciles these fields with the authoritative table once registration ends.
         this.markDirty();
         if (world != null)
         {
@@ -454,6 +458,30 @@ public abstract class TileEntityRealTransformer extends TileEntityImmersiveConne
         mvLvCableCount = mvLv;
         mvLvLimitType = mvLvType;
         return true;
+    }
+
+    /**
+     * Whether another HV wire may be attached. Stored state protects the client-side click path, while the live
+     * handler count protects the server if a saved tile has not yet received its description packet. Taking the
+     * larger count is deliberately conservative: a stale value may reject one click until validation, but can
+     * never create an illegal extra HV connection.
+     */
+    private boolean hasHvCapacity()
+    {
+        int occupied = (hvCable1 == null ? 0 : 1) + (hvCable2 == null ? 0 : 1);
+        if (world != null)
+        {
+            Set<Connection> conns = ImmersiveNetHandler.INSTANCE.getConnections(world, getPos());
+            if (conns != null)
+            {
+                int live = 0;
+                for (Connection c : conns)
+                    if (c.cableType == WireType.STEEL)
+                        live++;
+                occupied = Math.max(occupied, live);
+            }
+        }
+        return occupied < (isTwoWire() ? 2 : 1);
     }
 
     @Override
