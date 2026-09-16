@@ -341,7 +341,14 @@ public abstract class TileEntityRealTransformer extends TileEntityImmersiveConne
             return;
         }
 
-        // IE registers the connection before telling either end, so the live wires already include it.
+        // Establish the relay's type immediately.  On some IE paths the handler's connection table is not
+        // observable until after this callback returns; relying on the subsequent sync alone left a window in
+        // which a copper relay could accept an electrum wire (or vice versa).
+        if (getTargetedConnector(target) == 0 && mvLvLimitType == null)
+            mvLvLimitType = cableType;
+
+        // IE normally registers the connection before telling either end, so refresh counts/slots from the
+        // authoritative live set when it is available.
         syncCablesFromConnections();
         this.markDirty();
         if (world != null)
