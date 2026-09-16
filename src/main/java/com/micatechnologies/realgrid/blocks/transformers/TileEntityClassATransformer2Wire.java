@@ -21,8 +21,8 @@ public class TileEntityClassATransformer2Wire extends TileEntityRealTransformer
     }
 
     /**
-     * class_a_transformer.json models the insulator stacks at X = -4.5px / -2.5px on the left arm and
-     * 18.5px / 20.5px on the right; the midpoint of each pair is the attachment point.
+     * class_a_transformer.json models the insulator fins at X = -4.5px / -2.5px on the left arm and
+     * 18.5px / 20.5px on the right; the wire meets the top of each arm at the midpoint of its pair.
      */
     @Override
     protected double[] getHvBushingOffsets()
@@ -34,5 +34,11 @@ public class TileEntityClassATransformer2Wire extends TileEntityRealTransformer
     protected double getHvBushingHeight()
     {
         return CLASS_A_ARM_HEIGHT;
+    }
+
+    @Override
+    protected double getHvBushingDepth()
+    {
+        return CLASS_A_ARM_DEPTH;
     }
 }

@@ -21,8 +21,8 @@ public class TileEntityClassATransformer1Wire extends TileEntityRealTransformer
     }
 
     /**
-     * Shares class_a_transformer.json with the 2-wire variant, so both arms are modelled; only slot 1 is
-     * ever filled here.
+     * Shares class_a_transformer.json with the 2-wire variant, so both arms are modelled; the one wire goes
+     * to whichever arm is nearer where it comes from.
      */
     @Override
     protected double[] getHvBushingOffsets()
@@ -34,5 +34,11 @@ public class TileEntityClassATransformer1Wire extends TileEntityRealTransformer
     protected double getHvBushingHeight()
     {
         return CLASS_A_ARM_HEIGHT;
+    }
+
+    @Override
+    protected double getHvBushingDepth()
+    {
+        return CLASS_A_ARM_DEPTH;
     }
 }
