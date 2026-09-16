@@ -26,6 +26,9 @@
       "1": {
         "model": "realgrid:jumbo_transformer_top_1wire",
         "custom": {}
+      },
+      "2": {
+        "model": "realgrid:dummyair"
       }
     },
     "inventory": [
