@@ -1,0 +1,291 @@
+package com.micatechnologies.realgrid.blocks.lightmounts;
+
+import blusunrize.immersiveengineering.api.IEProperties;
+import blusunrize.immersiveengineering.api.energy.wires.TileEntityImmersiveConnectable;
+import blusunrize.immersiveengineering.common.util.Utils;
+import com.micatechnologies.realgrid.RealGrid;
+import com.micatechnologies.realgrid.blocks.insulators.BlockInsulatorBase;
+import com.micatechnologies.realgrid.init.IRealGridTileEntityProvider;
+import com.micatechnologies.realgrid.init.RealGridRegistry;
+import com.micatechnologies.realgrid.util.BoundsUtil;
+import net.minecraft.block.Block;
+import net.minecraft.block.ITileEntityProvider;
+import net.minecraft.block.material.Material;
+import net.minecraft.block.properties.IProperty;
+import net.minecraft.block.properties.PropertyBool;
+import net.minecraft.block.properties.PropertyDirection;
+import net.minecraft.block.properties.PropertyEnum;
+import net.minecraft.block.state.BlockStateContainer;
+import net.minecraft.block.state.IBlockState;
+import net.minecraft.creativetab.CreativeTabs;
+import net.minecraft.entity.EntityLivingBase;
+import net.minecraft.entity.player.EntityPlayer;
+import net.minecraft.item.Item;
+import net.minecraft.item.ItemStack;
+import net.minecraft.tileentity.TileEntity;
+import net.minecraft.util.BlockRenderLayer;
+import net.minecraft.util.EnumBlockRenderType;
+import net.minecraft.util.EnumFacing;
+import net.minecraft.util.EnumHand;
+import net.minecraft.util.NonNullList;
+import net.minecraft.util.math.AxisAlignedBB;
+import net.minecraft.util.math.BlockPos;
+import net.minecraft.util.math.MathHelper;
+import net.minecraft.world.IBlockAccess;
+import net.minecraft.world.World;
+import net.minecraftforge.common.property.ExtendedBlockState;
+import net.minecraftforge.common.property.IExtendedBlockState;
+import net.minecraftforge.common.property.IUnlistedProperty;
+
+import javax.annotation.Nullable;
+
+/**
+ * A street-light arm hung from the side of a power pole, SCE / LADWP style. One block per arm
+ * length; the arm and its fixture overhang the blocks in front of the pole, and the fixture itself
+ * (a CSM cobra head or floodlight, or an IE floodlight) is placed as its own block at the tip.
+ *
+ * <p>State: {@link #FACING} is the direction the arm reaches, i.e. the pole is on the opposite
+ * side. {@link #SWING} turns the arm up to 45 degrees either way at the bracket, which stays flat
+ * on the pole. {@link #WIRED} is not stored: it shows the guide insulator once a wire is attached.
+ *
+ * <p>The models are generated placeholders; see scripts/gen_pole_light_mounts.py for their
+ * coordinate system and for where each arm length ends.
+ */
+public class BlockPoleLightMount extends Block implements ITileEntityProvider, IRealGridTileEntityProvider
+{
+    public static final PropertyDirection FACING = PropertyDirection.create("facing", EnumFacing.Plane.HORIZONTAL);
+    public static final PropertyEnum<ArmSwing> SWING = PropertyEnum.create("swing", ArmSwing.class);
+    public static final PropertyBool WIRED = PropertyBool.create("wired");
+
+    /** Every length shares one tile entity type. */
+    private static final String TILE_ENTITY_NAME = "pole_light_mount";
+
+    /** Beyond this many degrees off straight out from the pole, placement swings the arm. */
+    private static final float SWING_THRESHOLD_DEGREES = 22.5f;
+
+    private final int armLength;
+
+    public BlockPoleLightMount(int armLength)
+    {
+        super(Material.IRON);
+        this.armLength = armLength;
+        String registryName = "pole_light_mount_" + armLength;
+        setRegistryName(RealGrid.MODID, registryName);
+        setTranslationKey(RealGrid.MODID + "." + registryName);
+        setHardness(2.0f);
+        setResistance(10.0f);
+        setDefaultState(blockState.getBaseState()
+            .withProperty(FACING, EnumFacing.NORTH)
+            .withProperty(SWING, ArmSwing.STRAIGHT)
+            .withProperty(WIRED, false));
+        RealGridRegistry.registerBlock(this);
+    }
+
+    /** @return the arm's reach in blocks when straight */
+    public int getArmLength()
+    {
+        return armLength;
+    }
+
+    // -----------------------------------------------------------------------
+    // IRealGridTileEntityProvider
+    // -----------------------------------------------------------------------
+
+    @Override
+    public String getTileEntityName()
+    {
+        return TILE_ENTITY_NAME;
+    }
+
+    @Override
+    public Class<? extends TileEntity> getTileEntityClass()
+    {
+        return TileEntityPoleLightMount.class;
+    }
+
+    @Nullable
+    @Override
+    public TileEntity createNewTileEntity(World world, int meta)
+    {
+        return new TileEntityPoleLightMount();
+    }
+
+    @Override
+    public boolean hasTileEntity(IBlockState state) { return true; }
+
+    // -----------------------------------------------------------------------
+    // State
+    // -----------------------------------------------------------------------
+
+    @Override
+    public void getSubBlocks(CreativeTabs tab, NonNullList<ItemStack> items)
+    {
+        items.add(new ItemStack(Item.getItemFromBlock(this), 1, 0));
+    }
+
+    @Override
+    protected BlockStateContainer createBlockState()
+    {
+        return new ExtendedBlockState(this, new IProperty[]{FACING, SWING, WIRED},
+            new IUnlistedProperty[]{IEProperties.CONNECTIONS, IEProperties.TILEENTITY_PASSTHROUGH});
+    }
+
+    /** Bits 0-1: facing. Bits 2-3: swing. */
+    @Override
+    public IBlockState getStateFromMeta(int meta)
+    {
+        return getDefaultState()
+            .withProperty(FACING, EnumFacing.byHorizontalIndex(meta & 3))
+            .withProperty(SWING, ArmSwing.byIndex((meta >> 2) & 3));
+    }
+
+    @Override
+    public int getMetaFromState(IBlockState state)
+    {
+        return state.getValue(FACING).getHorizontalIndex() | (state.getValue(SWING).ordinal() << 2);
+    }
+
+    @Override
+    public IBlockState getActualState(IBlockState state, IBlockAccess world, BlockPos pos)
+    {
+        TileEntity te = world.getTileEntity(pos);
+        boolean wired = te instanceof TileEntityPoleLightMount && ((TileEntityPoleLightMount) te).isWired();
+        return state.withProperty(WIRED, wired);
+    }
+
+    @Override
+    public IBlockState getExtendedState(IBlockState state, IBlockAccess world, BlockPos pos)
+    {
+        if (state instanceof IExtendedBlockState)
+        {
+            TileEntity te = world.getTileEntity(pos);
+            if (te instanceof TileEntityImmersiveConnectable)
+            {
+                state = ((IExtendedBlockState) state)
+                    .withProperty(IEProperties.CONNECTIONS, ((TileEntityImmersiveConnectable) te).genConnBlockstate())
+                    .withProperty(IEProperties.TILEENTITY_PASSTHROUGH, te);
+            }
+        }
+        return state;
+    }
+
+    // -----------------------------------------------------------------------
+    // Placement
+    // -----------------------------------------------------------------------
+
+    /**
+     * Clicking the side of a pole hangs the mount on that side, reaching away from it. The arm then
+     * swings towards where the player is looking from: someone standing off to one side of the
+     * pole gets an arm pointing their way. Clicking a top or bottom face has no pole side to go
+     * on, so the arm reaches towards the player.
+     */
+    @Override
+    public IBlockState getStateForPlacement(World world, BlockPos pos, EnumFacing side,
+                                            float hitX, float hitY, float hitZ,
+                                            int meta, EntityLivingBase placer, EnumHand hand)
+    {
+        EnumFacing facing = side.getAxis().isHorizontal() ? side : placer.getHorizontalFacing().getOpposite();
+        return getDefaultState()
+            .withProperty(FACING, facing)
+            .withProperty(SWING, swingTowards(facing, placer.rotationYaw + 180.0f));
+    }
+
+    /**
+     * @param facing   the way the arm reaches when straight
+     * @param wantedYaw the Minecraft yaw the arm would ideally point along (clockwise from south)
+     */
+    static ArmSwing swingTowards(EnumFacing facing, float wantedYaw)
+    {
+        float off = MathHelper.wrapDegrees(wantedYaw - facing.getHorizontalAngle());
+        if (off > SWING_THRESHOLD_DEGREES)
+            return ArmSwing.RIGHT;
+        if (off < -SWING_THRESHOLD_DEGREES)
+            return ArmSwing.LEFT;
+        return ArmSwing.STRAIGHT;
+    }
+
+    @Override
+    public void onBlockPlacedBy(World world, BlockPos pos, IBlockState state, EntityLivingBase placer, ItemStack stack)
+    {
+        if (world.isRemote)
+            return;
+        TileEntity te = world.getTileEntity(pos);
+        if (te instanceof TileEntityPoleLightMount)
+        {
+            ((TileEntityPoleLightMount) te).facing = state.getValue(FACING);
+            te.markDirty();
+        }
+    }
+
+    /** The Engineer's Hammer swings the arm: straight, right, left, and round again. */
+    @Override
+    public boolean onBlockActivated(World world, BlockPos pos, IBlockState state, EntityPlayer player,
+                                    EnumHand hand, EnumFacing side, float hitX, float hitY, float hitZ)
+    {
+        if (!Utils.isHammer(player.getHeldItem(hand)))
+            return false;
+        if (!world.isRemote)
+            world.setBlockState(pos, state.withProperty(SWING, state.getValue(SWING).next()), 3);
+        return true;
+    }
+
+    // -----------------------------------------------------------------------
+    // Support and removal
+    // -----------------------------------------------------------------------
+
+    /** Drops the mount once nothing holds it up, by the same rule as the insulators. */
+    @Override
+    public void neighborChanged(IBlockState state, World world, BlockPos pos, Block block, BlockPos fromPos)
+    {
+        super.neighborChanged(state, world, pos, block, fromPos);
+        if (world.isRemote || BlockInsulatorBase.hasAnySupport(world, pos))
+            return;
+        dropBlockAsItem(world, pos, state, 0);
+        world.setBlockToAir(pos);
+    }
+
+    @Override
+    public void breakBlock(World world, BlockPos pos, IBlockState state)
+    {
+        if (!world.isRemote)
+        {
+            TileEntity te = world.getTileEntity(pos);
+            if (te instanceof TileEntityPoleLightMount)
+                ((TileEntityPoleLightMount) te).onBlockDestroyed();
+        }
+        super.breakBlock(world, pos, state);
+    }
+
+    // -----------------------------------------------------------------------
+    // Shape and rendering
+    // -----------------------------------------------------------------------
+
+    @Override
+    public AxisAlignedBB getBoundingBox(IBlockState state, IBlockAccess source, BlockPos pos)
+    {
+        float[] b = BoundsUtil.rotateBounds(TileEntityPoleLightMount.BRACKET_BOUNDS, state.getValue(FACING));
+        return new AxisAlignedBB(b[0], b[1], b[2], b[3], b[4], b[5]);
+    }
+
+    @Override
+    public boolean canRenderInLayer(IBlockState state, BlockRenderLayer layer)
+    {
+        return layer == BlockRenderLayer.SOLID || layer == BlockRenderLayer.TRANSLUCENT;
+    }
+
+    @Override
+    public boolean isOpaqueCube(IBlockState state) { return false; }
+
+    @Override
+    public boolean isFullCube(IBlockState state) { return false; }
+
+    @Override
+    public EnumBlockRenderType getRenderType(IBlockState state) { return EnumBlockRenderType.MODEL; }
+
+    @Override
+    public boolean eventReceived(IBlockState state, World world, BlockPos pos, int id, int param)
+    {
+        TileEntity te = world.getTileEntity(pos);
+        return te != null && te.receiveClientEvent(id, param);
+    }
+}
