@@ -32,11 +32,11 @@ Based on MacLean fiberglass cutoff switches:
 - Provides redstone output
 
 ### Pole Light Mounts
-Street-light arms hung from the side of a power pole, in 2, 3 and 4 block lengths (placeholder models for now):
+Street-light arms hung from the side of a power pole, SCE / LADWP style, in lengths from 1 block (alleys) to 8 blocks (large intersections):
 - Click the side of a pole to hang one; the arm reaches away from the pole
 - The arm can swing 45 degrees left or right at the bracket: it turns towards you when placed, and the engineer's hammer cycles it
 - Place the light fixture as its own block where the arm ends
-- Takes Steel Cable or LV wire at the bracket (one type at a time); a guide insulator appears once wired
+- Takes Steel Cable or LV wire at the bracket (one type at a time); once wired, a guide insulator appears and the supply cable hangs under the arm to the fixture
 
 ### Transformer Bank Mounts
 Steel frames that stand off the front of a pole and carry a bank of transformers (placeholder models for now):

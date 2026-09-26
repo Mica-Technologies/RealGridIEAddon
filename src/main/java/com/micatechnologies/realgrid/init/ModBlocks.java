@@ -113,9 +113,14 @@ public class ModBlocks
     public static final BlockCutoffSwitch6 CUTOFF_SWITCH_6 = new BlockCutoffSwitch6();
 
     // Pole light mounts
+    public static final BlockPoleLightMount POLE_LIGHT_MOUNT_1 = new BlockPoleLightMount(1);
     public static final BlockPoleLightMount POLE_LIGHT_MOUNT_2 = new BlockPoleLightMount(2);
     public static final BlockPoleLightMount POLE_LIGHT_MOUNT_3 = new BlockPoleLightMount(3);
     public static final BlockPoleLightMount POLE_LIGHT_MOUNT_4 = new BlockPoleLightMount(4);
+    public static final BlockPoleLightMount POLE_LIGHT_MOUNT_5 = new BlockPoleLightMount(5);
+    public static final BlockPoleLightMount POLE_LIGHT_MOUNT_6 = new BlockPoleLightMount(6);
+    public static final BlockPoleLightMount POLE_LIGHT_MOUNT_7 = new BlockPoleLightMount(7);
+    public static final BlockPoleLightMount POLE_LIGHT_MOUNT_8 = new BlockPoleLightMount(8);
 
     // Transformer bank mounts
     public static final BlockTransformerBankMount TRANSFORMER_BANK_MOUNT_LADWP_3 = new BlockTransformerBankMount("ladwp", 3);
