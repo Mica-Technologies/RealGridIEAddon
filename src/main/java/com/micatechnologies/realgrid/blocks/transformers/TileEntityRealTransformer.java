@@ -19,6 +19,7 @@ import net.minecraft.tileentity.TileEntity;
 import net.minecraft.util.EnumFacing;
 import net.minecraft.util.math.BlockPos;
 import net.minecraft.util.math.Vec3d;
+import net.minecraft.util.math.Vec3i;
 
 import java.util.Set;
 
@@ -288,6 +289,17 @@ public abstract class TileEntityRealTransformer extends TileEntityImmersiveConne
                 }
             }
         }
+    }
+
+    /**
+     * IE's wire coil asks this three-argument form, and TileEntityImmersiveConnectable answers it
+     * from the LV/MV/HV tier alone without consulting the two-argument form, so the rules below
+     * are only applied because this sends the question on to them.
+     */
+    @Override
+    public boolean canConnectCable(WireType cableType, TargetingInfo target, Vec3i offset)
+    {
+        return canConnectCable(cableType, target);
     }
 
     @Override

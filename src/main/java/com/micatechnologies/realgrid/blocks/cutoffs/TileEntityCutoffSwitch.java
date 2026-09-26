@@ -23,6 +23,7 @@ import net.minecraft.util.ITickable;
 import net.minecraft.util.SoundCategory;
 import net.minecraft.util.math.BlockPos;
 import net.minecraft.util.math.Vec3d;
+import net.minecraft.util.math.Vec3i;
 import net.minecraft.world.World;
 
 import java.util.Set;
@@ -41,7 +42,7 @@ public class TileEntityCutoffSwitch extends TileEntityImmersiveConnectable
     // -----------------------------------------------------------------------
 
     /** Maximum simultaneous wire connections. Accepts any mix of HV, MV, LV. */
-    public static final int MAX_WIRES = 2;
+    public static final int MAX_WIRES = 3;
 
     /**
      * Block event ID sent when the switch opens (active=false).
@@ -117,6 +118,16 @@ public class TileEntityCutoffSwitch extends TileEntityImmersiveConnectable
     // -----------------------------------------------------------------------
     // Wire connection management
     // -----------------------------------------------------------------------
+
+    /**
+     * IE's wire coil asks this three-argument form, and TileEntityImmersiveConnectable answers it
+     * from the LV/MV/HV tier alone without consulting the two-argument form, so the rules below
+     * are only applied because this sends the question on to them.
+     */
+    @Override
+    public boolean canConnectCable(WireType cableType, TargetingInfo target, Vec3i offset) {
+        return canConnectCable(cableType, target);
+    }
 
     @Override
     public boolean canConnectCable(WireType cableType, TargetingInfo target) {
