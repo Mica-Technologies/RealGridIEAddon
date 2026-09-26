@@ -1,0 +1,96 @@
+{
+  "forge_marker": 1,
+  "defaults": {
+    "model": "realgrid:transformer_bank_mount/mount_3.obj",
+    "custom": {
+      "flip-v": true
+    }
+  },
+  "variants": {
+    "facing": {
+      "north": {
+        "y": 0
+      },
+      "east": {
+        "y": 90
+      },
+      "south": {
+        "y": 180
+      },
+      "west": {
+        "y": 270
+      }
+    },
+    "inventory": [
+      {
+        "model": "realgrid:transformer_bank_mount/mount_3.obj",
+        "custom": {
+          "flip-v": true
+        },
+        "transform": {
+          "gui": {
+            "translation": [
+              0,
+              -0.1,
+              0
+            ],
+            "rotation": [
+              {
+                "x": 30
+              },
+              {
+                "y": 135
+              }
+            ],
+            "scale": 0.28
+          },
+          "ground": {
+            "translation": [
+              0,
+              0.1,
+              0
+            ],
+            "scale": 0.2
+          },
+          "fixed": {
+            "rotation": [
+              {
+                "y": 180
+              }
+            ],
+            "scale": 0.3
+          },
+          "thirdperson": {
+            "translation": [
+              0,
+              0.1,
+              0.1
+            ],
+            "rotation": [
+              {
+                "x": 75
+              },
+              {
+                "y": 45
+              }
+            ],
+            "scale": 0.25
+          },
+          "firstperson": {
+            "translation": [
+              0.1,
+              0.1,
+              0
+            ],
+            "rotation": [
+              {
+                "y": 45
+              }
+            ],
+            "scale": 0.25
+          }
+        }
+      }
+    ]
+  }
+}
