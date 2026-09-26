@@ -96,5 +96,10 @@ realgrid.info.cutoff_status.closed=Cutoff Switch is CLOSED!
 realgrid.info.switch_inverted.on=Cutoff Switch Inversion: ON
 realgrid.info.switch_inverted.off=Cutoff Switch Inversion: OFF
 
+# Pole Light Mounts
+tile.realgrid.pole_light_mount_2.name=Pole Light Mount (2 Block Arm)
+tile.realgrid.pole_light_mount_3.name=Pole Light Mount (3 Block Arm)
+tile.realgrid.pole_light_mount_4.name=Pole Light Mount (4 Block Arm)
+
 # Creative Tab
 itemGroup.realgrid=RealGrid

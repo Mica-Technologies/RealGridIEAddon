@@ -2,6 +2,7 @@ package com.micatechnologies.realgrid.init;
 
 import com.micatechnologies.realgrid.RealGrid;
 import com.micatechnologies.realgrid.blocks.insulators.*;
+import com.micatechnologies.realgrid.blocks.lightmounts.BlockPoleLightMount;
 import com.micatechnologies.realgrid.blocks.transformers.BlockClassATransformer2Wire;
 import com.micatechnologies.realgrid.blocks.transformers.BlockClassATransformer1Wire;
 import com.micatechnologies.realgrid.blocks.transformers.BlockClassCTransformer2Wire;
@@ -109,6 +110,11 @@ public class ModBlocks
     public static final BlockCutoffSwitch4 CUTOFF_SWITCH_4 = new BlockCutoffSwitch4();
     public static final BlockCutoffSwitch5 CUTOFF_SWITCH_5 = new BlockCutoffSwitch5();
     public static final BlockCutoffSwitch6 CUTOFF_SWITCH_6 = new BlockCutoffSwitch6();
+
+    // Pole light mounts
+    public static final BlockPoleLightMount POLE_LIGHT_MOUNT_2 = new BlockPoleLightMount(2);
+    public static final BlockPoleLightMount POLE_LIGHT_MOUNT_3 = new BlockPoleLightMount(3);
+    public static final BlockPoleLightMount POLE_LIGHT_MOUNT_4 = new BlockPoleLightMount(4);
 
     // Creative Tab
     public static final CreativeTabs CREATIVE_TAB = new CreativeTabs(RealGrid.MODID) {

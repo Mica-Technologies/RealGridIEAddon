@@ -171,7 +171,7 @@ public abstract class BlockInsulatorBase extends Block implements ITileEntityPro
     /**
      * @return true if any of the six neighbouring blocks is solid enough to hold an insulator
      */
-    private static boolean hasAnySupport(World world, BlockPos pos)
+    public static boolean hasAnySupport(World world, BlockPos pos)
     {
         for (EnumFacing side : EnumFacing.VALUES)
         {
