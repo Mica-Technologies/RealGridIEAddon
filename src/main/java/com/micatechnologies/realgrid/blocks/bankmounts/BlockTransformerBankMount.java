@@ -30,7 +30,7 @@ import net.minecraft.world.World;
  * <ul>
  *   <li>Three-transformer bank: one tank on each side of the frame, facing outwards, and one on its
  *       front. LADWP frames brace their sides with an X, SCE frames with straight arms.</li>
- *   <li>Two-transformer bank: a slim H-shaped bracket against the pole, one tank on each side.</li>
+ *   <li>Two-transformer bank: an H-shaped bracket standing off the pole, one tank on each side.</li>
  * </ul>
  *
  * <p>The three-transformer frames fill their block and the bracket spans its block's width, so
@@ -41,8 +41,8 @@ public class BlockTransformerBankMount extends Block
 {
     public static final PropertyDirection FACING = PropertyDirection.create("facing", EnumFacing.Plane.HORIZONTAL);
 
-    /** The two-transformer bracket, for a north-facing mount: 4 pixels deep against the pole. */
-    private static final float[] BRACKET_BOUNDS = {0.0f, 0.0f, 0.75f, 1.0f, 1.0f, 1.0f};
+    /** The two-transformer bracket, for a north-facing mount: from the tanks' centre line back to the pole. */
+    private static final float[] BRACKET_BOUNDS = {0.0f, 0.0f, 0.3125f, 1.0f, 1.0f, 1.0f};
 
     private final int transformers;
 

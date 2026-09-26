@@ -41,7 +41,7 @@ Street-light arms hung from the side of a power pole, SCE / LADWP style, in leng
 ### Transformer Bank Mounts
 Steel frames that stand off the front of a pole and carry a bank of transformers (placeholder models for now):
 - **LADWP** (X-braced) and **SCE** (straight arms) frames for **3 transformers**: one on each side of the frame and one on its front
-- A slim H-shaped bracket for **2 transformers** side by side, one on each side
+- An H-shaped bracket for **2 transformers** side by side, one on each side
 - Click the front of the pole to place the frame, then click its faces to place the transformers against it
 
 ## Requirements

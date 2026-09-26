@@ -20,8 +20,8 @@ a log, their back lugs at the edge of the frame's block:
     front, facing away from the pole.
       * LADWP: X-braced side frames.
       * SCE:   straight side arms.
-  - two-transformer bank: a slim H-shaped bracket against the pole (a centre plate and two cross
-    bars at the lug heights) with one tank on each side.
+  - two-transformer bank: an H-shaped bracket standing off the pole: cross bars at the lug heights
+    on the tanks' centre line, arms back to a plate on the pole, and one tank on each side.
 """
 
 import json
@@ -72,23 +72,21 @@ def side(obj, x0, x1, style, top):
         obj.box((x0, ym - BAR / 2, 0.0), (x1, ym + BAR / 2, 1.0))
 
 
-H_DEPTH = 4 * PX   # how far the two-transformer bracket stands off the pole
-
-
 def h_bracket_model(name):
-    """Two-transformer bracket: a centre plate on the pole and two cross bars at the lug heights,
-    with pads at each end for the tanks' backs. It stays against the pole rather than filling the
-    block, so it only reaches H_DEPTH out."""
+    """Two-transformer bracket. The tanks stand on either side of it facing outwards, and a tank's
+    back lugs sit in the middle of its block's depth (5-11 pixels), not at the pole, so the cross
+    bars run along that centre line and standoff arms carry them back to a plate on the pole."""
     obj = Obj('transformer_bank_mount_%s' % name, 'transformer_bank_mount.mtl', HEADER)
     lo, hi = LUG_BANDS[0][0] - PX, LUG_BANDS[1][1] + PX
     obj.use('clamp')
-    obj.box((5 * PX, lo, 1.0 - PX), (11 * PX, hi, 1.0))                  # plate on the pole
+    obj.box((5 * PX, lo, 15 * PX), (11 * PX, hi, 1.0))                   # plate on the pole
     obj.use('metal')
-    obj.box((6 * PX, lo, 1.0 - 2.5 * PX), (10 * PX, hi, 1.0 - PX))       # centre upright
+    obj.box((6.5 * PX, lo, 7 * PX), (9.5 * PX, hi, 9 * PX))              # centre upright
     for y0, y1 in LUG_BANDS:
-        obj.box((0.0, y0, 1.0 - 3 * PX), (1.0, y1, 1.0 - PX))            # cross bar
-        for x0, x1 in ((0.0, PX), (1.0 - PX, 1.0)):                       # end pads for the tanks
-            obj.box((x0, y0 - PX, 1.0 - H_DEPTH), (x1, y1 + PX, 1.0))
+        obj.box((0.0, y0, 6.5 * PX), (1.0, y1, 9.5 * PX))                # cross bar on the tanks' centre line
+        obj.box((7 * PX, y0 + PX, 9.5 * PX), (9 * PX, y1 - PX, 15 * PX))  # standoff back to the pole
+        for x0, x1 in ((0.0, PX), (1.0 - PX, 1.0)):                       # pads the tanks' lugs bolt to
+            obj.box((x0, y0 - PX, 5 * PX), (x1, y1 + PX, 11 * PX))
     return obj.text()
 
 
