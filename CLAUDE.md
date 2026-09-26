@@ -110,7 +110,7 @@ The major behavioral contract of the mod is implemented in three shared tile-ent
 
 ### Wire lifecycle rules
 
-IE's wire coil calls the three-argument `canConnectCable(WireType, TargetingInfo, Vec3i)`, and `TileEntityImmersiveConnectable` implements that one from the LV/MV/HV tier alone, without calling the two-argument form. A rule written only in the two-argument override is never consulted; override the three-argument form to reach it.
+IE's wire coil calls the three-argument `canConnectCable(WireType, TargetingInfo, Vec3i)`, and `TileEntityImmersiveConnectable` implements that one from the LV/MV/HV tier alone, without calling the two-argument form. The transformer, insulator and cutoff bases each override the three-argument form to forward to their two-argument rules; a new connectable base must do the same, or its rules are never consulted.
 
 When modifying any connectable block, preserve the full IE lifecycle: attachment checks, `connectCable`, `getCableLimiter`, `removeCable`, NBT persistence, client notification, and block-break cleanup. Block destruction must use IE's `clearAllConnectionsFor(...)` while the TE is still available so remote endpoints and client wire rendering are also cleaned up.
 

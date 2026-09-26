@@ -15,6 +15,7 @@ import net.minecraft.entity.EntityLivingBase;
 import net.minecraft.nbt.NBTTagCompound;
 import net.minecraft.util.EnumFacing;
 import net.minecraft.util.math.Vec3d;
+import net.minecraft.util.math.Vec3i;
 
 import java.util.Set;
 
@@ -67,6 +68,17 @@ public abstract class TileEntityInsulatorBase extends TileEntityImmersiveConnect
         facing = loaded.getAxis() != EnumFacing.Axis.Y ? loaded : EnumFacing.NORTH;
         wireCount = nbt.getInteger("wireCount");
         colorVariant = nbt.getInteger("colorVariant");
+    }
+
+    /**
+     * IE's wire coil asks this three-argument form, and TileEntityImmersiveConnectable answers it
+     * from the LV/MV/HV tier alone without consulting the two-argument form, so the rules below
+     * are only applied because this sends the question on to them.
+     */
+    @Override
+    public boolean canConnectCable(WireType cableType, TargetingInfo target, Vec3i offset)
+    {
+        return canConnectCable(cableType, target);
     }
 
     @Override

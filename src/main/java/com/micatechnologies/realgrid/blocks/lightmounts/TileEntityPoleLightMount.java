@@ -9,7 +9,6 @@ import net.minecraft.block.state.IBlockState;
 import net.minecraft.entity.EntityLivingBase;
 import net.minecraft.util.EnumFacing;
 import net.minecraft.util.math.Vec3d;
-import net.minecraft.util.math.Vec3i;
 
 /**
  * The wire point on a pole light mount's bracket. Shared by every arm length: the bracket, and so
@@ -18,7 +17,8 @@ import net.minecraft.util.math.Vec3i;
  * <p>It takes Steel Cable, which carries a light's messenger wire to it, or LV copper, which can
  * feed an Immersive Engineering floodlight hung at the arm. One type at a time, several wires of
  * it, passing energy through like the insulators. The wire-count and wire-type bookkeeping, and
- * its repair from IE's live connections, all come from {@link TileEntityInsulatorBase}.
+ * its repair from IE's live connections, all come from {@link TileEntityInsulatorBase}, which also
+ * routes IE's three-argument canConnectCable to the rules below.
  */
 public class TileEntityPoleLightMount extends TileEntityInsulatorBase
 {
@@ -36,17 +36,6 @@ public class TileEntityPoleLightMount extends TileEntityInsulatorBase
     public TileEntityPoleLightMount()
     {
         super(GEOMETRY);
-    }
-
-    /**
-     * IE's wire coil asks the three-argument form, and TileEntityImmersiveConnectable answers that
-     * one itself from the LV/MV/HV tier alone, without consulting the two-argument form. Left to
-     * it, the mount would take HV wire and refuse Steel Cable.
-     */
-    @Override
-    public boolean canConnectCable(WireType cableType, TargetingInfo target, Vec3i offset)
-    {
-        return canConnectCable(cableType, target);
     }
 
     @Override
