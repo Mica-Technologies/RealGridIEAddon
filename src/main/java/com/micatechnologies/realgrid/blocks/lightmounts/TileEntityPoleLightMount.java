@@ -24,7 +24,7 @@ public class TileEntityPoleLightMount extends TileEntityInsulatorBase
 {
     /**
      * The front face of the guide insulator, for a north-facing mount. Must agree with
-     * {@code guide_insulator.obj}, which scripts/gen_pole_light_mounts.py generates.
+     * the guide insulator scripts/gen_pole_light_mounts.py draws on the wired models (GUIDE_FRONT).
      */
     static final Vec3d WIRE_POINT = new Vec3d(0.5, 0.875, 0.75);
 
