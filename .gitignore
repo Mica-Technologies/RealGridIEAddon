@@ -87,3 +87,6 @@ logs/
 
 # local-only agent/dev plans (kept private, not published)
 docs/agent-plans/
+
+# Output of .github/scripts/server-smoke-test.sh when run locally.
+server-smoke.log
