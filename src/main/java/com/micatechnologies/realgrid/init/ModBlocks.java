@@ -1,6 +1,7 @@
 package com.micatechnologies.realgrid.init;
 
 import com.micatechnologies.realgrid.RealGrid;
+import com.micatechnologies.realgrid.blocks.bankmounts.BlockTransformerBankMount;
 import com.micatechnologies.realgrid.blocks.insulators.*;
 import com.micatechnologies.realgrid.blocks.lightmounts.BlockPoleLightMount;
 import com.micatechnologies.realgrid.blocks.transformers.BlockClassATransformer2Wire;
@@ -115,6 +116,10 @@ public class ModBlocks
     public static final BlockPoleLightMount POLE_LIGHT_MOUNT_2 = new BlockPoleLightMount(2);
     public static final BlockPoleLightMount POLE_LIGHT_MOUNT_3 = new BlockPoleLightMount(3);
     public static final BlockPoleLightMount POLE_LIGHT_MOUNT_4 = new BlockPoleLightMount(4);
+
+    // Transformer bank mounts
+    public static final BlockTransformerBankMount TRANSFORMER_BANK_MOUNT_3 = new BlockTransformerBankMount(3);
+    public static final BlockTransformerBankMount TRANSFORMER_BANK_MOUNT_2 = new BlockTransformerBankMount(2);
 
     // Creative Tab
     public static final CreativeTabs CREATIVE_TAB = new CreativeTabs(RealGrid.MODID) {

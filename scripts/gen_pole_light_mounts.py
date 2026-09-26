@@ -50,8 +50,8 @@ PIVOT = (0.5, 0.90)     # (x, z) where the arm leaves the bracket
 class Obj:
     """Minimal OBJ writer: quads with per-face normals and a unit UV square per face."""
 
-    def __init__(self, name):
-        self.lines = [HEADER, 'mtllib pole_light_mount.mtl\n', 'o %s\n' % name,
+    def __init__(self, name, mtllib='pole_light_mount.mtl', header=HEADER):
+        self.lines = [header, 'mtllib %s\n' % mtllib, 'o %s\n' % name,
                       'vt 0 0\n', 'vt 1 0\n', 'vt 1 1\n', 'vt 0 1\n']
         self.v = 0
         self.vn = 0
