@@ -1,7 +1,7 @@
 {
   "forge_marker": 1,
   "defaults": {
-    "model": "realgrid:transformer_bank_mount/mount_3.obj",
+    "model": "realgrid:transformer_bank_mount/mount_sce_3.obj",
     "custom": {
       "flip-v": true
     }
@@ -23,7 +23,7 @@
     },
     "inventory": [
       {
-        "model": "realgrid:transformer_bank_mount/mount_3.obj",
+        "model": "realgrid:transformer_bank_mount/mount_sce_3.obj",
         "custom": {
           "flip-v": true
         },
@@ -31,7 +31,7 @@
           "gui": {
             "translation": [
               0,
-              -0.1,
+              -0.2,
               0
             ],
             "rotation": [
@@ -42,7 +42,7 @@
                 "y": 135
               }
             ],
-            "scale": 0.28
+            "scale": 0.4
           },
           "ground": {
             "translation": [
@@ -50,7 +50,7 @@
               0.1,
               0
             ],
-            "scale": 0.2
+            "scale": 0.25
           },
           "fixed": {
             "rotation": [
@@ -58,7 +58,7 @@
                 "y": 180
               }
             ],
-            "scale": 0.3
+            "scale": 0.4
           },
           "thirdperson": {
             "translation": [
@@ -74,7 +74,7 @@
                 "y": 45
               }
             ],
-            "scale": 0.25
+            "scale": 0.3
           },
           "firstperson": {
             "translation": [
@@ -87,7 +87,7 @@
                 "y": 45
               }
             ],
-            "scale": 0.25
+            "scale": 0.3
           }
         }
       }

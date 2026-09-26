@@ -1,7 +1,7 @@
 {
   "forge_marker": 1,
   "defaults": {
-    "model": "realgrid:transformer_bank_mount/mount_2.obj",
+    "model": "realgrid:transformer_bank_mount/mount_ladwp_3.obj",
     "custom": {
       "flip-v": true
     }
@@ -23,7 +23,7 @@
     },
     "inventory": [
       {
-        "model": "realgrid:transformer_bank_mount/mount_2.obj",
+        "model": "realgrid:transformer_bank_mount/mount_ladwp_3.obj",
         "custom": {
           "flip-v": true
         },
