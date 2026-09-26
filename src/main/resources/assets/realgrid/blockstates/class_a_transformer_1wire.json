@@ -25,6 +25,9 @@
       "0": {},
       "1": {
         "model": "realgrid:dummyair"
+      },
+      "2": {
+        "model": "realgrid:dummyair"
       }
     },
     "inventory": [
