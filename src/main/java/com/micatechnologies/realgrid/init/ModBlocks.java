@@ -118,8 +118,9 @@ public class ModBlocks
     public static final BlockPoleLightMount POLE_LIGHT_MOUNT_4 = new BlockPoleLightMount(4);
 
     // Transformer bank mounts
-    public static final BlockTransformerBankMount TRANSFORMER_BANK_MOUNT_3 = new BlockTransformerBankMount(3);
-    public static final BlockTransformerBankMount TRANSFORMER_BANK_MOUNT_2 = new BlockTransformerBankMount(2);
+    public static final BlockTransformerBankMount TRANSFORMER_BANK_MOUNT_LADWP_3 = new BlockTransformerBankMount("ladwp", 3);
+    public static final BlockTransformerBankMount TRANSFORMER_BANK_MOUNT_SCE_3 = new BlockTransformerBankMount("sce", 3);
+    public static final BlockTransformerBankMount TRANSFORMER_BANK_MOUNT_2 = new BlockTransformerBankMount(null, 2);
 
     // Creative Tab
     public static final CreativeTabs CREATIVE_TAB = new CreativeTabs(RealGrid.MODID) {

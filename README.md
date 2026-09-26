@@ -39,9 +39,10 @@ Street-light arms hung from the side of a power pole, in 2, 3 and 4 block length
 - Takes Steel Cable or LV wire at the bracket (one type at a time); a guide insulator appears once wired
 
 ### Transformer Bank Mounts
-Steel channel frames for pole-mounted transformer banks (placeholder models for now):
-- **3 transformers**: click the free side of a pole whose other three sides carry transformers
-- **2 transformers, side by side**: click a side of the pole, then place a transformer either side of the frame, facing away from the pole
+Steel frames that stand off the front of a pole and carry a bank of transformers (placeholder models for now):
+- **LADWP** (X-braced) and **SCE** (straight arms) frames for **3 transformers**: one on each side of the frame and one on its front
+- A smaller frame for **2 transformers** side by side, one on each side
+- Click the front of the pole to place the frame, then click its faces to place the transformers against it
 
 ## Requirements
 - Minecraft 1.12.2
