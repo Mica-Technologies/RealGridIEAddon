@@ -108,6 +108,9 @@ tile.realgrid.pole_light_mount_8.name=Pole Light Mount (8 Block Arm)
 tile.realgrid.pole_light_mount_tip.name=Pole Light Mount Tip
 realgrid.pole_light_mount.tip_blocked=The arm needs a clear space where its insulator goes.
 realgrid.pole_light_mount.swing_wired=Take the wires off before swinging the arm.
+realgrid.pole_light_mount.style.street=Carries a street light
+realgrid.pole_light_mount.style.flood_up=Carries a floodlight, standing up
+realgrid.pole_light_mount.style.flood_down=Carries a floodlight, hanging down
 
 # Transformer Bank Mounts
 tile.realgrid.transformer_bank_mount_ladwp_3.name=LADWP Transformer Bank Mount (3 Transformers)
