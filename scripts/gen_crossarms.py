@@ -10,7 +10,8 @@ A segment is drawn from parts, put together by a multipart blockstate from its s
 its ends where the arm carries on (left / right), the through-bolt where it sits against a pole
 (pole), and the hardware for what is mounted on it, which appears by itself: an insulator pin's nut
 under the arm (pin), a hanger strap down to an IE connector below it (hanger), and an eyebolt on
-each face something hangs from (front_fit, back_fit, left_fit, right_fit). The parts are plain JSON
+each face something hangs from (front_fit, back_fit, left_fit, right_fit); and, from the segment's
+tile entity, the sign on its front face (sign) and a wood arm's end caps (caps). The parts are plain JSON
 models, so materials only change the beam's texture. The Java side relies on the file names, the
 property names, and on the arm's cross-section matching BlockCrossarm.ARM_BOUNDS.
 
@@ -18,6 +19,14 @@ Coordinate system (as in gen_pole_light_mounts.py): one unit is one block, the s
 0..1, the segment faces NORTH (away from the pole) and the pole is the block to its SOUTH (z 1..2).
 The arm runs along x. Left and right are seen looking out from the pole, so left is west (-x).
 The blockstate rotates the models to the other facings.
+
+Alley-arm braces (BlockCrossarmAlleyBrace) hold an arm reaching 5 to 7 blocks out to one side of its
+pole: one long strap from low on the pole up to the arm, in metal, wood or fiberglass, as OBJ since
+it reaches far past a JSON model's limits.
+
+Back-to-back spacers (BlockCrossarmSpacer) tie two arms on opposite faces of a pole together, in the
+gap beside the pole: a double-arming bolt for wood, a spacer bracket with optional washers for
+fiberglass.
 
 V-braces (BlockCrossarmBrace) go one block below the arm, in front of the pole. A brace's point is
 bolted to the pole's face; each leg runs up to the arm's front face one block out to that side, and
@@ -28,7 +37,8 @@ the same coordinates, with the arm in the block above (y 1..2).
 import json
 import os
 
-from gen_pole_light_mounts import Obj, png, write
+import model_uv
+from gen_pole_light_mounts import Obj, png, textured, write
 
 ROOT = os.path.join(os.path.dirname(os.path.abspath(__file__)), '..', 'src', 'main', 'resources', 'assets', 'realgrid')
 MODEL_DIR = os.path.join(ROOT, 'models', 'block', 'crossarm')
@@ -43,15 +53,26 @@ FACINGS = (('north', 0), ('east', 90), ('south', 180), ('west', 270))
 ARM_LO = 10 * PX          # the arm's cross-section: 6 px square at the top back of the block
 END_INSET = 0.5 * PX      # an open end stops just short of its block's edge
 
-# name: (base colour, grain spread) of the placeholder wood texture
+# name: (base colour, texture spread, bracket). Wood arms (bracket None) are through-bolted to the
+# pole; fiberglass arms sit in their maker's braceless bracket (BRACKETS). Issue #38, Q3: Brooks
+# cedar in brown, tan and orange; PUPI fiberglass white and dark brown; Shakespeare maroon; MacLean
+# tan, white and dark brown. Keep in step with CrossarmMaterial.
 MATERIALS = {
-    'brooks_brown': ((122, 84, 56), 10),
+    'brooks_brown': ((122, 84, 56), 10, None),
+    'brooks_tan': ((168, 130, 90), 10, None),
+    'brooks_orange': ((178, 100, 48), 10, None),
+    'pupi_white': ((226, 226, 218), 4, 'cross'),
+    'pupi_dark_brown': ((80, 60, 46), 4, 'cross'),
+    'shakespeare_maroon': ((114, 46, 42), 4, 'gusset'),
+    'maclean_tan': ((188, 168, 128), 4, 'box'),
+    'maclean_white': ((232, 230, 222), 4, 'box'),
+    'maclean_dark_brown': ((86, 64, 48), 4, 'box'),
 }
 
 # V-braces: kind -> (texture, strap half-thickness)
 BRACES = {
     'wood': ('realgrid:blocks/crossarm_brace_wood', 1.2 * PX),
-    'metal': ('realgrid:blocks/pole_light_mount_metal', 0.8 * PX),
+    'metal': ('realgrid:blocks/crossarm_galvanized', 0.8 * PX),
 }
 BRACE_POINT = (0.5, 0.55, 15.2 * PX)     # where the point is bolted to the pole's face
 BRACE_REACH = 1.0                        # how far out either side the legs meet the arm
@@ -81,7 +102,7 @@ def brace_model(kind, left, right):
 
 def brace_mtl(kind):
     texture, _ = BRACES[kind]
-    return HEADER + 'newmtl strap\nmap_Kd %s\nnewmtl clamp\nmap_Kd realgrid:blocks/pole_light_mount_clamp\n' % texture
+    return HEADER + 'newmtl strap\nmap_Kd %s\nnewmtl clamp\nmap_Kd realgrid:blocks/crossarm_galvanized\n' % texture
 
 
 def brace_blockstate(kind):
@@ -119,7 +140,7 @@ BOOLS = (False, True)
 # Crossarm segments: JSON parts and a multipart blockstate
 # ---------------------------------------------------------------------------------------------
 
-STEEL = 'realgrid:blocks/pole_light_mount_clamp'
+STEEL = 'realgrid:blocks/crossarm_galvanized'    # light galvanized steel, as in the issue's mockups
 
 # part name: (texture variable, [(from, to) boxes in pixels, north-facing]), and the condition it
 # shows on. Boxes are in the segment's own block; the arm is 10-16 px up and 10-16 px deep.
@@ -133,6 +154,22 @@ ARM_PARTS = {
     'pin': ('steel', [((6.5, 9.6, 11.5), (9.5, 10, 14.5)), ((7.25, 8.6, 12.25), (8.75, 9.6, 13.75))]),
     # A strap down from the arm and a plate at the bottom of the block, over a connector hung there.
     'hanger': ('steel', [((7, 1.5, 12), (9, 10, 14)), ((7, 0, 6), (9, 1.5, 14)), ((5, 0, 5), (11, 0.75, 11))]),
+    # Fiberglass braceless brackets, bolted to the pole's face (z 15-16) and strapped round the arm.
+    # PUPI: a cross-shaped plate (img: white arms on a wood pole).
+    'bracket_cross': ('steel', [((6, 1, 15), (10, 19, 16)), ((1, 3, 15), (15, 7, 16)),
+                                ((6, 9.4, 9.4), (10, 16.6, 10)), ((6, 16, 9.4), (10, 16.6, 16)),
+                                ((6, 9.4, 9.4), (10, 10, 16)), ((7.25, 4.25, 14.4), (8.75, 5.75, 15)),
+                                ((2.25, 4.25, 14.4), (3.75, 5.75, 15)), ((12.25, 4.25, 14.4), (13.75, 5.75, 15)),
+                                ((7.25, 12.25, 8.8), (8.75, 13.75, 9.4))]),
+    # MacLean: a box bracket, a tall back plate with a U-strap round the arm.
+    'bracket_box': ('steel', [((3, 3, 15), (13, 17, 16)), ((4.5, 9.4, 9.4), (11.5, 16.6, 10)),
+                              ((4.5, 16, 9.4), (11.5, 16.6, 15)), ((4.5, 9.4, 9.4), (11.5, 10, 15)),
+                              ((5, 4.5, 14.4), (7, 6.5, 15)), ((9, 4.5, 14.4), (11, 6.5, 15)),
+                              ((7, 12, 8.8), (9, 14, 9.4))]),
+    # Shakespeare: a narrow plate with a gusset under the arm.
+    'bracket_gusset': ('steel', [((5.5, 2, 15), (10.5, 17, 16)), ((5.5, 9.4, 9.4), (10.5, 16.6, 10)),
+                                 ((5.5, 16, 9.4), (10.5, 16.6, 15)), ((5.5, 9.4, 9.4), (10.5, 10, 15)),
+                                 ((7.5, 3, 10.5), (8.5, 10, 15)), ((7.25, 12.25, 8.8), (8.75, 13.75, 9.4))]),
     # Eyebolts for what hangs off each face.
     'front_fit': ('steel', [((6.5, 11.5, 9.6), (9.5, 14.5, 10)), ((7.5, 12.25, 8.4), (8.5, 13.75, 9.6))]),
     'back_fit': ('steel', [((6.5, 11.5, 16), (9.5, 14.5, 16.4)), ((7.5, 12.25, 16.4), (8.5, 13.75, 17.6))]),
@@ -143,7 +180,7 @@ PART_WHEN = {
     'beam': {},
     'beam_left': {'left': 'true'},
     'beam_right': {'right': 'true'},
-    'pole_bolt': {'pole': 'true', 'front_fit': 'false'},     # an eyebolt takes the through-bolt's place
+    'pole_bolt': {'pole': 'true', 'front_fit': 'false'},     # an eyebolt takes the through-bolt's place; fiberglass: its bracket
     'pin': {'pin': 'true'},
     'hanger': {'hanger': 'true'},
     'front_fit': {'front_fit': 'true'},
@@ -156,16 +193,39 @@ PART_WHEN = {
 def json_model(texture_var, boxes, textures=None):
     elements = []
     for lo, hi in boxes:
-        faces = {f: {'texture': '#' + texture_var} for f in ('north', 'south', 'east', 'west', 'up', 'down')}
-        elements.append({'from': list(lo), 'to': list(hi), 'faces': faces})
+        elements.append({'from': list(lo), 'to': list(hi), 'faces': model_uv.faces(lo, hi, '#' + texture_var)})
     model = {'__comment': 'Generated by scripts/gen_crossarms.py', 'elements': elements}
     if textures:
         model['textures'] = textures
     return model
 
 
+def bracket(material):
+    """@return the material's pole part: the through-bolt for wood, its maker's bracket for fiberglass"""
+    style = MATERIALS[material][2]
+    return 'pole_bolt' if style is None else 'bracket_' + style
+
+
+def parts_for(material):
+    """The parts a material uses, each with the condition it shows on."""
+    out = {}
+    for part, when in PART_WHEN.items():
+        if part == 'pole_bolt':
+            out[bracket(material)] = when
+        else:
+            out[part] = when
+    for sign in SIGNS:
+        out['sign_' + sign] = {'sign': sign}
+    if MATERIALS[material][2] is None:                     # end caps are for wood arms
+        out['cap_left'] = {'left': 'false', 'caps': 'true'}
+        out['cap_right'] = {'right': 'false', 'caps': 'true'}
+    return out
+
+
 def part_model(material, part):
-    var, boxes = ARM_PARTS[part]
+    if part.startswith('sign_'):
+        return sign_model(material, part[len('sign_'):])
+    var, boxes = ARM_PARTS.get(part) or CAP_PARTS[part]
     tex = 'realgrid:blocks/crossarm_%s' % material if var == 'wood' else STEEL
     return json_model(var, boxes, {var: tex, 'particle': 'realgrid:blocks/crossarm_%s' % material})
 
@@ -173,7 +233,7 @@ def part_model(material, part):
 def multipart(material):
     parts = []
     for facing, y in FACINGS:
-        for part, when in PART_WHEN.items():
+        for part, when in parts_for(material).items():
             cond = dict(when, facing=facing)
             parts.append({'when': cond, 'apply': {'model': 'realgrid:crossarm/%s/%s' % (material, part), 'y': y}})
     return {'multipart': parts}
@@ -184,7 +244,7 @@ def item_model(material):
     wood = ARM_PARTS['beam_left'][1] + ARM_PARTS['beam'][1] + ARM_PARTS['beam_right'][1]
     model = json_model('wood', wood, {'wood': 'realgrid:blocks/crossarm_%s' % material, 'steel': STEEL,
                                       'particle': 'realgrid:blocks/crossarm_%s' % material})
-    model['elements'] += json_model('steel', ARM_PARTS['pole_bolt'][1])['elements']
+    model['elements'] += json_model('steel', ARM_PARTS[bracket(material)][1])['elements']
     model['display'] = {
         'gui': {'rotation': [30, 225, 0], 'translation': [0, -2.5, 0], 'scale': [0.75, 0.75, 0.75]},
         'ground': {'translation': [0, 3, 0], 'scale': [0.4, 0.4, 0.4]},
@@ -201,25 +261,216 @@ def write_json(path, data):
         f.write('\n')
 
 
+# ---------------------------------------------------------------------------------------------
+# Signs and end caps (BlockCrossarm SIGN / CAPS, kept in TileEntityCrossarm)
+# ---------------------------------------------------------------------------------------------
+# Signs go on the arm's front face (z 10 here): HIGH and VOLTAGE as long plates, N as a square one,
+# each nailed (an embossed plate with a border and nails) or a sticker (flat, flush). They are their
+# own 64 px textures so the lettering stays sharp. End caps sleeve a wood arm's open ends.
+
+SIGNS = ('high_nailed', 'voltage_nailed', 'n_nailed', 'high_sticker', 'voltage_sticker', 'n_sticker')
+SIGN_PX = 64                  # sign texture size
+
+FONT = {   # 5 x 7
+    'H': ['10001', '10001', '10001', '11111', '10001', '10001', '10001'],
+    'I': ['11111', '00100', '00100', '00100', '00100', '00100', '11111'],
+    'G': ['01110', '10001', '10000', '10111', '10001', '10001', '01111'],
+    'V': ['10001', '10001', '10001', '10001', '10001', '01010', '00100'],
+    'O': ['01110', '10001', '10001', '10001', '10001', '10001', '01110'],
+    'L': ['10000', '10000', '10000', '10000', '10000', '10000', '11111'],
+    'T': ['11111', '00100', '00100', '00100', '00100', '00100', '00100'],
+    'A': ['01110', '10001', '10001', '11111', '10001', '10001', '10001'],
+    'E': ['11111', '10000', '10000', '11110', '10000', '10000', '11111'],
+    'N': ['10001', '11001', '10101', '10011', '10001', '10001', '10001'],
+}
+
+
+def sign_boxes(sign):
+    word, kind = sign.split('_')
+    if word == 'n':
+        return [((6, 11, 9.6), (10, 15, 10))] if kind == 'nailed' else [((6.5, 11.5, 9.9), (9.5, 14.5, 10))]
+    return [((3, 11.5, 9.6), (13, 14.5, 10))] if kind == 'nailed' else [((3.5, 11.75, 9.9), (12.5, 14.25, 10))]
+
+
+def sign_model(material, sign):
+    (lo, hi), = sign_boxes(sign)
+    faces = model_uv.faces(lo, hi, '#sign')
+    for f in faces.values():
+        f['uv'] = [0, 0, 0.5, 0.5]                    # edges: a corner of the plate's colour
+    w, h = hi[0] - lo[0], hi[1] - lo[1]
+    faces['north']['uv'] = [0, 0, 16, round(16 * h / w, 4)]   # the face: the sign's top band of the texture
+    return {'__comment': 'Generated by scripts/gen_crossarms.py',
+            'textures': {'sign': 'realgrid:blocks/crossarm_sign_%s' % sign, 'particle': 'realgrid:blocks/crossarm_%s' % material},
+            'elements': [{'from': list(lo), 'to': list(hi), 'faces': faces}]}
+
+
+def sign_texture(sign):
+    word, kind = sign.split('_')
+    nailed = kind == 'nailed'
+    (lo, hi), = sign_boxes(sign)
+    band = round(SIGN_PX * (hi[1] - lo[1]) / (hi[0] - lo[0]))       # rows the face uses
+    yellow = (226, 186, 36) if nailed else (248, 214, 40)
+    ink = (24, 22, 18)
+    px = [[yellow] * SIGN_PX for _ in range(SIGN_PX)]
+    if nailed:                                               # embossed border and nails at the ends
+        for y in range(band):
+            for x in range(SIGN_PX):
+                if x < 2 or x >= SIGN_PX - 2 or y < 2 or y >= band - 2:
+                    px[y][x] = (150, 120, 24)
+        for nx in (4, SIGN_PX - 6):
+            for dy in (0, 1):
+                for dx in (0, 1):
+                    px[band // 2 - 1 + dy][nx + dx] = (190, 190, 186)
+    text = {'high': 'HIGH', 'voltage': 'VOLTAGE', 'n': 'N'}[word]
+    sx = 6 if word == 'n' else (2 if word == 'high' else 1)
+    sy = 6 if word == 'n' else 2
+    tw = len(text) * 6 * sx - sx
+    x0, y0 = (SIGN_PX - tw) // 2, (band - 7 * sy) // 2
+    for i, ch in enumerate(text):
+        for r, row in enumerate(FONT[ch]):
+            for c, bit in enumerate(row):
+                if bit == '1':
+                    for yy in range(sy):
+                        for xx in range(sx):
+                            px[y0 + r * sy + yy][x0 + (i * 6 + c) * sx + xx] = ink
+    return [p for row in px for p in row]
+
+
+CAP_PARTS = {
+    'cap_left': ('steel', [((0.1, 9.7, 9.7), (0.7, 16.3, 16.3))]),
+    'cap_right': ('steel', [((15.3, 9.7, 9.7), (15.9, 16.3, 16.3))]),
+}
+
+
+# ---------------------------------------------------------------------------------------------
+# Back-to-back spacers (BlockCrossarmSpacer)
+# ---------------------------------------------------------------------------------------------
+# The spacer's block is beside the pole, between two arms on opposite faces of it; drawn for the
+# z axis (the y=90 rotation turns it to x). The arm to the north faces north, so its 6 px section is
+# the south end of its block: z -6..0 here, front face at -6. The arm to the south: z 16..22.
+
+def spacer_boxes(kind, style):
+    rod = [((7.5, 12.5, -7.6), (8.5, 13.5, 23.6))]                       # the bolt, through both arms
+    nuts = [((7, 12, -7.2), (9, 14, -6.4)), ((7, 12, 22.4), (9, 14, 23.2))]
+    if kind == 'wood':
+        washers = [((6.5, 11.5, -6.4), (9.5, 14.5, -6)), ((6.5, 11.5, 22), (9.5, 14.5, 22.4))]
+        return rod + washers + nuts
+    spacer = [((5.5, 10.5, 0), (10.5, 11, 16)), ((5.5, 15, 0), (10.5, 15.5, 16)),   # a channel between the arms
+              ((5.5, 10.5, 0), (6, 15.5, 16)), ((5.5, 10.5, 0.4), (10.5, 15.5, 1.2)),
+              ((5.5, 10.5, 14.8), (10.5, 15.5, 15.6))]
+    if style == 'square':
+        washers = [((6, 11, -6.4), (10, 15, -6)), ((6, 11, 22), (10, 15, 22.4))]
+    elif style == 'round':
+        washers = [((6.5, 11.5, -6.4), (9.5, 14.5, -6)), ((6, 12, -6.4), (10, 14, -6)), ((7, 11, -6.4), (9, 15, -6)),
+                   ((6.5, 11.5, 22), (9.5, 14.5, 22.4)), ((6, 12, 22), (10, 14, 22.4)), ((7, 11, 22), (9, 15, 22.4))]
+    else:
+        washers = []
+    return spacer + rod + washers + nuts
+
+
+SPACER_STYLES = {'wood': ('plain',), 'fiberglass': ('plain', 'square', 'round')}
+
+
+def spacer_blockstate(kind):
+    variants = {}
+    for axis, y in (('z', 0), ('x', 90)):
+        for style in ('plain', 'square', 'round'):
+            shown = style if style in SPACER_STYLES[kind] else 'plain'
+            variants['axis=%s,style=%s' % (axis, style)] = {'model': 'realgrid:crossarm/spacer_%s/%s' % (kind, shown), 'y': y}
+    return {'variants': variants}
+
+
+# ---------------------------------------------------------------------------------------------
+# Alley-arm braces (BlockCrossarmAlleyBrace)
+# ---------------------------------------------------------------------------------------------
+# One long strap from low on the pole's face up and out to the arm's front face, reach blocks to one
+# side (BlockCrossarmAlleyBrace.reach: two short of the arm's end). Same coordinates as the V-braces.
+
+ALLEY_LENGTHS = (5, 6, 7)
+# kind: (strap texture, half-thickness, sides of the strap's section)
+ALLEY_KINDS = {
+    'metal': ('realgrid:blocks/crossarm_galvanized', 0.8 * PX, 4),
+    'wood': ('realgrid:blocks/crossarm_brace_wood', 1.3 * PX, 4),
+    'fiberglass': ('realgrid:blocks/crossarm_brace_fiberglass', 1.1 * PX, 8),
+}
+ALLEY_POINT = (0.5, 0.25, 15.2 * PX)
+
+
+def alley_model(kind, length, right):
+    _, half, sides = ALLEY_KINDS[kind]
+    sign = 1 if right else -1
+    reach = length - 2
+    obj = Obj('crossarm_alley_%s_%d_%s' % (kind, length, 'r' if right else 'l'), 'alley.mtl', HEADER)
+    px, py, pz = ALLEY_POINT
+    obj.use('clamp')
+    obj.box((px - 2.5 * PX, py - 2 * PX, 15.4 * PX), (px + 2.5 * PX, py + 3 * PX, 1.0))       # plate on the pole
+    end = (px + sign * reach, BRACE_TOP, BRACE_FRONT)
+    obj.use('strap')
+    obj.tube([(px + sign * 1.5 * PX, py + 0.5 * PX, pz), end], half, sides=sides)
+    obj.use('clamp')
+    obj.box((end[0] - 1.2 * PX, end[1] - 1.2 * PX, end[2] - 1 * PX), (end[0] + 1.2 * PX, end[1] + 1.2 * PX, ARM_LO))
+    return obj.text()
+
+
+def alley_blockstate(kind, length):
+    folder = 'realgrid:crossarm/alley_%s_%d' % (kind, length)
+    variants = {}
+    for facing, y in FACINGS:
+        for right in (False, True):
+            variants['facing=%s,right=%s' % (facing, str(right).lower())] = {
+                'model': '%s/brace_%s.obj' % (folder, 'r' if right else 'l'), 'custom': {'flip-v': True}, 'y': y}
+    variants['inventory'] = {
+        'model': '%s/brace_r.obj' % folder, 'custom': {'flip-v': True},
+        'transform': {
+            'gui': {'translation': [-0.3, -0.25, 0], 'rotation': [{'x': 30}, {'y': 135}], 'scale': 0.16},
+            'ground': {'scale': 0.12},
+            'fixed': {'rotation': [{'y': 180}], 'scale': 0.15},
+            'thirdperson': {'translation': [0, 0.1, 0.1], 'rotation': [{'x': 75}, {'y': 45}], 'scale': 0.12},
+            'firstperson': {'translation': [0.1, 0.1, 0], 'rotation': [{'y': 45}], 'scale': 0.12},
+        },
+    }
+    return {'forge_marker': 1, 'variants': variants}
+
+
 def wood_texture(base, spread):
-    """A placeholder: streaks of grain along the texture's rows, repeatable rather than random."""
+    """Cedar: grain lines running along the arm (the texture's rows), drifting up and down a little
+    so they read as grain rather than stripes, with a few dark checks. Repeatable, not random."""
     out = []
     for y in range(16):
-        row = ((y * 7919) % 13) - 6
         for x in range(16):
-            knot = -14 if (x * 31 + y * 17) % 97 == 0 else 0
+            drift = (x // 5 + y) % 16                      # the grain wanders by a row every 5 px
+            line = ((drift * 7919) % 13) - 6               # each grain row has its own shade
+            late = -spread // 2 if drift % 4 == 0 else 0  # darker latewood every fourth row
+            check = -spread * 2 if (x * 31 + y * 17) % 89 == 0 else 0
             fleck = ((x * 2654435761 + y * 40503) >> 9) % 5 - 2
-            shade = row * spread // 6 + fleck + knot
+            shade = line * spread // 6 + late + check + fleck
+            out.append(tuple(max(0, min(255, c + shade)) for c in base))
+    return out
+
+
+def fiberglass_texture(base, spread):
+    """Fiberglass: a smooth moulded colour with faint fibres along the arm and two predrilled
+    mounting holes on the centre line, as on the real arms."""
+    out = []
+    for y in range(16):
+        for x in range(16):
+            fibre = ((y * 7919 + (x // 8) * 31) % 7) - 3
+            fleck = ((x * 2654435761 + y * 40503) >> 9) % 3 - 1
+            shade = fibre * spread // 3 + fleck
+            if y in (7, 8) and x in (3, 4, 11, 12):
+                shade = -70                                # a mounting hole
+            elif y in (6, 9) and x in (3, 4, 11, 12) or y in (7, 8) and x in (2, 5, 10, 13):
+                shade -= 12                                # its shadowed rim
             out.append(tuple(max(0, min(255, c + shade)) for c in base))
     return out
 
 
 def main():
-    for material, (colour, spread) in MATERIALS.items():
+    for material, (colour, spread, style) in MATERIALS.items():
         folder = os.path.join(MODEL_DIR, material)
         os.makedirs(folder, exist_ok=True)
         keep = set()
-        for part in ARM_PARTS:
+        for part in parts_for(material):
             keep.add(part + '.json')
             write_json(os.path.join(folder, part + '.json'), part_model(material, part))
         keep.add('item.json')
@@ -230,7 +481,8 @@ def main():
         write_json(os.path.join(BLOCKSTATE_DIR, 'crossarm_%s.json' % material), multipart(material))
         write_json(os.path.join(ITEM_MODEL_DIR, 'crossarm_%s.json' % material),
                    {'parent': 'realgrid:block/crossarm/%s/item' % material})
-        png(os.path.join(TEXTURE_DIR, 'crossarm_%s.png' % material), wood_texture(colour, spread))
+        texture = wood_texture(colour, spread) if style is None else fiberglass_texture(colour, spread)
+        png(os.path.join(TEXTURE_DIR, 'crossarm_%s.png' % material), texture)
     for kind in BRACES:
         folder = os.path.join(MODEL_DIR, 'brace_%s' % kind)
         os.makedirs(folder, exist_ok=True)
@@ -240,6 +492,33 @@ def main():
         write(os.path.join(folder, 'brace.mtl'), brace_mtl(kind))
         write(os.path.join(BLOCKSTATE_DIR, 'crossarm_brace_%s.json' % kind), json.dumps(brace_blockstate(kind), indent=2) + '\n')
     png(os.path.join(TEXTURE_DIR, 'crossarm_brace_wood.png'), wood_texture((150, 124, 92), 8))
+    png(os.path.join(TEXTURE_DIR, 'crossarm_galvanized.png'), textured((168, 172, 172), 7))
+    png(os.path.join(TEXTURE_DIR, 'crossarm_brace_fiberglass.png'), fiberglass_texture((198, 192, 172), 3))
+    for sign in SIGNS:
+        model_uv.png_rgb(os.path.join(TEXTURE_DIR, 'crossarm_sign_%s.png' % sign), sign_texture(sign), SIGN_PX, SIGN_PX)
+    for kind, (texture, _, _) in ALLEY_KINDS.items():
+        for length in ALLEY_LENGTHS:
+            folder = os.path.join(MODEL_DIR, 'alley_%s_%d' % (kind, length))
+            os.makedirs(folder, exist_ok=True)
+            for right in (False, True):
+                write(os.path.join(folder, 'brace_%s.obj' % ('r' if right else 'l')), alley_model(kind, length, right))
+            write(os.path.join(folder, 'alley.mtl'),
+                  HEADER + 'newmtl strap\nmap_Kd %s\nnewmtl clamp\nmap_Kd %s\n' % (texture, STEEL))
+            write(os.path.join(BLOCKSTATE_DIR, 'crossarm_alley_brace_%s_%d.json' % (kind, length)),
+                  json.dumps(alley_blockstate(kind, length), indent=2) + '\n')
+    for kind, styles in SPACER_STYLES.items():
+        folder = os.path.join(MODEL_DIR, 'spacer_%s' % kind)
+        os.makedirs(folder, exist_ok=True)
+        for style in styles:
+            write_json(os.path.join(folder, style + '.json'),
+                       json_model('steel', spacer_boxes(kind, style), {'steel': STEEL, 'particle': STEEL}))
+        write_json(os.path.join(BLOCKSTATE_DIR, 'crossarm_spacer_%s.json' % kind), spacer_blockstate(kind))
+        item = {'parent': 'realgrid:block/crossarm/spacer_%s/%s' % (kind, styles[-1]),
+                'display': {'gui': {'rotation': [30, 45, 0], 'scale': [0.5, 0.5, 0.5]},
+                            'ground': {'scale': [0.3, 0.3, 0.3]},
+                            'thirdperson_righthand': {'rotation': [75, 45, 0], 'scale': [0.3, 0.3, 0.3]},
+                            'firstperson_righthand': {'rotation': [0, 45, 0], 'scale': [0.35, 0.35, 0.35]}}}
+        write_json(os.path.join(ITEM_MODEL_DIR, 'crossarm_spacer_%s.json' % kind), item)
 
 
 if __name__ == '__main__':

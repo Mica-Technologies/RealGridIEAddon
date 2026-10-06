@@ -1,0 +1,644 @@
+{
+  "multipart": [
+    {
+      "when": {
+        "facing": "north"
+      },
+      "apply": {
+        "model": "realgrid:crossarm/pupi_white/beam",
+        "y": 0
+      }
+    },
+    {
+      "when": {
+        "left": "true",
+        "facing": "north"
+      },
+      "apply": {
+        "model": "realgrid:crossarm/pupi_white/beam_left",
+        "y": 0
+      }
+    },
+    {
+      "when": {
+        "right": "true",
+        "facing": "north"
+      },
+      "apply": {
+        "model": "realgrid:crossarm/pupi_white/beam_right",
+        "y": 0
+      }
+    },
+    {
+      "when": {
+        "pole": "true",
+        "front_fit": "false",
+        "facing": "north"
+      },
+      "apply": {
+        "model": "realgrid:crossarm/pupi_white/bracket_cross",
+        "y": 0
+      }
+    },
+    {
+      "when": {
+        "pin": "true",
+        "facing": "north"
+      },
+      "apply": {
+        "model": "realgrid:crossarm/pupi_white/pin",
+        "y": 0
+      }
+    },
+    {
+      "when": {
+        "hanger": "true",
+        "facing": "north"
+      },
+      "apply": {
+        "model": "realgrid:crossarm/pupi_white/hanger",
+        "y": 0
+      }
+    },
+    {
+      "when": {
+        "front_fit": "true",
+        "facing": "north"
+      },
+      "apply": {
+        "model": "realgrid:crossarm/pupi_white/front_fit",
+        "y": 0
+      }
+    },
+    {
+      "when": {
+        "back_fit": "true",
+        "facing": "north"
+      },
+      "apply": {
+        "model": "realgrid:crossarm/pupi_white/back_fit",
+        "y": 0
+      }
+    },
+    {
+      "when": {
+        "left_fit": "true",
+        "facing": "north"
+      },
+      "apply": {
+        "model": "realgrid:crossarm/pupi_white/left_fit",
+        "y": 0
+      }
+    },
+    {
+      "when": {
+        "right_fit": "true",
+        "facing": "north"
+      },
+      "apply": {
+        "model": "realgrid:crossarm/pupi_white/right_fit",
+        "y": 0
+      }
+    },
+    {
+      "when": {
+        "sign": "high_nailed",
+        "facing": "north"
+      },
+      "apply": {
+        "model": "realgrid:crossarm/pupi_white/sign_high_nailed",
+        "y": 0
+      }
+    },
+    {
+      "when": {
+        "sign": "voltage_nailed",
+        "facing": "north"
+      },
+      "apply": {
+        "model": "realgrid:crossarm/pupi_white/sign_voltage_nailed",
+        "y": 0
+      }
+    },
+    {
+      "when": {
+        "sign": "n_nailed",
+        "facing": "north"
+      },
+      "apply": {
+        "model": "realgrid:crossarm/pupi_white/sign_n_nailed",
+        "y": 0
+      }
+    },
+    {
+      "when": {
+        "sign": "high_sticker",
+        "facing": "north"
+      },
+      "apply": {
+        "model": "realgrid:crossarm/pupi_white/sign_high_sticker",
+        "y": 0
+      }
+    },
+    {
+      "when": {
+        "sign": "voltage_sticker",
+        "facing": "north"
+      },
+      "apply": {
+        "model": "realgrid:crossarm/pupi_white/sign_voltage_sticker",
+        "y": 0
+      }
+    },
+    {
+      "when": {
+        "sign": "n_sticker",
+        "facing": "north"
+      },
+      "apply": {
+        "model": "realgrid:crossarm/pupi_white/sign_n_sticker",
+        "y": 0
+      }
+    },
+    {
+      "when": {
+        "facing": "east"
+      },
+      "apply": {
+        "model": "realgrid:crossarm/pupi_white/beam",
+        "y": 90
+      }
+    },
+    {
+      "when": {
+        "left": "true",
+        "facing": "east"
+      },
+      "apply": {
+        "model": "realgrid:crossarm/pupi_white/beam_left",
+        "y": 90
+      }
+    },
+    {
+      "when": {
+        "right": "true",
+        "facing": "east"
+      },
+      "apply": {
+        "model": "realgrid:crossarm/pupi_white/beam_right",
+        "y": 90
+      }
+    },
+    {
+      "when": {
+        "pole": "true",
+        "front_fit": "false",
+        "facing": "east"
+      },
+      "apply": {
+        "model": "realgrid:crossarm/pupi_white/bracket_cross",
+        "y": 90
+      }
+    },
+    {
+      "when": {
+        "pin": "true",
+        "facing": "east"
+      },
+      "apply": {
+        "model": "realgrid:crossarm/pupi_white/pin",
+        "y": 90
+      }
+    },
+    {
+      "when": {
+        "hanger": "true",
+        "facing": "east"
+      },
+      "apply": {
+        "model": "realgrid:crossarm/pupi_white/hanger",
+        "y": 90
+      }
+    },
+    {
+      "when": {
+        "front_fit": "true",
+        "facing": "east"
+      },
+      "apply": {
+        "model": "realgrid:crossarm/pupi_white/front_fit",
+        "y": 90
+      }
+    },
+    {
+      "when": {
+        "back_fit": "true",
+        "facing": "east"
+      },
+      "apply": {
+        "model": "realgrid:crossarm/pupi_white/back_fit",
+        "y": 90
+      }
+    },
+    {
+      "when": {
+        "left_fit": "true",
+        "facing": "east"
+      },
+      "apply": {
+        "model": "realgrid:crossarm/pupi_white/left_fit",
+        "y": 90
+      }
+    },
+    {
+      "when": {
+        "right_fit": "true",
+        "facing": "east"
+      },
+      "apply": {
+        "model": "realgrid:crossarm/pupi_white/right_fit",
+        "y": 90
+      }
+    },
+    {
+      "when": {
+        "sign": "high_nailed",
+        "facing": "east"
+      },
+      "apply": {
+        "model": "realgrid:crossarm/pupi_white/sign_high_nailed",
+        "y": 90
+      }
+    },
+    {
+      "when": {
+        "sign": "voltage_nailed",
+        "facing": "east"
+      },
+      "apply": {
+        "model": "realgrid:crossarm/pupi_white/sign_voltage_nailed",
+        "y": 90
+      }
+    },
+    {
+      "when": {
+        "sign": "n_nailed",
+        "facing": "east"
+      },
+      "apply": {
+        "model": "realgrid:crossarm/pupi_white/sign_n_nailed",
+        "y": 90
+      }
+    },
+    {
+      "when": {
+        "sign": "high_sticker",
+        "facing": "east"
+      },
+      "apply": {
+        "model": "realgrid:crossarm/pupi_white/sign_high_sticker",
+        "y": 90
+      }
+    },
+    {
+      "when": {
+        "sign": "voltage_sticker",
+        "facing": "east"
+      },
+      "apply": {
+        "model": "realgrid:crossarm/pupi_white/sign_voltage_sticker",
+        "y": 90
+      }
+    },
+    {
+      "when": {
+        "sign": "n_sticker",
+        "facing": "east"
+      },
+      "apply": {
+        "model": "realgrid:crossarm/pupi_white/sign_n_sticker",
+        "y": 90
+      }
+    },
+    {
+      "when": {
+        "facing": "south"
+      },
+      "apply": {
+        "model": "realgrid:crossarm/pupi_white/beam",
+        "y": 180
+      }
+    },
+    {
+      "when": {
+        "left": "true",
+        "facing": "south"
+      },
+      "apply": {
+        "model": "realgrid:crossarm/pupi_white/beam_left",
+        "y": 180
+      }
+    },
+    {
+      "when": {
+        "right": "true",
+        "facing": "south"
+      },
+      "apply": {
+        "model": "realgrid:crossarm/pupi_white/beam_right",
+        "y": 180
+      }
+    },
+    {
+      "when": {
+        "pole": "true",
+        "front_fit": "false",
+        "facing": "south"
+      },
+      "apply": {
+        "model": "realgrid:crossarm/pupi_white/bracket_cross",
+        "y": 180
+      }
+    },
+    {
+      "when": {
+        "pin": "true",
+        "facing": "south"
+      },
+      "apply": {
+        "model": "realgrid:crossarm/pupi_white/pin",
+        "y": 180
+      }
+    },
+    {
+      "when": {
+        "hanger": "true",
+        "facing": "south"
+      },
+      "apply": {
+        "model": "realgrid:crossarm/pupi_white/hanger",
+        "y": 180
+      }
+    },
+    {
+      "when": {
+        "front_fit": "true",
+        "facing": "south"
+      },
+      "apply": {
+        "model": "realgrid:crossarm/pupi_white/front_fit",
+        "y": 180
+      }
+    },
+    {
+      "when": {
+        "back_fit": "true",
+        "facing": "south"
+      },
+      "apply": {
+        "model": "realgrid:crossarm/pupi_white/back_fit",
+        "y": 180
+      }
+    },
+    {
+      "when": {
+        "left_fit": "true",
+        "facing": "south"
+      },
+      "apply": {
+        "model": "realgrid:crossarm/pupi_white/left_fit",
+        "y": 180
+      }
+    },
+    {
+      "when": {
+        "right_fit": "true",
+        "facing": "south"
+      },
+      "apply": {
+        "model": "realgrid:crossarm/pupi_white/right_fit",
+        "y": 180
+      }
+    },
+    {
+      "when": {
+        "sign": "high_nailed",
+        "facing": "south"
+      },
+      "apply": {
+        "model": "realgrid:crossarm/pupi_white/sign_high_nailed",
+        "y": 180
+      }
+    },
+    {
+      "when": {
+        "sign": "voltage_nailed",
+        "facing": "south"
+      },
+      "apply": {
+        "model": "realgrid:crossarm/pupi_white/sign_voltage_nailed",
+        "y": 180
+      }
+    },
+    {
+      "when": {
+        "sign": "n_nailed",
+        "facing": "south"
+      },
+      "apply": {
+        "model": "realgrid:crossarm/pupi_white/sign_n_nailed",
+        "y": 180
+      }
+    },
+    {
+      "when": {
+        "sign": "high_sticker",
+        "facing": "south"
+      },
+      "apply": {
+        "model": "realgrid:crossarm/pupi_white/sign_high_sticker",
+        "y": 180
+      }
+    },
+    {
+      "when": {
+        "sign": "voltage_sticker",
+        "facing": "south"
+      },
+      "apply": {
+        "model": "realgrid:crossarm/pupi_white/sign_voltage_sticker",
+        "y": 180
+      }
+    },
+    {
+      "when": {
+        "sign": "n_sticker",
+        "facing": "south"
+      },
+      "apply": {
+        "model": "realgrid:crossarm/pupi_white/sign_n_sticker",
+        "y": 180
+      }
+    },
+    {
+      "when": {
+        "facing": "west"
+      },
+      "apply": {
+        "model": "realgrid:crossarm/pupi_white/beam",
+        "y": 270
+      }
+    },
+    {
+      "when": {
+        "left": "true",
+        "facing": "west"
+      },
+      "apply": {
+        "model": "realgrid:crossarm/pupi_white/beam_left",
+        "y": 270
+      }
+    },
+    {
+      "when": {
+        "right": "true",
+        "facing": "west"
+      },
+      "apply": {
+        "model": "realgrid:crossarm/pupi_white/beam_right",
+        "y": 270
+      }
+    },
+    {
+      "when": {
+        "pole": "true",
+        "front_fit": "false",
+        "facing": "west"
+      },
+      "apply": {
+        "model": "realgrid:crossarm/pupi_white/bracket_cross",
+        "y": 270
+      }
+    },
+    {
+      "when": {
+        "pin": "true",
+        "facing": "west"
+      },
+      "apply": {
+        "model": "realgrid:crossarm/pupi_white/pin",
+        "y": 270
+      }
+    },
+    {
+      "when": {
+        "hanger": "true",
+        "facing": "west"
+      },
+      "apply": {
+        "model": "realgrid:crossarm/pupi_white/hanger",
+        "y": 270
+      }
+    },
+    {
+      "when": {
+        "front_fit": "true",
+        "facing": "west"
+      },
+      "apply": {
+        "model": "realgrid:crossarm/pupi_white/front_fit",
+        "y": 270
+      }
+    },
+    {
+      "when": {
+        "back_fit": "true",
+        "facing": "west"
+      },
+      "apply": {
+        "model": "realgrid:crossarm/pupi_white/back_fit",
+        "y": 270
+      }
+    },
+    {
+      "when": {
+        "left_fit": "true",
+        "facing": "west"
+      },
+      "apply": {
+        "model": "realgrid:crossarm/pupi_white/left_fit",
+        "y": 270
+      }
+    },
+    {
+      "when": {
+        "right_fit": "true",
+        "facing": "west"
+      },
+      "apply": {
+        "model": "realgrid:crossarm/pupi_white/right_fit",
+        "y": 270
+      }
+    },
+    {
+      "when": {
+        "sign": "high_nailed",
+        "facing": "west"
+      },
+      "apply": {
+        "model": "realgrid:crossarm/pupi_white/sign_high_nailed",
+        "y": 270
+      }
+    },
+    {
+      "when": {
+        "sign": "voltage_nailed",
+        "facing": "west"
+      },
+      "apply": {
+        "model": "realgrid:crossarm/pupi_white/sign_voltage_nailed",
+        "y": 270
+      }
+    },
+    {
+      "when": {
+        "sign": "n_nailed",
+        "facing": "west"
+      },
+      "apply": {
+        "model": "realgrid:crossarm/pupi_white/sign_n_nailed",
+        "y": 270
+      }
+    },
+    {
+      "when": {
+        "sign": "high_sticker",
+        "facing": "west"
+      },
+      "apply": {
+        "model": "realgrid:crossarm/pupi_white/sign_high_sticker",
+        "y": 270
+      }
+    },
+    {
+      "when": {
+        "sign": "voltage_sticker",
+        "facing": "west"
+      },
+      "apply": {
+        "model": "realgrid:crossarm/pupi_white/sign_voltage_sticker",
+        "y": 270
+      }
+    },
+    {
+      "when": {
+        "sign": "n_sticker",
+        "facing": "west"
+      },
+      "apply": {
+        "model": "realgrid:crossarm/pupi_white/sign_n_sticker",
+        "y": 270
+      }
+    }
+  ]
+}

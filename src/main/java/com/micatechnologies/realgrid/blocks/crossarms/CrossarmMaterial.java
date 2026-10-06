@@ -6,12 +6,21 @@ package com.micatechnologies.realgrid.blocks.crossarms;
  * scripts/gen_crossarms.py.
  *
  * <p>Issue #38 lists the full set: Brooks cedar in brown, tan and orange; PUPI fiberglass in white and
- * dark brown; Shakespeare fiberglass in maroon; MacLean fiberglass in tan, white and dark brown. The
- * foundation ships the first of them, and the rest come with the texture work.
+ * dark brown; Shakespeare fiberglass in maroon; MacLean fiberglass in tan, white and dark brown. Wood
+ * arms are through-bolted to the pole; fiberglass arms sit in their maker's braceless bracket, drawn by
+ * the arm itself (the generator's MATERIALS table says which bracket each one has).
  */
 public enum CrossarmMaterial
 {
-    BROOKS_BROWN("brooks_brown", false);
+    BROOKS_BROWN("brooks_brown", false),
+    BROOKS_TAN("brooks_tan", false),
+    BROOKS_ORANGE("brooks_orange", false),
+    PUPI_WHITE("pupi_white", true),
+    PUPI_DARK_BROWN("pupi_dark_brown", true),
+    SHAKESPEARE_MAROON("shakespeare_maroon", true),
+    MACLEAN_TAN("maclean_tan", true),
+    MACLEAN_WHITE("maclean_white", true),
+    MACLEAN_DARK_BROWN("maclean_dark_brown", true);
 
     private final String name;
     private final boolean fiberglass;
