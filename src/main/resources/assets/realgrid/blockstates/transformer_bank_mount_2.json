@@ -21,6 +21,17 @@
         "y": 270
       }
     },
+    "part": {
+      "center": {
+        "model": "realgrid:transformer_bank_mount/mount_2.obj"
+      },
+      "left": {
+        "model": "realgrid:transformer_bank_mount/mount_2.obj"
+      },
+      "right": {
+        "model": "realgrid:transformer_bank_mount/mount_2.obj"
+      }
+    },
     "inventory": [
       {
         "model": "realgrid:transformer_bank_mount/mount_2.obj",
@@ -50,7 +61,7 @@
               0.1,
               0
             ],
-            "scale": 0.25
+            "scale": 0.24
           },
           "fixed": {
             "rotation": [

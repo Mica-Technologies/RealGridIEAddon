@@ -16,10 +16,14 @@ The mount is a steel box frame standing off the front of the pole; the back of t
 for bolt covers. Transformers stand flush against the frame the same way they stand flush against
 a log, their back lugs at the edge of the frame's block:
 
-  - three-transformer bank: one tank on each side of the frame, facing outwards, and one on its
-    front, facing away from the pole.
-      * LADWP: X-braced side frames.
-      * SCE:   straight side arms.
+  - three-transformer bank (Brandon's diagram on issue #35): three blocks in a row, drawn two
+    tall. Front view, left to right: side tank, arm, centre, arm, side tank; the front tank stands
+    in front of the centre, and the side tanks face outwards with their backs to the arms. The
+    centre is a tall channel frame bolted to the pole, reaching above and below the tanks, with a
+    cage out front at the lug bands that carries the front tank. Each arm runs from a post at the
+    side tank's lugs to a small cage beside the centre.
+      * LADWP: the arms taper from the tall post to a shorter cage, so the pair reads as an X.
+      * SCE:   straight arms, level at the lug bands.
   - two-transformer bank: an H-shaped bracket standing off the pole: cross bars at the lug heights
     on the tanks' centre line, arms back to a plate on the pole, and one tank on each side.
 """
@@ -46,30 +50,16 @@ VARIANTS = {
     'sce_3': (3, 'straight', 2.0),
     '2': (2, 'straight', 29 * PX + BAR),
 }
+PARTS = ('center', 'left', 'right')
+LUG_DEPTH = (5 * PX, 11 * PX)                        # a tank's back lugs, across its block's depth
+CENTRE_FRAME_Y = (-0.3, 2.3)                         # the centre's pole frame reaches above and below the tanks
+TAPERED_CAGE_Y = (0.45, 1.35)                        # where a tapered LADWP arm meets its cage at the centre
 
 
 def rail_x(obj, y0, y1, z0, z1):
     """Horizontal member across the frame (along x) at a lug band."""
     obj.box((0.0, y0, z0), (1.0, y0 + BAR, z1))
     obj.box((0.0, y1 - BAR, z0), (1.0, y1, z1))
-
-
-def side(obj, x0, x1, style, top):
-    """One side frame: corner posts, a rail at each lug band, and the side's bracing."""
-    obj.box((x0, 0.0, 0.0), (x1, top, BAR))                      # front post
-    obj.box((x0, 0.0, 1.0 - BAR), (x1, top, 1.0))                # post against the pole
-    for y0, y1 in LUG_BANDS:
-        obj.box((x0, y0, 0.0), (x1, y0 + BAR, 1.0))
-        obj.box((x0, y1 - BAR, 0.0), (x1, y1, 1.0))
-    xm = (x0 + x1) / 2
-    if style == 'x':
-        lo, hi = LUG_BANDS[0][0], LUG_BANDS[1][1]
-        obj.tube([(xm, lo, BAR), (xm, hi, 1.0 - BAR)], BRACE)
-        obj.tube([(xm, lo, 1.0 - BAR), (xm, hi, BAR)], BRACE)
-    else:
-        # A straight arm from the pole out to the front post, midway up.
-        ym = (LUG_BANDS[0][1] + LUG_BANDS[1][0]) / 2
-        obj.box((x0, ym - BAR / 2, 0.0), (x1, ym + BAR / 2, 1.0))
 
 
 def h_bracket_model(name):
@@ -90,21 +80,96 @@ def h_bracket_model(name):
     return obj.text()
 
 
-def mount_model(name, transformers, style, top):
-    if transformers == 2:
-        return h_bracket_model(name)
-    obj = Obj('transformer_bank_mount_%s' % name, 'transformer_bank_mount.mtl', HEADER)
-    obj.use('metal')
-    side(obj, 0.0, BAR, style, top)
-    side(obj, 1.0 - BAR, 1.0, style, top)
-    for y0, y1 in LUG_BANDS:
-        rail_x(obj, y0, y1, 1.0 - BAR, 1.0)        # back rails, bolted to the pole
-        if transformers == 3:
-            rail_x(obj, y0, y1, 0.0, BAR)          # front rails, carrying the front tank
-    obj.use('clamp')
-    # Pole plate the back rails bolt through.
-    obj.box((5 * PX, 0.0, 1.0 - BAR - PX / 2), (11 * PX, top, 1.0 - BAR))
+class Mirror:
+    """Draws into an Obj, mirrored across x = 0.5 when asked, so one arm drawing serves both sides."""
+
+    def __init__(self, obj, mirrored, dx=0.0):
+        self.obj, self.mirrored, self.dx = obj, mirrored, dx
+
+    def x(self, x):
+        return (1.0 - x if self.mirrored else x) + self.dx
+
+    def box(self, lo, hi):
+        xs = sorted((self.x(lo[0]), self.x(hi[0])))
+        self.obj.box((xs[0], lo[1], lo[2]), (xs[1], hi[1], hi[2]))
+
+    def tube(self, pts, r, sides=4):
+        self.obj.tube([(self.x(p[0]), p[1], p[2]) for p in pts], r, sides=sides)
+
+    def use(self, m):
+        self.obj.use(m)
+
+
+def draw_centre(d):
+    """The centre: a tall channel frame bolted to the pole, and a cage out front for the front tank."""
+    y0, y1 = CENTRE_FRAME_Y
+    d.use('metal')
+    for x0 in (3 * PX, 11.5 * PX):                                      # frame uprights against the pole
+        d.box((x0, y0, 1.0 - 3 * PX), (x0 + BAR, y1, 1.0))
+    for y in (y0, y1 - BAR):                                            # frame top and bottom
+        d.box((3 * PX, y, 1.0 - 3 * PX), (13 * PX, y + BAR, 1.0))
+    for b0, b1 in LUG_BANDS:
+        rail_x(d, b0, b1, 0.0, BAR)                                     # front rails: the front tank's lugs
+        for x0 in (0.0, 1.0 - BAR):                                     # cage sides back to the frame
+            d.box((x0, b0, 0.0), (x0 + BAR, b0 + BAR, 1.0 - 3 * PX))
+            d.box((x0, b1 - BAR, 0.0), (x0 + BAR, b1, 1.0 - 3 * PX))
+    for x0 in (0.0, 1.0 - BAR):                                         # cage corner posts
+        for z0 in (0.0, 1.0 - 3 * PX - BAR):
+            d.box((x0, LUG_BANDS[0][0], z0), (x0 + BAR, LUG_BANDS[1][1], z0 + BAR))
+    d.use('clamp')
+    for y in (0.15, 1.6):                                               # plates bolted through the pole
+        d.box((2 * PX, y, 1.0 - PX / 2), (14 * PX, y + 4 * PX, 1.0 + PX / 2))
+
+
+def draw_arm(d, style):
+    """One arm, drawn as the left one: the side tank's post at x = 0, the cage against the centre at x = 1."""
+    z0, z1 = LUG_DEPTH
+    post_lo, post_hi = LUG_BANDS[0][0] - PX, LUG_BANDS[1][1] + PX
+    cage_lo, cage_hi = TAPERED_CAGE_Y if style == 'x' else (post_lo, post_hi)
+    cx0, cx1 = 1.0 - 4 * PX, 1.0
+    d.use('metal')
+    d.box((0.0, post_lo, z0 + PX), (BAR, post_hi, z1 - PX))             # post the side tank bolts to
+    d.use('clamp')
+    for b0, b1 in LUG_BANDS:                                            # pads under the tank's lugs
+        d.box((0.0, b0 - PX, z0), (PX, b1 + PX, z1))
+    d.use('metal')
+    for z in (z0, z1 - BAR):                                            # the small cage at the centre
+        for x in (cx0, cx1 - BAR):
+            d.box((x, cage_lo, z), (x + BAR, cage_hi, z + BAR))
+    for y in (cage_lo, cage_hi - BAR):
+        d.box((cx0, y, z0), (cx1, y + BAR, z1))
+    r = BAR * 0.7                                                        # members from the post to the cage
+    for z in (z0 + BAR / 2, z1 - BAR / 2):
+        if style == 'x':
+            d.tube([(BAR, post_hi - BAR / 2, z), (cx0, cage_hi - BAR / 2, z)], r)
+            d.tube([(BAR, post_lo + BAR / 2, z), (cx0, cage_lo + BAR / 2, z)], r)
+        else:
+            for b0, b1 in LUG_BANDS:
+                ym = (b0 + b1) / 2
+                d.box((BAR, ym - BAR / 2, z - BAR / 2), (cx0, ym + BAR / 2, z + BAR / 2))
+
+
+def part_model(name, style, part):
+    obj = Obj('transformer_bank_mount_%s_%s' % (name, part), 'transformer_bank_mount.mtl', HEADER)
+    if part == 'center':
+        draw_centre(Mirror(obj, False))
+    else:
+        draw_arm(Mirror(obj, part == 'right'), style)
     return obj.text()
+
+
+def item_model(name, style):
+    """The whole frame, for the item: the arms either side of the centre."""
+    obj = Obj('transformer_bank_mount_%s_item' % name, 'transformer_bank_mount.mtl', HEADER)
+    draw_centre(Mirror(obj, False))
+    draw_arm(Mirror(obj, False, -1.0), style)
+    draw_arm(Mirror(obj, True, 1.0), style)
+    return obj.text()
+
+
+def mount_model(name, transformers, style, top):
+    """The two-transformer bracket's single model; the three-transformer frames are drawn per part."""
+    return h_bracket_model(name)
 
 
 MTL = HEADER + """newmtl metal
@@ -114,22 +179,29 @@ map_Kd realgrid:blocks/pole_light_mount_clamp
 """
 
 
-def blockstate(name):
-    model = 'realgrid:transformer_bank_mount/mount_%s.obj' % name
+def blockstate(name, transformers):
+    """facing x part. A two-transformer bracket is only ever a centre, but the property is shared."""
+    def model(part):
+        if transformers == 2:
+            return 'realgrid:transformer_bank_mount/mount_%s.obj' % name
+        return 'realgrid:transformer_bank_mount/mount_%s_%s.obj' % (name, part)
+    item = model('center') if transformers == 2 else 'realgrid:transformer_bank_mount/mount_%s_item.obj' % name
+    scale = 0.4 if transformers == 2 else 0.25
     return {
         'forge_marker': 1,
-        'defaults': {'model': model, 'custom': {'flip-v': True}},
+        'defaults': {'model': model('center'), 'custom': {'flip-v': True}},
         'variants': {
             'facing': {'north': {'y': 0}, 'east': {'y': 90}, 'south': {'y': 180}, 'west': {'y': 270}},
+            'part': {p: {'model': model(p)} for p in PARTS},
             'inventory': [{
-                'model': model,
+                'model': item,
                 'custom': {'flip-v': True},
                 'transform': {
-                    'gui': {'translation': [0, -0.2, 0], 'rotation': [{'x': 30}, {'y': 135}], 'scale': 0.4},
-                    'ground': {'translation': [0, 0.1, 0], 'scale': 0.25},
-                    'fixed': {'rotation': [{'y': 180}], 'scale': 0.4},
-                    'thirdperson': {'translation': [0, 0.1, 0.1], 'rotation': [{'x': 75}, {'y': 45}], 'scale': 0.3},
-                    'firstperson': {'translation': [0.1, 0.1, 0], 'rotation': [{'y': 45}], 'scale': 0.3},
+                    'gui': {'translation': [0, -0.2, 0], 'rotation': [{'x': 30}, {'y': 135}], 'scale': scale},
+                    'ground': {'translation': [0, 0.1, 0], 'scale': round(scale * 0.6, 3)},
+                    'fixed': {'rotation': [{'y': 180}], 'scale': scale},
+                    'thirdperson': {'translation': [0, 0.1, 0.1], 'rotation': [{'x': 75}, {'y': 45}], 'scale': round(scale * 0.75, 3)},
+                    'firstperson': {'translation': [0.1, 0.1, 0], 'rotation': [{'y': 45}], 'scale': round(scale * 0.75, 3)},
                 },
             }],
         },
@@ -138,14 +210,21 @@ def blockstate(name):
 
 def main():
     os.makedirs(MODEL_DIR, exist_ok=True)
-    for old in ('mount_2.obj', 'mount_3.obj'):
-        path = os.path.join(MODEL_DIR, old)
-        if os.path.exists(path) and old[:-4] not in ['mount_%s' % n for n in VARIANTS]:
-            os.remove(path)
+    keep = set()
     for name, (transformers, style, top) in VARIANTS.items():
-        write(os.path.join(MODEL_DIR, 'mount_%s.obj' % name), mount_model(name, transformers, style, top))
+        if transformers == 2:
+            files = {'mount_%s.obj' % name: mount_model(name, transformers, style, top)}
+        else:
+            files = {'mount_%s_%s.obj' % (name, part): part_model(name, style, part) for part in PARTS}
+            files['mount_%s_item.obj' % name] = item_model(name, style)
+        for fname, text in files.items():
+            keep.add(fname)
+            write(os.path.join(MODEL_DIR, fname), text)
         write(os.path.join(BLOCKSTATE_DIR, 'transformer_bank_mount_%s.json' % name),
-              json.dumps(blockstate(name), indent=2) + '\n')
+              json.dumps(blockstate(name, transformers), indent=2) + '\n')
+    for stale in os.listdir(MODEL_DIR):
+        if stale.endswith('.obj') and stale not in keep:
+            os.remove(os.path.join(MODEL_DIR, stale))
     write(os.path.join(MODEL_DIR, 'transformer_bank_mount.mtl'), MTL)
 
 
