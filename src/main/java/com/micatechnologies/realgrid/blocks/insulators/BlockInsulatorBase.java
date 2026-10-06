@@ -10,6 +10,7 @@ import net.minecraft.block.ITileEntityProvider;
 import net.minecraft.block.material.Material;
 import net.minecraft.block.properties.IProperty;
 import net.minecraft.block.properties.PropertyDirection;
+import net.minecraft.block.properties.PropertyEnum;
 import net.minecraft.block.state.BlockStateContainer;
 import net.minecraft.block.state.IBlockState;
 import net.minecraft.creativetab.CreativeTabs;
@@ -40,6 +41,13 @@ public abstract class BlockInsulatorBase extends Block implements ITileEntityPro
     IRealGridTileEntityProvider
 {
     public static final PropertyDirection FACING = PropertyDirection.create("facing", EnumFacing.Plane.HORIZONTAL);
+
+    /**
+     * Where a top-mounted insulator sits: on its own, or on the crossarm below it, moved back towards
+     * the pole (see {@link InsulatorSeat}). Worked out from the block below, never stored. Only the
+     * top-mounted insulators have it; side-mounted and dead-end ones reach out from a pole instead.
+     */
+    public static final PropertyEnum<InsulatorSeat> SEAT = PropertyEnum.create("seat", InsulatorSeat.class);
 
     protected static final AxisAlignedBB DEFAULT_AABB = new AxisAlignedBB(0.25, 0.0, 0.25, 0.75, 0.875, 0.75);
 
@@ -80,8 +88,33 @@ public abstract class BlockInsulatorBase extends Block implements ITileEntityPro
     @Override
     protected BlockStateContainer createBlockState()
     {
-        return new ExtendedBlockState(this, new IProperty[]{FACING},
+        IProperty[] properties = isTopMount() ? new IProperty[]{FACING, SEAT} : new IProperty[]{FACING};
+        return new ExtendedBlockState(this, properties,
             new IUnlistedProperty[]{IEProperties.CONNECTIONS, IEProperties.TILEENTITY_PASSTHROUGH});
+    }
+
+    /**
+     * @return whether this insulator stands on the block below it, from its tile entity's geometry.
+     *         Called while the block is being constructed, so it relies only on
+     *         {@link #createNewTileEntity}, which every variant implements without needing a world.
+     */
+    public boolean isTopMount()
+    {
+        if (topMount == null)
+        {
+            TileEntity te = createNewTileEntity(null, 0);
+            topMount = te instanceof TileEntityInsulatorBase && ((TileEntityInsulatorBase) te).geometry.isTopMount();
+        }
+        return topMount;
+    }
+
+    /** Whether this is a top-mounted insulator; worked out once, on first asking. */
+    private Boolean topMount;
+
+    @Override
+    public IBlockState getActualState(IBlockState state, IBlockAccess world, BlockPos pos)
+    {
+        return state.getPropertyKeys().contains(SEAT) ? state.withProperty(SEAT, InsulatorSeat.at(world, pos)) : state;
     }
 
     @Override

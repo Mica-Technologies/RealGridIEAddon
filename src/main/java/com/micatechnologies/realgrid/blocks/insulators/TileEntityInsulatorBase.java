@@ -205,13 +205,29 @@ public abstract class TileEntityInsulatorBase extends TileEntityImmersiveConnect
     @Override
     public Vec3d getConnectionOffset(Connection con)
     {
-        return geometry.connectionOffset(facing);
+        return geometry.connectionOffset(facing).add(seat().shift());
     }
 
     @Override
     public float[] getBlockBounds()
     {
-        return geometry.blockBounds(facing);
+        float[] b = geometry.blockBounds(facing);
+        Vec3d s = seat().shift();
+        if (s == Vec3d.ZERO)
+            return b;
+        return new float[]{(float) (b[0] + s.x), b[1], (float) (b[2] + s.z), (float) (b[3] + s.x), b[4], (float) (b[5] + s.z)};
+    }
+
+    /**
+     * Where this insulator sits. A top-mounted one standing on a crossarm is drawn moved back onto the
+     * arm's centre line, so its wire point and box move with it; anything else stays where its
+     * geometry puts it.
+     */
+    protected InsulatorSeat seat()
+    {
+        if (!geometry.isTopMount() || world == null)
+            return InsulatorSeat.NONE;
+        return InsulatorSeat.at(world, pos);
     }
 
     /**

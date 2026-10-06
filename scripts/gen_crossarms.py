@@ -7,7 +7,9 @@ Run from the repository root:
 
 A crossarm is built from one-block segments that join into an arm of any length (BlockCrossarm).
 Each segment's model depends on its neighbours: whether the arm carries on to its left and to its
-right, and whether it sits against a pole, where a through-bolt holds it. The Java side relies on
+right, whether it sits against a pole, where a through-bolt holds it, and the hardware for what is
+mounted on it: an insulator pin's nut under the arm when a top-mounted insulator stands on the
+segment (pin), and a hanger strap down to an IE connector hung below it (hanger). The Java side relies on
 the file names, and on the arm's cross-section matching BlockCrossarm.ARM_BOUNDS.
 
 Coordinate system (as in gen_pole_light_mounts.py): one unit is one block, the segment's block spans
@@ -54,8 +56,11 @@ BRACE_TOP = 1.0 + ARM_LO + 1.5 * PX      # where a leg meets the arm's front fac
 BRACE_FRONT = ARM_LO - 0.4 * PX          # just in front of the arm's front face
 
 
-def arm_model(material, left, right, pole):
-    obj = Obj('crossarm_%s_%s' % (material, key(left, right, pole)), 'crossarm.mtl', HEADER)
+ARM_MID_Z = (ARM_LO + 1.0) / 2       # the arm's centre line, where a seated insulator's pin goes through
+
+
+def arm_model(material, left, right, pole, pin=False, hanger=False):
+    obj = Obj('crossarm_%s_%s' % (material, key(left, right, pole, pin, hanger)), 'crossarm.mtl', HEADER)
     obj.use(material)
     x0 = 0.0 if left else END_INSET
     x1 = 1.0 if right else 1.0 - END_INSET
@@ -65,6 +70,18 @@ def arm_model(material, left, right, pole):
         obj.use('steel')
         obj.box((6 * PX, 11 * PX, ARM_LO - 0.4 * PX), (10 * PX, 15 * PX, ARM_LO))
         obj.box((7 * PX, 12 * PX, ARM_LO - 1.0 * PX), (9 * PX, 14 * PX, ARM_LO - 0.4 * PX))
+    if pin:
+        # The insulator pin's washer and nut, under the arm on its centre line.
+        obj.use('steel')
+        obj.box((6.5 * PX, ARM_LO - 0.4 * PX, ARM_MID_Z - 1.5 * PX), (9.5 * PX, ARM_LO, ARM_MID_Z + 1.5 * PX))
+        obj.box((7.25 * PX, ARM_LO - 1.4 * PX, ARM_MID_Z - 0.75 * PX), (8.75 * PX, ARM_LO - 0.4 * PX, ARM_MID_Z + 0.75 * PX))
+    if hanger:
+        # A strap down from the arm and a plate at the bottom of the block, centred over the
+        # connector hanging from it.
+        obj.use('steel')
+        obj.box((7 * PX, 1.5 * PX, ARM_MID_Z - 1 * PX), (9 * PX, ARM_LO, ARM_MID_Z + 1 * PX))
+        obj.box((7 * PX, 0.0, 6 * PX), (9 * PX, 1.5 * PX, ARM_MID_Z + 1 * PX))
+        obj.box((5 * PX, 0.0, 5 * PX), (11 * PX, 0.75 * PX, 11 * PX))
     return obj.text()
 
 
@@ -112,9 +129,9 @@ def brace_blockstate(kind):
     return {'forge_marker': 1, 'variants': variants}
 
 
-def key(left, right, pole):
-    """'lrp'-style suffix: which of left, right and pole are set."""
-    return ''.join(c for c, on in (('l', left), ('r', right), ('p', pole)) if on) or 'none'
+def key(left, right, pole, pin=False, hanger=False):
+    """'lrpih'-style suffix: which of left, right, pole, pin and hanger are set."""
+    return ''.join(c for c, on in (('l', left), ('r', right), ('p', pole), ('i', pin), ('h', hanger)) if on) or 'none'
 
 
 def mtl():
@@ -125,17 +142,23 @@ def mtl():
     return ''.join(lines)
 
 
+BOOLS = (False, True)
+
+
 def blockstate(material):
-    def model(left, right, pole):
-        return 'realgrid:crossarm/%s/arm_%s.obj' % (material, key(left, right, pole))
+    def model(*k):
+        return 'realgrid:crossarm/%s/arm_%s.obj' % (material, key(*k))
     variants = {}
     for facing, y in FACINGS:
-        for left in (False, True):
-            for pole in (False, True):
-                for right in (False, True):
-                    variants['facing=%s,left=%s,pole=%s,right=%s' % (
-                        facing, str(left).lower(), str(pole).lower(), str(right).lower())] = {
-                        'model': model(left, right, pole), 'custom': {'flip-v': True}, 'y': y}
+        for hanger in BOOLS:
+            for left in BOOLS:
+                for pin in BOOLS:
+                    for pole in BOOLS:
+                        for right in BOOLS:
+                            b = lambda v: str(v).lower()
+                            variants['facing=%s,hanger=%s,left=%s,pin=%s,pole=%s,right=%s' % (
+                                facing, b(hanger), b(left), b(pin), b(pole), b(right))] = {
+                                'model': model(left, right, pole, pin, hanger), 'custom': {'flip-v': True}, 'y': y}
     variants['inventory'] = {
         'model': 'realgrid:crossarm/%s/arm_%s.obj' % (material, key(True, True, True)),
         'custom': {'flip-v': True},
@@ -168,12 +191,14 @@ def main():
         folder = os.path.join(MODEL_DIR, material)
         os.makedirs(folder, exist_ok=True)
         keep = set()
-        for left in (False, True):
-            for right in (False, True):
-                for pole in (False, True):
-                    name = 'arm_%s.obj' % key(left, right, pole)
-                    keep.add(name)
-                    write(os.path.join(folder, name), arm_model(material, left, right, pole))
+        for left in BOOLS:
+            for right in BOOLS:
+                for pole in BOOLS:
+                    for pin in BOOLS:
+                        for hanger in BOOLS:
+                            name = 'arm_%s.obj' % key(left, right, pole, pin, hanger)
+                            keep.add(name)
+                            write(os.path.join(folder, name), arm_model(material, left, right, pole, pin, hanger))
         for stale in os.listdir(folder):
             if stale.endswith('.obj') and stale not in keep:
                 os.remove(os.path.join(folder, stale))
