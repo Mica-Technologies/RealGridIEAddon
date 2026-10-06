@@ -41,8 +41,12 @@ public class BlockTransformerBankMount extends Block
 {
     public static final PropertyDirection FACING = PropertyDirection.create("facing", EnumFacing.Plane.HORIZONTAL);
 
-    /** The two-transformer bracket, for a north-facing mount: from the tanks' centre line back to the pole. */
-    private static final float[] BRACKET_BOUNDS = {0.0f, 0.0f, 0.3125f, 1.0f, 1.0f, 1.0f};
+    /**
+     * The two-transformer bracket, for a north-facing mount: from the tanks' centre line back to the
+     * pole, and only as high as the lower cross bar and its lug clamps, so the box stays clear of
+     * the tanks' bushings and the wires leaving them.
+     */
+    private static final float[] BRACKET_BOUNDS = {0.0f, 0.0f, 0.3125f, 1.0f, 0.625f, 1.0f};
 
     private final int transformers;
 
