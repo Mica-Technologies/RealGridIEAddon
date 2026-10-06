@@ -80,7 +80,7 @@ The major behavioral contract of the mod is implemented in three shared tile-ent
 
 - Connector `0`: invisible top-centre MV/LV relay; accepts multiple connections of exactly one type, copper or electrum.
 - Connectors `1` and `2`: HV bushings; steel only. One-wire variants have one bushing/one connection; two-wire variants have two.
-- `getTargetedConnector(TargetingInfo)` maps click location and horizontal facing to a connector.
+- A wire goes to a connector by its type, wherever the transformer is clicked: steel to a bushing, copper or electrum to the relay (`connectorFor`). `getTargetedConnector(TargetingInfo)` maps click location and horizontal facing to a connector; it picks between two bushings and tells the wire cutters which wires to cut, falling back to the other attached type when nothing is attached at the clicked point.
 - `getConnectionOffset(Connection)` must agree with the physical model. Per-variant bushing offsets/heights are transformed from the model's authored south-facing coordinate system.
 - With two HV bushings, the renderer assigns wires to the nearer bushing based on remote endpoints, keeping the pair uncrossed where possible.
 - Cable state is reconstructed from IE's live connection set after placement/load/removal to avoid stale slot/type state from world edits, copying, or duplicate callbacks.
