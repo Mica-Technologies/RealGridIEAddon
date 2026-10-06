@@ -2,6 +2,8 @@ package com.micatechnologies.realgrid.init;
 
 import com.micatechnologies.realgrid.RealGrid;
 import com.micatechnologies.realgrid.blocks.bankmounts.BlockTransformerBankMount;
+import com.micatechnologies.realgrid.blocks.crossarms.BlockCrossarm;
+import com.micatechnologies.realgrid.blocks.crossarms.CrossarmMaterial;
 import com.micatechnologies.realgrid.blocks.insulators.*;
 import com.micatechnologies.realgrid.blocks.lightmounts.BlockPoleLightMount;
 import com.micatechnologies.realgrid.blocks.lightmounts.BlockPoleLightMountTip;
@@ -128,6 +130,9 @@ public class ModBlocks
     public static final BlockTransformerBankMount TRANSFORMER_BANK_MOUNT_LADWP_3 = new BlockTransformerBankMount("ladwp", 3);
     public static final BlockTransformerBankMount TRANSFORMER_BANK_MOUNT_SCE_3 = new BlockTransformerBankMount("sce", 3);
     public static final BlockTransformerBankMount TRANSFORMER_BANK_MOUNT_2 = new BlockTransformerBankMount(null, 2);
+
+    // Crossarms (issue #38): one block per material, segments joining into an arm of any length
+    public static final BlockCrossarm CROSSARM_BROOKS_BROWN = new BlockCrossarm(CrossarmMaterial.BROOKS_BROWN);
 
     // Creative Tab
     public static final CreativeTabs CREATIVE_TAB = new CreativeTabs(RealGrid.MODID) {
