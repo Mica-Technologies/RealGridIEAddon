@@ -142,6 +142,7 @@ public class ModBlocks
     public static final BlockCrossarmBrace CROSSARM_BRACE_METAL = new BlockCrossarmBrace(BlockCrossarmBrace.Kind.METAL);
     public static final BlockCrossarmSpacer CROSSARM_SPACER_WOOD = new BlockCrossarmSpacer(BlockCrossarmSpacer.Kind.WOOD);
     public static final BlockCrossarmSpacer CROSSARM_SPACER_FIBERGLASS = new BlockCrossarmSpacer(BlockCrossarmSpacer.Kind.FIBERGLASS);
+    public static final BlockCrossarmGuyMount CROSSARM_GUY_MOUNT = new BlockCrossarmGuyMount();
 
     // Transformer cases (issue #38): platforms of any size between poles
     public static final BlockTransformerCase TRANSFORMER_CASE_METAL = new BlockTransformerCase(BlockTransformerCase.Kind.METAL);
