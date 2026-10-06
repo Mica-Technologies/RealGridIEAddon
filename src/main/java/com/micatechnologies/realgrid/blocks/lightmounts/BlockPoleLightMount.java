@@ -6,6 +6,7 @@ import blusunrize.immersiveengineering.common.util.Utils;
 import com.micatechnologies.realgrid.RealGrid;
 import com.micatechnologies.realgrid.blocks.insulators.BlockInsulatorBase;
 import com.micatechnologies.realgrid.init.IRealGridTileEntityProvider;
+import com.micatechnologies.realgrid.init.ModBlocks;
 import com.micatechnologies.realgrid.init.RealGridRegistry;
 import com.micatechnologies.realgrid.util.BoundsUtil;
 import net.minecraft.block.Block;
@@ -31,6 +32,7 @@ import net.minecraft.util.NonNullList;
 import net.minecraft.util.math.AxisAlignedBB;
 import net.minecraft.util.math.BlockPos;
 import net.minecraft.util.math.MathHelper;
+import net.minecraft.util.text.TextComponentTranslation;
 import net.minecraft.world.IBlockAccess;
 import net.minecraft.world.World;
 import net.minecraftforge.common.property.ExtendedBlockState;
@@ -205,11 +207,33 @@ public class BlockPoleLightMount extends Block implements ITileEntityProvider, I
         return ArmSwing.STRAIGHT;
     }
 
+    /** However the mount got here (a player, a command, a structure), it puts its tip block out where it can. */
+    @Override
+    public void onBlockAdded(World world, BlockPos pos, IBlockState state)
+    {
+        super.onBlockAdded(world, pos, state);
+        if (!world.isRemote)
+            placeTip(world, pos, state);
+    }
+
+    /** A player's mount needs its tip; with no room for it the placement is undone and the mount handed back. */
     @Override
     public void onBlockPlacedBy(World world, BlockPos pos, IBlockState state, EntityLivingBase placer, ItemStack stack)
     {
         if (world.isRemote)
             return;
+        if (!hasTip(world, pos, state))
+        {
+            world.setBlockToAir(pos);
+            if (placer instanceof EntityPlayer)
+            {
+                EntityPlayer player = (EntityPlayer) placer;
+                player.sendStatusMessage(new TextComponentTranslation("realgrid.pole_light_mount.tip_blocked"), true);
+                if (!player.capabilities.isCreativeMode)
+                    player.inventory.addItemStackToInventory(new ItemStack(this));
+            }
+            return;
+        }
         TileEntity te = world.getTileEntity(pos);
         if (te instanceof TileEntityPoleLightMount)
         {
@@ -218,16 +242,73 @@ public class BlockPoleLightMount extends Block implements ITileEntityProvider, I
         }
     }
 
-    /** The Engineer's Hammer swings the arm: straight, right, left, and round again. */
+    /**
+     * The Engineer's Hammer swings the arm: straight, right, left, and round again. The tip block
+     * moves with it, so the swing is refused while wires are attached (they would be left at the old
+     * tip) or when the new tip's spot is taken.
+     */
     @Override
     public boolean onBlockActivated(World world, BlockPos pos, IBlockState state, EntityPlayer player,
                                     EnumHand hand, EnumFacing side, float hitX, float hitY, float hitZ)
     {
         if (!Utils.isHammer(player.getHeldItem(hand)))
             return false;
-        if (!world.isRemote)
-            world.setBlockState(pos, state.withProperty(SWING, state.getValue(SWING).next()), 3);
+        if (world.isRemote)
+            return true;
+        TileEntity te = world.getTileEntity(pos);
+        if (te instanceof TileEntityPoleLightMount && ((TileEntityPoleLightMount) te).isWired())
+        {
+            player.sendStatusMessage(new TextComponentTranslation("realgrid.pole_light_mount.swing_wired"), true);
+            return true;
+        }
+        BlockPos oldTip = PoleLightMountGeometry.tipPos(state, pos);
+        IBlockState swung = state.withProperty(SWING, state.getValue(SWING).next());
+        BlockPos newTip = PoleLightMountGeometry.tipPos(swung, pos);
+        if (!newTip.equals(oldTip) && !world.getBlockState(newTip).getBlock().isReplaceable(world, newTip))
+        {
+            player.sendStatusMessage(new TextComponentTranslation("realgrid.pole_light_mount.tip_blocked"), true);
+            return true;
+        }
+        // The new state first: the old tip then no longer belongs to the mount, so removing it leaves the mount be.
+        world.setBlockState(pos, swung, 3);
+        if (!newTip.equals(oldTip) && world.getBlockState(oldTip).getBlock() instanceof BlockPoleLightMountTip)
+            world.setBlockToAir(oldTip);
+        placeTip(world, pos, swung);
         return true;
+    }
+
+    // -----------------------------------------------------------------------
+    // Tip block
+    // -----------------------------------------------------------------------
+
+    /** Puts the tip block at the end of the arm, if its spot is free, and points it at this mount. */
+    static void placeTip(World world, BlockPos pos, IBlockState state)
+    {
+        BlockPos tip = PoleLightMountGeometry.tipPos(state, pos);
+        if (tip == null)
+            return;
+        Block there = world.getBlockState(tip).getBlock();
+        if (there instanceof BlockPoleLightMountTip)
+        {
+            // Another mount's tip is in the way; an orphaned one (its mount gone) is reused.
+            BlockPos owner = BlockPoleLightMountTip.mountOf(world, tip);
+            if (owner != null && !owner.equals(pos))
+                return;
+        }
+        else if (!there.isReplaceable(world, tip))
+            return;
+        if (!(there instanceof BlockPoleLightMountTip))
+            world.setBlockState(tip, ModBlocks.POLE_LIGHT_MOUNT_TIP.getDefaultState(), 3);
+        TileEntity te = world.getTileEntity(tip);
+        if (te instanceof TileEntityPoleLightMountTip)
+            ((TileEntityPoleLightMountTip) te).setMount(pos);
+    }
+
+    /** @return whether this mount's tip block is in place and points back at it */
+    static boolean hasTip(IBlockAccess world, BlockPos pos, IBlockState state)
+    {
+        BlockPos tip = PoleLightMountGeometry.tipPos(state, pos);
+        return tip != null && pos.equals(BlockPoleLightMountTip.mountOf(world, tip));
     }
 
     // -----------------------------------------------------------------------
@@ -253,6 +334,10 @@ public class BlockPoleLightMount extends Block implements ITileEntityProvider, I
             TileEntity te = world.getTileEntity(pos);
             if (te instanceof TileEntityPoleLightMount)
                 ((TileEntityPoleLightMount) te).onBlockDestroyed();
+            // This position is already air, so the tip no longer claims it and goes quietly.
+            BlockPos tip = PoleLightMountGeometry.tipPos(state, pos);
+            if (tip != null && world.getBlockState(tip).getBlock() instanceof BlockPoleLightMountTip)
+                world.setBlockToAir(tip);
         }
         super.breakBlock(world, pos, state);
     }

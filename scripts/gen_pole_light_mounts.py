@@ -7,12 +7,13 @@ Run from the repository root:
 
 The arm follows the SCE / LADWP street-light arms in issue #34: a plate bolted to the pole with a
 mast-arm fitting, a round arm that leaves the fitting level, sweeps up through an elbow and runs
-out on a gentle rise, a slimmer slip-fitter at the tip for the fixture, and a diagonal brace. Once
-a wire is attached ("wired" models) a porcelain guide insulator sits on top of the plate and the
-supply cable drops from it, hangs about 13 pixels under the arm and meets the arm at the tip.
+out on a gentle rise, a slimmer slip-fitter at the tip for the fixture, and a diagonal brace. A
+porcelain insulator stands on the arm just behind the slip-fitter, next to the fixture; wires
+attach to its top. Once a wire is attached ("wired" models) a short slack loop runs from the
+insulator, under the arm and into the fixture.
 
-The Java side relies only on the file names and on the wire point, which lives in
-TileEntityPoleLightMount (WIRE_POINT) and must agree with GUIDE_FRONT below.
+The wire point and the invisible tip block that makes the insulator clickable are written to
+PoleLightMountTips.java, so the Java side and the models come from the same numbers.
 
 Coordinate system (the same one every generated .obj uses): one unit is one block, the mount
 block spans 0..1 on every axis, the arm reaches NORTH (-Z), and the pole is on the SOUTH face
@@ -38,6 +39,8 @@ ROOT = os.path.join(os.path.dirname(os.path.abspath(__file__)), '..', 'src', 'ma
 MODEL_DIR = os.path.join(ROOT, 'models', 'block', 'pole_light_mount')
 BLOCKSTATE_DIR = os.path.join(ROOT, 'blockstates')
 TEXTURE_DIR = os.path.join(ROOT, 'textures', 'blocks')
+JAVA_TIPS = os.path.join(os.path.dirname(os.path.abspath(__file__)), '..', 'src', 'main', 'java', 'com', 'micatechnologies',
+                         'realgrid', 'blocks', 'lightmounts', 'PoleLightMountTips.java')
 
 LENGTHS = tuple(range(1, 9))
 SWINGS = ('straight', 'left', 'right')
@@ -59,8 +62,11 @@ ARM_TIP_Y = 1 + 2.5 * PX  # height of the slip-fitter: a CSM fixture's socket, o
 TIP_LENGTH = 0.18       # level slip-fitter at the tip
 TIP_INSET = 3 * PX      # how far the slip-fitter runs into the fixture's socket
 SWING_TURN = 0.7        # how far back from the socket a swung arm starts turning to meet it
-CABLE_DROP = 13 * PX    # how far the cable hangs under the arm at its lowest
-GUIDE_FRONT = (0.5, 0.875, 0.75)   # front face of the guide insulator = TileEntityPoleLightMount.WIRE_POINT
+INSULATOR_BACK = 0.08   # how far behind the slip-fitter the tip insulator stands
+PIN_HEIGHT = 1.5 * PX   # insulator pin between the arm and the porcelain
+PORCELAIN = 3 * PX      # porcelain insulator, a cube this size
+SLACK_DROP = 5 * PX     # how far the slack loop hangs under the arm
+HITBOX_PAD = 3 * PX     # the tip block's box reaches this far round the insulator
 
 
 class Obj:
@@ -188,6 +194,13 @@ class ArmPath:
             return ELBOW_TOP_Y + (ARM_TIP_Y - ELBOW_TOP_Y) * u
         return ARM_TIP_Y
 
+    def side(self, s):
+        """Unit (x, z) vector to the arm's right, seen looking along it from the pole."""
+        a, b = self.point(max(0.0, s - 0.01)), self.point(min(self.reach, s + 0.01))
+        dx, dz = b[0] - a[0], b[2] - a[2]
+        m = math.hypot(dx, dz) or 1.0
+        return (-dz / m, dx / m)
+
     def point(self, s, dy=0.0):
         s = max(0.0, min(self.reach, s))
         i = 1
@@ -218,21 +231,44 @@ def arm_model(length, swing, wired):
     obj.tube([path.point(s) for s in _samples(path.s_tip - 0.01, path.reach, 3)], TIP_RADIUS, sides=ARM_SIDES)
     brace_s = min(0.9, 0.55 * path.reach)
     obj.tube([(0.5, 2 * PX, 0.89), path.point(brace_s, -ARM_RADIUS * 0.6)], BRACE_RADIUS, sides=TUBE_SIDES)
+    tip = tip_insulator(path)
+    ax, ay, az = tip['arm']
+    obj.use('clamp')
+    obj.box((ax - 0.5 * PX, ay, az - 0.5 * PX), (ax + 0.5 * PX, tip['porcelain_y'], az + 0.5 * PX))     # pin
+    obj.use('porcelain')
+    half = PORCELAIN / 2
+    obj.box((ax - half, tip['porcelain_y'], az - half), (ax + half, tip['wire'][1], az + half))       # insulator
     if wired:
-        obj.use('clamp')
-        obj.box((7.5 * PX, 0.75, 0.8125), (8.5 * PX, 0.8125, 0.9))            # insulator standoff
-        obj.use('porcelain')
-        obj.box((7 * PX, 0.8125, GUIDE_FRONT[2]), (9 * PX, 0.9375, 0.875))    # guide insulator
+        # Slight slack: from the insulator, down under the arm beside it, and into the fixture's socket.
         obj.use('cable')
-        pts = [GUIDE_FRONT]
-        for s in _samples(0.0, path.reach, 24)[1:]:
-            w = min(1.0, s / 0.35)
-            arm_pt = path.point(s)
-            hang = CABLE_DROP * max(0.0, math.sin(math.pi * s / path.reach)) ** 0.6
-            y = (1 - w) * GUIDE_FRONT[1] + w * (arm_pt[1] - ARM_RADIUS) - hang
-            pts.append((arm_pt[0], y, arm_pt[2]))
+        side = path.side(tip['s'])
+        def beside(s, dy):
+            p = path.point(s, dy)
+            return (p[0] + side[0] * 1.5 * PX, p[1], p[2] + side[1] * 1.5 * PX)
+        drop = -ARM_RADIUS - SLACK_DROP
+        pts = [(ax + side[0] * half, tip['wire'][1] - 1 * PX, az + side[1] * half),
+               beside(tip['s'] + 0.02, -ARM_RADIUS),
+               beside(tip['s'] + 0.06, drop),
+               beside((tip['s'] + path.reach) / 2, drop * 0.8),
+               beside(path.reach - 0.04, -TIP_RADIUS - 1 * PX),
+               path.point(path.reach, -TIP_RADIUS * 0.5)]
         obj.tube(pts, CABLE_RADIUS, sides=6)
     return obj.text()
+
+
+def tip_insulator(path):
+    """Where the insulator on the arm's tip stands and where its wire attaches, in the mount's
+    north-facing coordinates, plus the tip block it sits in and that block's box round it."""
+    s = path.reach - TIP_LENGTH - INSULATOR_BACK
+    ax, ay, az = path.point(s)
+    ay += ARM_RADIUS * 0.8
+    porcelain_y = ay + PIN_HEIGHT
+    wire = (ax, porcelain_y + PORCELAIN, az)
+    block = tuple(math.floor(c) for c in wire)
+    lo = (ax - HITBOX_PAD, ay - 2 * ARM_RADIUS, az - HITBOX_PAD)
+    hi = (ax + HITBOX_PAD, wire[1] + 1 * PX, az + HITBOX_PAD)
+    box = tuple(max(0.0, min(1.0, v - block[i % 3])) for i, v in enumerate(lo + hi))
+    return {'s': s, 'arm': (ax, ay, az), 'porcelain_y': porcelain_y, 'wire': wire, 'block': block, 'box': box}
 
 
 MTL = HEADER + """newmtl metal
@@ -240,7 +276,9 @@ map_Kd realgrid:blocks/pole_light_mount_metal
 newmtl clamp
 map_Kd realgrid:blocks/pole_light_mount_clamp
 newmtl porcelain
-map_Kd realgrid:blocks/porcelain_insulators
+map_Kd realgrid:blocks/pole_light_mount_porcelain
+newmtl porcelain_black
+map_Kd realgrid:blocks/pole_light_mount_porcelain_black
 newmtl cable
 map_Kd realgrid:blocks/pole_light_mount_cable
 """
@@ -299,6 +337,54 @@ def write(path, text):
         f.write(text)
 
 
+def tips_java():
+    rows = []
+    for length in LENGTHS:
+        cells = []
+        for swing in SWINGS:
+            t = tip_insulator(ArmPath(length, swing))
+            fixture = fixture_block(length, swing)
+            assert t['block'] != (0, 0, 0) and t['block'] != fixture, (length, swing, t['block'])
+            vals = list(t['wire']) + list(t['block']) + list(t['box']) + list(fixture)
+            cells.append('            {' + ', '.join('%.5ff' % v for v in vals) + '}, // %s' % swing)
+        rows.append('        { // %d block%s\n%s\n        }' % (length, '' if length == 1 else 's', '\n'.join(cells)))
+    return JAVA_TEMPLATE % ',\n'.join(rows)
+
+
+def fixture_block(length, swing):
+    """The block the CSM fixture goes in, relative to the mount, north-facing."""
+    if swing == 'straight':
+        return (0, 1, -length)
+    n = max(1, round(length / math.sqrt(2)))
+    return (-n if swing == 'left' else n, 1, -n)
+
+
+JAVA_TEMPLATE = """// Generated by scripts/gen_pole_light_mounts.py: edit the script and rerun it, not this file.
+package com.micatechnologies.realgrid.blocks.lightmounts;
+
+/**
+ * Where each pole light mount's tip insulator is, for a north-facing mount, indexed
+ * [arm length - 1][swing ordinal]. Each row holds, all relative to the mount block:
+ * the wire point (x, y, z); the tip block holding the insulator (dx, dy, dz); that tip block's
+ * box round the insulator, in its own coordinates (minX, minY, minZ, maxX, maxY, maxZ); and the
+ * block the fixture goes in (dx, dy, dz).
+ */
+final class PoleLightMountTips
+{
+    static final int WIRE = 0;
+    static final int TIP_BLOCK = 3;
+    static final int TIP_BOX = 6;
+    static final int FIXTURE_BLOCK = 12;
+
+    static final float[][][] TIPS = {
+%s
+    };
+
+    private PoleLightMountTips() {}
+}
+"""
+
+
 def main():
     os.makedirs(MODEL_DIR, exist_ok=True)
     keep = set()
@@ -314,9 +400,12 @@ def main():
         if stale.endswith('.obj') and stale not in keep:
             os.remove(os.path.join(MODEL_DIR, stale))
     write(os.path.join(MODEL_DIR, 'pole_light_mount.mtl'), MTL)
+    write(JAVA_TIPS, tips_java())
     png(os.path.join(TEXTURE_DIR, 'pole_light_mount_metal.png'), textured((168, 172, 170), 6))
     png(os.path.join(TEXTURE_DIR, 'pole_light_mount_clamp.png'), textured((40, 40, 42), 4))
     png(os.path.join(TEXTURE_DIR, 'pole_light_mount_cable.png'), textured((22, 22, 24), 3))
+    png(os.path.join(TEXTURE_DIR, 'pole_light_mount_porcelain.png'), textured((236, 236, 228), 4))
+    png(os.path.join(TEXTURE_DIR, 'pole_light_mount_porcelain_black.png'), textured((34, 32, 34), 4))
 
 
 if __name__ == '__main__':

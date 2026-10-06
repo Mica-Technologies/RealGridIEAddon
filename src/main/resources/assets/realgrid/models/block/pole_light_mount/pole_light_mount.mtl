@@ -4,6 +4,8 @@ map_Kd realgrid:blocks/pole_light_mount_metal
 newmtl clamp
 map_Kd realgrid:blocks/pole_light_mount_clamp
 newmtl porcelain
-map_Kd realgrid:blocks/porcelain_insulators
+map_Kd realgrid:blocks/pole_light_mount_porcelain
+newmtl porcelain_black
+map_Kd realgrid:blocks/pole_light_mount_porcelain_black
 newmtl cable
 map_Kd realgrid:blocks/pole_light_mount_cable
