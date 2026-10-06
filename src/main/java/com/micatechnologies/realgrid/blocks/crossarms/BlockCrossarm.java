@@ -1,6 +1,7 @@
 package com.micatechnologies.realgrid.blocks.crossarms;
 
 import com.micatechnologies.realgrid.RealGrid;
+import com.micatechnologies.realgrid.blocks.insulators.BlockInsulatorBase;
 import com.micatechnologies.realgrid.init.RealGridRegistry;
 import com.micatechnologies.realgrid.util.BoundsUtil;
 import net.minecraft.block.Block;
@@ -28,8 +29,10 @@ import net.minecraft.world.World;
  * <p>{@link #FACING} points away from the pole; the arm runs across it, from its left to its right.
  * The rest of the state is worked out from the neighbours each time, never stored, so nothing goes
  * stale when the arm is changed (fence logic): {@link #LEFT} and {@link #RIGHT} say whether the arm
- * carries on that way, and {@link #POLE} whether this segment sits against a pole, where it is
- * through-bolted.
+ * carries on that way, {@link #POLE} whether this segment sits against a pole, where it is
+ * through-bolted. The hardware for what is mounted on the arm appears by itself, as on a real arm:
+ * {@link #PIN} draws an insulator pin's nut under the arm when a top-mounted insulator stands on the
+ * segment, and {@link #HANGER} a bracket down to an IE connector hung below it.
  *
  * <p>Clicking a pole's face puts a segment flush in front of it; clicking either end of an arm adds
  * a segment there, in line with it. An arm stays up while any segment in its unbroken row is against
@@ -41,6 +44,8 @@ public class BlockCrossarm extends Block
     public static final PropertyBool LEFT = PropertyBool.create("left");
     public static final PropertyBool RIGHT = PropertyBool.create("right");
     public static final PropertyBool POLE = PropertyBool.create("pole");
+    public static final PropertyBool PIN = PropertyBool.create("pin");
+    public static final PropertyBool HANGER = PropertyBool.create("hanger");
 
     /** The arm's cross-section, for a north-facing segment: 6 px square at the top back of the block, against the pole. */
     static final float[] ARM_BOUNDS = {0.0f, 10 / 16f, 10 / 16f, 1.0f, 1.0f, 1.0f};
@@ -60,7 +65,8 @@ public class BlockCrossarm extends Block
         setHardness(2.0f);
         setResistance(10.0f);
         setDefaultState(blockState.getBaseState().withProperty(FACING, EnumFacing.NORTH)
-            .withProperty(LEFT, false).withProperty(RIGHT, false).withProperty(POLE, false));
+            .withProperty(LEFT, false).withProperty(RIGHT, false).withProperty(POLE, false)
+            .withProperty(PIN, false).withProperty(HANGER, false));
         RealGridRegistry.registerBlock(this);
     }
 
@@ -76,7 +82,7 @@ public class BlockCrossarm extends Block
     @Override
     protected BlockStateContainer createBlockState()
     {
-        return new BlockStateContainer(this, FACING, LEFT, RIGHT, POLE);
+        return new BlockStateContainer(this, FACING, LEFT, RIGHT, POLE, PIN, HANGER);
     }
 
     @Override
@@ -98,7 +104,23 @@ public class BlockCrossarm extends Block
         return state
             .withProperty(LEFT, continues(world, pos, facing, facing.rotateYCCW()))
             .withProperty(RIGHT, continues(world, pos, facing, facing.rotateY()))
-            .withProperty(POLE, isPole(world, pos.offset(facing.getOpposite()), facing));
+            .withProperty(POLE, isPole(world, pos.offset(facing.getOpposite()), facing))
+            .withProperty(PIN, hasPinInsulator(world, pos.up()))
+            .withProperty(HANGER, isConnector(world, pos.down()));
+    }
+
+    /** @return whether a top-mounted insulator stands at {@code at}, pinned through the arm below it */
+    static boolean hasPinInsulator(IBlockAccess world, BlockPos at)
+    {
+        IBlockState state = world.getBlockState(at);
+        return state.getBlock() instanceof BlockInsulatorBase && ((BlockInsulatorBase) state.getBlock()).isTopMount();
+    }
+
+    /** @return whether an Immersive Engineering connector hangs at {@code at}, under the arm */
+    static boolean isConnector(IBlockAccess world, BlockPos at)
+    {
+        ResourceLocation id = world.getBlockState(at).getBlock().getRegistryName();
+        return id != null && "immersiveengineering".equals(id.getNamespace()) && "connector".equals(id.getPath());
     }
 
     /** @return whether the arm carries on from {@code pos} towards {@code way}: an arm segment facing the same way */

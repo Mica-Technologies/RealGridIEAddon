@@ -7,19 +7,145 @@
     }
   },
   "variants": {
-    "facing": {
-      "north": {
-        "y": 180
+    "facing=north,seat=none": {
+      "model": "immersiveengineering:smartmodel/connector",
+      "custom": {
+        "base": "realgrid:block/large_maclean_porcelain_insulator_old"
       },
-      "south": {
-        "y": 0
+      "y": 180
+    },
+    "facing=north,seat=north": {
+      "model": "immersiveengineering:smartmodel/connector",
+      "custom": {
+        "base": "realgrid:block/large_maclean_porcelain_insulator_old_seat_s"
       },
-      "west": {
-        "y": 90
+      "y": 180
+    },
+    "facing=north,seat=east": {
+      "model": "immersiveengineering:smartmodel/connector",
+      "custom": {
+        "base": "realgrid:block/large_maclean_porcelain_insulator_old_seat_w"
       },
-      "east": {
-        "y": 270
-      }
+      "y": 180
+    },
+    "facing=north,seat=south": {
+      "model": "immersiveengineering:smartmodel/connector",
+      "custom": {
+        "base": "realgrid:block/large_maclean_porcelain_insulator_old_seat_n"
+      },
+      "y": 180
+    },
+    "facing=north,seat=west": {
+      "model": "immersiveengineering:smartmodel/connector",
+      "custom": {
+        "base": "realgrid:block/large_maclean_porcelain_insulator_old_seat_e"
+      },
+      "y": 180
+    },
+    "facing=south,seat=none": {
+      "model": "immersiveengineering:smartmodel/connector",
+      "custom": {
+        "base": "realgrid:block/large_maclean_porcelain_insulator_old"
+      },
+      "y": 0
+    },
+    "facing=south,seat=north": {
+      "model": "immersiveengineering:smartmodel/connector",
+      "custom": {
+        "base": "realgrid:block/large_maclean_porcelain_insulator_old_seat_n"
+      },
+      "y": 0
+    },
+    "facing=south,seat=east": {
+      "model": "immersiveengineering:smartmodel/connector",
+      "custom": {
+        "base": "realgrid:block/large_maclean_porcelain_insulator_old_seat_e"
+      },
+      "y": 0
+    },
+    "facing=south,seat=south": {
+      "model": "immersiveengineering:smartmodel/connector",
+      "custom": {
+        "base": "realgrid:block/large_maclean_porcelain_insulator_old_seat_s"
+      },
+      "y": 0
+    },
+    "facing=south,seat=west": {
+      "model": "immersiveengineering:smartmodel/connector",
+      "custom": {
+        "base": "realgrid:block/large_maclean_porcelain_insulator_old_seat_w"
+      },
+      "y": 0
+    },
+    "facing=west,seat=none": {
+      "model": "immersiveengineering:smartmodel/connector",
+      "custom": {
+        "base": "realgrid:block/large_maclean_porcelain_insulator_old"
+      },
+      "y": 90
+    },
+    "facing=west,seat=north": {
+      "model": "immersiveengineering:smartmodel/connector",
+      "custom": {
+        "base": "realgrid:block/large_maclean_porcelain_insulator_old_seat_w"
+      },
+      "y": 90
+    },
+    "facing=west,seat=east": {
+      "model": "immersiveengineering:smartmodel/connector",
+      "custom": {
+        "base": "realgrid:block/large_maclean_porcelain_insulator_old_seat_n"
+      },
+      "y": 90
+    },
+    "facing=west,seat=south": {
+      "model": "immersiveengineering:smartmodel/connector",
+      "custom": {
+        "base": "realgrid:block/large_maclean_porcelain_insulator_old_seat_e"
+      },
+      "y": 90
+    },
+    "facing=west,seat=west": {
+      "model": "immersiveengineering:smartmodel/connector",
+      "custom": {
+        "base": "realgrid:block/large_maclean_porcelain_insulator_old_seat_s"
+      },
+      "y": 90
+    },
+    "facing=east,seat=none": {
+      "model": "immersiveengineering:smartmodel/connector",
+      "custom": {
+        "base": "realgrid:block/large_maclean_porcelain_insulator_old"
+      },
+      "y": 270
+    },
+    "facing=east,seat=north": {
+      "model": "immersiveengineering:smartmodel/connector",
+      "custom": {
+        "base": "realgrid:block/large_maclean_porcelain_insulator_old_seat_e"
+      },
+      "y": 270
+    },
+    "facing=east,seat=east": {
+      "model": "immersiveengineering:smartmodel/connector",
+      "custom": {
+        "base": "realgrid:block/large_maclean_porcelain_insulator_old_seat_s"
+      },
+      "y": 270
+    },
+    "facing=east,seat=south": {
+      "model": "immersiveengineering:smartmodel/connector",
+      "custom": {
+        "base": "realgrid:block/large_maclean_porcelain_insulator_old_seat_w"
+      },
+      "y": 270
+    },
+    "facing=east,seat=west": {
+      "model": "immersiveengineering:smartmodel/connector",
+      "custom": {
+        "base": "realgrid:block/large_maclean_porcelain_insulator_old_seat_n"
+      },
+      "y": 270
     },
     "inventory": [
       {

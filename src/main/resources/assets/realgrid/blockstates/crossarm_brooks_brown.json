@@ -1,225 +1,897 @@
 {
   "forge_marker": 1,
   "variants": {
-    "facing=north,left=false,pole=false,right=false": {
+    "facing=north,hanger=false,left=false,pin=false,pole=false,right=false": {
       "model": "realgrid:crossarm/brooks_brown/arm_none.obj",
       "custom": {
         "flip-v": true
       },
       "y": 0
     },
-    "facing=north,left=false,pole=false,right=true": {
+    "facing=north,hanger=false,left=false,pin=false,pole=false,right=true": {
       "model": "realgrid:crossarm/brooks_brown/arm_r.obj",
       "custom": {
         "flip-v": true
       },
       "y": 0
     },
-    "facing=north,left=false,pole=true,right=false": {
+    "facing=north,hanger=false,left=false,pin=false,pole=true,right=false": {
       "model": "realgrid:crossarm/brooks_brown/arm_p.obj",
       "custom": {
         "flip-v": true
       },
       "y": 0
     },
-    "facing=north,left=false,pole=true,right=true": {
+    "facing=north,hanger=false,left=false,pin=false,pole=true,right=true": {
       "model": "realgrid:crossarm/brooks_brown/arm_rp.obj",
       "custom": {
         "flip-v": true
       },
       "y": 0
     },
-    "facing=north,left=true,pole=false,right=false": {
+    "facing=north,hanger=false,left=false,pin=true,pole=false,right=false": {
+      "model": "realgrid:crossarm/brooks_brown/arm_i.obj",
+      "custom": {
+        "flip-v": true
+      },
+      "y": 0
+    },
+    "facing=north,hanger=false,left=false,pin=true,pole=false,right=true": {
+      "model": "realgrid:crossarm/brooks_brown/arm_ri.obj",
+      "custom": {
+        "flip-v": true
+      },
+      "y": 0
+    },
+    "facing=north,hanger=false,left=false,pin=true,pole=true,right=false": {
+      "model": "realgrid:crossarm/brooks_brown/arm_pi.obj",
+      "custom": {
+        "flip-v": true
+      },
+      "y": 0
+    },
+    "facing=north,hanger=false,left=false,pin=true,pole=true,right=true": {
+      "model": "realgrid:crossarm/brooks_brown/arm_rpi.obj",
+      "custom": {
+        "flip-v": true
+      },
+      "y": 0
+    },
+    "facing=north,hanger=false,left=true,pin=false,pole=false,right=false": {
       "model": "realgrid:crossarm/brooks_brown/arm_l.obj",
       "custom": {
         "flip-v": true
       },
       "y": 0
     },
-    "facing=north,left=true,pole=false,right=true": {
+    "facing=north,hanger=false,left=true,pin=false,pole=false,right=true": {
       "model": "realgrid:crossarm/brooks_brown/arm_lr.obj",
       "custom": {
         "flip-v": true
       },
       "y": 0
     },
-    "facing=north,left=true,pole=true,right=false": {
+    "facing=north,hanger=false,left=true,pin=false,pole=true,right=false": {
       "model": "realgrid:crossarm/brooks_brown/arm_lp.obj",
       "custom": {
         "flip-v": true
       },
       "y": 0
     },
-    "facing=north,left=true,pole=true,right=true": {
+    "facing=north,hanger=false,left=true,pin=false,pole=true,right=true": {
       "model": "realgrid:crossarm/brooks_brown/arm_lrp.obj",
       "custom": {
         "flip-v": true
       },
       "y": 0
     },
-    "facing=east,left=false,pole=false,right=false": {
+    "facing=north,hanger=false,left=true,pin=true,pole=false,right=false": {
+      "model": "realgrid:crossarm/brooks_brown/arm_li.obj",
+      "custom": {
+        "flip-v": true
+      },
+      "y": 0
+    },
+    "facing=north,hanger=false,left=true,pin=true,pole=false,right=true": {
+      "model": "realgrid:crossarm/brooks_brown/arm_lri.obj",
+      "custom": {
+        "flip-v": true
+      },
+      "y": 0
+    },
+    "facing=north,hanger=false,left=true,pin=true,pole=true,right=false": {
+      "model": "realgrid:crossarm/brooks_brown/arm_lpi.obj",
+      "custom": {
+        "flip-v": true
+      },
+      "y": 0
+    },
+    "facing=north,hanger=false,left=true,pin=true,pole=true,right=true": {
+      "model": "realgrid:crossarm/brooks_brown/arm_lrpi.obj",
+      "custom": {
+        "flip-v": true
+      },
+      "y": 0
+    },
+    "facing=north,hanger=true,left=false,pin=false,pole=false,right=false": {
+      "model": "realgrid:crossarm/brooks_brown/arm_h.obj",
+      "custom": {
+        "flip-v": true
+      },
+      "y": 0
+    },
+    "facing=north,hanger=true,left=false,pin=false,pole=false,right=true": {
+      "model": "realgrid:crossarm/brooks_brown/arm_rh.obj",
+      "custom": {
+        "flip-v": true
+      },
+      "y": 0
+    },
+    "facing=north,hanger=true,left=false,pin=false,pole=true,right=false": {
+      "model": "realgrid:crossarm/brooks_brown/arm_ph.obj",
+      "custom": {
+        "flip-v": true
+      },
+      "y": 0
+    },
+    "facing=north,hanger=true,left=false,pin=false,pole=true,right=true": {
+      "model": "realgrid:crossarm/brooks_brown/arm_rph.obj",
+      "custom": {
+        "flip-v": true
+      },
+      "y": 0
+    },
+    "facing=north,hanger=true,left=false,pin=true,pole=false,right=false": {
+      "model": "realgrid:crossarm/brooks_brown/arm_ih.obj",
+      "custom": {
+        "flip-v": true
+      },
+      "y": 0
+    },
+    "facing=north,hanger=true,left=false,pin=true,pole=false,right=true": {
+      "model": "realgrid:crossarm/brooks_brown/arm_rih.obj",
+      "custom": {
+        "flip-v": true
+      },
+      "y": 0
+    },
+    "facing=north,hanger=true,left=false,pin=true,pole=true,right=false": {
+      "model": "realgrid:crossarm/brooks_brown/arm_pih.obj",
+      "custom": {
+        "flip-v": true
+      },
+      "y": 0
+    },
+    "facing=north,hanger=true,left=false,pin=true,pole=true,right=true": {
+      "model": "realgrid:crossarm/brooks_brown/arm_rpih.obj",
+      "custom": {
+        "flip-v": true
+      },
+      "y": 0
+    },
+    "facing=north,hanger=true,left=true,pin=false,pole=false,right=false": {
+      "model": "realgrid:crossarm/brooks_brown/arm_lh.obj",
+      "custom": {
+        "flip-v": true
+      },
+      "y": 0
+    },
+    "facing=north,hanger=true,left=true,pin=false,pole=false,right=true": {
+      "model": "realgrid:crossarm/brooks_brown/arm_lrh.obj",
+      "custom": {
+        "flip-v": true
+      },
+      "y": 0
+    },
+    "facing=north,hanger=true,left=true,pin=false,pole=true,right=false": {
+      "model": "realgrid:crossarm/brooks_brown/arm_lph.obj",
+      "custom": {
+        "flip-v": true
+      },
+      "y": 0
+    },
+    "facing=north,hanger=true,left=true,pin=false,pole=true,right=true": {
+      "model": "realgrid:crossarm/brooks_brown/arm_lrph.obj",
+      "custom": {
+        "flip-v": true
+      },
+      "y": 0
+    },
+    "facing=north,hanger=true,left=true,pin=true,pole=false,right=false": {
+      "model": "realgrid:crossarm/brooks_brown/arm_lih.obj",
+      "custom": {
+        "flip-v": true
+      },
+      "y": 0
+    },
+    "facing=north,hanger=true,left=true,pin=true,pole=false,right=true": {
+      "model": "realgrid:crossarm/brooks_brown/arm_lrih.obj",
+      "custom": {
+        "flip-v": true
+      },
+      "y": 0
+    },
+    "facing=north,hanger=true,left=true,pin=true,pole=true,right=false": {
+      "model": "realgrid:crossarm/brooks_brown/arm_lpih.obj",
+      "custom": {
+        "flip-v": true
+      },
+      "y": 0
+    },
+    "facing=north,hanger=true,left=true,pin=true,pole=true,right=true": {
+      "model": "realgrid:crossarm/brooks_brown/arm_lrpih.obj",
+      "custom": {
+        "flip-v": true
+      },
+      "y": 0
+    },
+    "facing=east,hanger=false,left=false,pin=false,pole=false,right=false": {
       "model": "realgrid:crossarm/brooks_brown/arm_none.obj",
       "custom": {
         "flip-v": true
       },
       "y": 90
     },
-    "facing=east,left=false,pole=false,right=true": {
+    "facing=east,hanger=false,left=false,pin=false,pole=false,right=true": {
       "model": "realgrid:crossarm/brooks_brown/arm_r.obj",
       "custom": {
         "flip-v": true
       },
       "y": 90
     },
-    "facing=east,left=false,pole=true,right=false": {
+    "facing=east,hanger=false,left=false,pin=false,pole=true,right=false": {
       "model": "realgrid:crossarm/brooks_brown/arm_p.obj",
       "custom": {
         "flip-v": true
       },
       "y": 90
     },
-    "facing=east,left=false,pole=true,right=true": {
+    "facing=east,hanger=false,left=false,pin=false,pole=true,right=true": {
       "model": "realgrid:crossarm/brooks_brown/arm_rp.obj",
       "custom": {
         "flip-v": true
       },
       "y": 90
     },
-    "facing=east,left=true,pole=false,right=false": {
+    "facing=east,hanger=false,left=false,pin=true,pole=false,right=false": {
+      "model": "realgrid:crossarm/brooks_brown/arm_i.obj",
+      "custom": {
+        "flip-v": true
+      },
+      "y": 90
+    },
+    "facing=east,hanger=false,left=false,pin=true,pole=false,right=true": {
+      "model": "realgrid:crossarm/brooks_brown/arm_ri.obj",
+      "custom": {
+        "flip-v": true
+      },
+      "y": 90
+    },
+    "facing=east,hanger=false,left=false,pin=true,pole=true,right=false": {
+      "model": "realgrid:crossarm/brooks_brown/arm_pi.obj",
+      "custom": {
+        "flip-v": true
+      },
+      "y": 90
+    },
+    "facing=east,hanger=false,left=false,pin=true,pole=true,right=true": {
+      "model": "realgrid:crossarm/brooks_brown/arm_rpi.obj",
+      "custom": {
+        "flip-v": true
+      },
+      "y": 90
+    },
+    "facing=east,hanger=false,left=true,pin=false,pole=false,right=false": {
       "model": "realgrid:crossarm/brooks_brown/arm_l.obj",
       "custom": {
         "flip-v": true
       },
       "y": 90
     },
-    "facing=east,left=true,pole=false,right=true": {
+    "facing=east,hanger=false,left=true,pin=false,pole=false,right=true": {
       "model": "realgrid:crossarm/brooks_brown/arm_lr.obj",
       "custom": {
         "flip-v": true
       },
       "y": 90
     },
-    "facing=east,left=true,pole=true,right=false": {
+    "facing=east,hanger=false,left=true,pin=false,pole=true,right=false": {
       "model": "realgrid:crossarm/brooks_brown/arm_lp.obj",
       "custom": {
         "flip-v": true
       },
       "y": 90
     },
-    "facing=east,left=true,pole=true,right=true": {
+    "facing=east,hanger=false,left=true,pin=false,pole=true,right=true": {
       "model": "realgrid:crossarm/brooks_brown/arm_lrp.obj",
       "custom": {
         "flip-v": true
       },
       "y": 90
     },
-    "facing=south,left=false,pole=false,right=false": {
+    "facing=east,hanger=false,left=true,pin=true,pole=false,right=false": {
+      "model": "realgrid:crossarm/brooks_brown/arm_li.obj",
+      "custom": {
+        "flip-v": true
+      },
+      "y": 90
+    },
+    "facing=east,hanger=false,left=true,pin=true,pole=false,right=true": {
+      "model": "realgrid:crossarm/brooks_brown/arm_lri.obj",
+      "custom": {
+        "flip-v": true
+      },
+      "y": 90
+    },
+    "facing=east,hanger=false,left=true,pin=true,pole=true,right=false": {
+      "model": "realgrid:crossarm/brooks_brown/arm_lpi.obj",
+      "custom": {
+        "flip-v": true
+      },
+      "y": 90
+    },
+    "facing=east,hanger=false,left=true,pin=true,pole=true,right=true": {
+      "model": "realgrid:crossarm/brooks_brown/arm_lrpi.obj",
+      "custom": {
+        "flip-v": true
+      },
+      "y": 90
+    },
+    "facing=east,hanger=true,left=false,pin=false,pole=false,right=false": {
+      "model": "realgrid:crossarm/brooks_brown/arm_h.obj",
+      "custom": {
+        "flip-v": true
+      },
+      "y": 90
+    },
+    "facing=east,hanger=true,left=false,pin=false,pole=false,right=true": {
+      "model": "realgrid:crossarm/brooks_brown/arm_rh.obj",
+      "custom": {
+        "flip-v": true
+      },
+      "y": 90
+    },
+    "facing=east,hanger=true,left=false,pin=false,pole=true,right=false": {
+      "model": "realgrid:crossarm/brooks_brown/arm_ph.obj",
+      "custom": {
+        "flip-v": true
+      },
+      "y": 90
+    },
+    "facing=east,hanger=true,left=false,pin=false,pole=true,right=true": {
+      "model": "realgrid:crossarm/brooks_brown/arm_rph.obj",
+      "custom": {
+        "flip-v": true
+      },
+      "y": 90
+    },
+    "facing=east,hanger=true,left=false,pin=true,pole=false,right=false": {
+      "model": "realgrid:crossarm/brooks_brown/arm_ih.obj",
+      "custom": {
+        "flip-v": true
+      },
+      "y": 90
+    },
+    "facing=east,hanger=true,left=false,pin=true,pole=false,right=true": {
+      "model": "realgrid:crossarm/brooks_brown/arm_rih.obj",
+      "custom": {
+        "flip-v": true
+      },
+      "y": 90
+    },
+    "facing=east,hanger=true,left=false,pin=true,pole=true,right=false": {
+      "model": "realgrid:crossarm/brooks_brown/arm_pih.obj",
+      "custom": {
+        "flip-v": true
+      },
+      "y": 90
+    },
+    "facing=east,hanger=true,left=false,pin=true,pole=true,right=true": {
+      "model": "realgrid:crossarm/brooks_brown/arm_rpih.obj",
+      "custom": {
+        "flip-v": true
+      },
+      "y": 90
+    },
+    "facing=east,hanger=true,left=true,pin=false,pole=false,right=false": {
+      "model": "realgrid:crossarm/brooks_brown/arm_lh.obj",
+      "custom": {
+        "flip-v": true
+      },
+      "y": 90
+    },
+    "facing=east,hanger=true,left=true,pin=false,pole=false,right=true": {
+      "model": "realgrid:crossarm/brooks_brown/arm_lrh.obj",
+      "custom": {
+        "flip-v": true
+      },
+      "y": 90
+    },
+    "facing=east,hanger=true,left=true,pin=false,pole=true,right=false": {
+      "model": "realgrid:crossarm/brooks_brown/arm_lph.obj",
+      "custom": {
+        "flip-v": true
+      },
+      "y": 90
+    },
+    "facing=east,hanger=true,left=true,pin=false,pole=true,right=true": {
+      "model": "realgrid:crossarm/brooks_brown/arm_lrph.obj",
+      "custom": {
+        "flip-v": true
+      },
+      "y": 90
+    },
+    "facing=east,hanger=true,left=true,pin=true,pole=false,right=false": {
+      "model": "realgrid:crossarm/brooks_brown/arm_lih.obj",
+      "custom": {
+        "flip-v": true
+      },
+      "y": 90
+    },
+    "facing=east,hanger=true,left=true,pin=true,pole=false,right=true": {
+      "model": "realgrid:crossarm/brooks_brown/arm_lrih.obj",
+      "custom": {
+        "flip-v": true
+      },
+      "y": 90
+    },
+    "facing=east,hanger=true,left=true,pin=true,pole=true,right=false": {
+      "model": "realgrid:crossarm/brooks_brown/arm_lpih.obj",
+      "custom": {
+        "flip-v": true
+      },
+      "y": 90
+    },
+    "facing=east,hanger=true,left=true,pin=true,pole=true,right=true": {
+      "model": "realgrid:crossarm/brooks_brown/arm_lrpih.obj",
+      "custom": {
+        "flip-v": true
+      },
+      "y": 90
+    },
+    "facing=south,hanger=false,left=false,pin=false,pole=false,right=false": {
       "model": "realgrid:crossarm/brooks_brown/arm_none.obj",
       "custom": {
         "flip-v": true
       },
       "y": 180
     },
-    "facing=south,left=false,pole=false,right=true": {
+    "facing=south,hanger=false,left=false,pin=false,pole=false,right=true": {
       "model": "realgrid:crossarm/brooks_brown/arm_r.obj",
       "custom": {
         "flip-v": true
       },
       "y": 180
     },
-    "facing=south,left=false,pole=true,right=false": {
+    "facing=south,hanger=false,left=false,pin=false,pole=true,right=false": {
       "model": "realgrid:crossarm/brooks_brown/arm_p.obj",
       "custom": {
         "flip-v": true
       },
       "y": 180
     },
-    "facing=south,left=false,pole=true,right=true": {
+    "facing=south,hanger=false,left=false,pin=false,pole=true,right=true": {
       "model": "realgrid:crossarm/brooks_brown/arm_rp.obj",
       "custom": {
         "flip-v": true
       },
       "y": 180
     },
-    "facing=south,left=true,pole=false,right=false": {
+    "facing=south,hanger=false,left=false,pin=true,pole=false,right=false": {
+      "model": "realgrid:crossarm/brooks_brown/arm_i.obj",
+      "custom": {
+        "flip-v": true
+      },
+      "y": 180
+    },
+    "facing=south,hanger=false,left=false,pin=true,pole=false,right=true": {
+      "model": "realgrid:crossarm/brooks_brown/arm_ri.obj",
+      "custom": {
+        "flip-v": true
+      },
+      "y": 180
+    },
+    "facing=south,hanger=false,left=false,pin=true,pole=true,right=false": {
+      "model": "realgrid:crossarm/brooks_brown/arm_pi.obj",
+      "custom": {
+        "flip-v": true
+      },
+      "y": 180
+    },
+    "facing=south,hanger=false,left=false,pin=true,pole=true,right=true": {
+      "model": "realgrid:crossarm/brooks_brown/arm_rpi.obj",
+      "custom": {
+        "flip-v": true
+      },
+      "y": 180
+    },
+    "facing=south,hanger=false,left=true,pin=false,pole=false,right=false": {
       "model": "realgrid:crossarm/brooks_brown/arm_l.obj",
       "custom": {
         "flip-v": true
       },
       "y": 180
     },
-    "facing=south,left=true,pole=false,right=true": {
+    "facing=south,hanger=false,left=true,pin=false,pole=false,right=true": {
       "model": "realgrid:crossarm/brooks_brown/arm_lr.obj",
       "custom": {
         "flip-v": true
       },
       "y": 180
     },
-    "facing=south,left=true,pole=true,right=false": {
+    "facing=south,hanger=false,left=true,pin=false,pole=true,right=false": {
       "model": "realgrid:crossarm/brooks_brown/arm_lp.obj",
       "custom": {
         "flip-v": true
       },
       "y": 180
     },
-    "facing=south,left=true,pole=true,right=true": {
+    "facing=south,hanger=false,left=true,pin=false,pole=true,right=true": {
       "model": "realgrid:crossarm/brooks_brown/arm_lrp.obj",
       "custom": {
         "flip-v": true
       },
       "y": 180
     },
-    "facing=west,left=false,pole=false,right=false": {
+    "facing=south,hanger=false,left=true,pin=true,pole=false,right=false": {
+      "model": "realgrid:crossarm/brooks_brown/arm_li.obj",
+      "custom": {
+        "flip-v": true
+      },
+      "y": 180
+    },
+    "facing=south,hanger=false,left=true,pin=true,pole=false,right=true": {
+      "model": "realgrid:crossarm/brooks_brown/arm_lri.obj",
+      "custom": {
+        "flip-v": true
+      },
+      "y": 180
+    },
+    "facing=south,hanger=false,left=true,pin=true,pole=true,right=false": {
+      "model": "realgrid:crossarm/brooks_brown/arm_lpi.obj",
+      "custom": {
+        "flip-v": true
+      },
+      "y": 180
+    },
+    "facing=south,hanger=false,left=true,pin=true,pole=true,right=true": {
+      "model": "realgrid:crossarm/brooks_brown/arm_lrpi.obj",
+      "custom": {
+        "flip-v": true
+      },
+      "y": 180
+    },
+    "facing=south,hanger=true,left=false,pin=false,pole=false,right=false": {
+      "model": "realgrid:crossarm/brooks_brown/arm_h.obj",
+      "custom": {
+        "flip-v": true
+      },
+      "y": 180
+    },
+    "facing=south,hanger=true,left=false,pin=false,pole=false,right=true": {
+      "model": "realgrid:crossarm/brooks_brown/arm_rh.obj",
+      "custom": {
+        "flip-v": true
+      },
+      "y": 180
+    },
+    "facing=south,hanger=true,left=false,pin=false,pole=true,right=false": {
+      "model": "realgrid:crossarm/brooks_brown/arm_ph.obj",
+      "custom": {
+        "flip-v": true
+      },
+      "y": 180
+    },
+    "facing=south,hanger=true,left=false,pin=false,pole=true,right=true": {
+      "model": "realgrid:crossarm/brooks_brown/arm_rph.obj",
+      "custom": {
+        "flip-v": true
+      },
+      "y": 180
+    },
+    "facing=south,hanger=true,left=false,pin=true,pole=false,right=false": {
+      "model": "realgrid:crossarm/brooks_brown/arm_ih.obj",
+      "custom": {
+        "flip-v": true
+      },
+      "y": 180
+    },
+    "facing=south,hanger=true,left=false,pin=true,pole=false,right=true": {
+      "model": "realgrid:crossarm/brooks_brown/arm_rih.obj",
+      "custom": {
+        "flip-v": true
+      },
+      "y": 180
+    },
+    "facing=south,hanger=true,left=false,pin=true,pole=true,right=false": {
+      "model": "realgrid:crossarm/brooks_brown/arm_pih.obj",
+      "custom": {
+        "flip-v": true
+      },
+      "y": 180
+    },
+    "facing=south,hanger=true,left=false,pin=true,pole=true,right=true": {
+      "model": "realgrid:crossarm/brooks_brown/arm_rpih.obj",
+      "custom": {
+        "flip-v": true
+      },
+      "y": 180
+    },
+    "facing=south,hanger=true,left=true,pin=false,pole=false,right=false": {
+      "model": "realgrid:crossarm/brooks_brown/arm_lh.obj",
+      "custom": {
+        "flip-v": true
+      },
+      "y": 180
+    },
+    "facing=south,hanger=true,left=true,pin=false,pole=false,right=true": {
+      "model": "realgrid:crossarm/brooks_brown/arm_lrh.obj",
+      "custom": {
+        "flip-v": true
+      },
+      "y": 180
+    },
+    "facing=south,hanger=true,left=true,pin=false,pole=true,right=false": {
+      "model": "realgrid:crossarm/brooks_brown/arm_lph.obj",
+      "custom": {
+        "flip-v": true
+      },
+      "y": 180
+    },
+    "facing=south,hanger=true,left=true,pin=false,pole=true,right=true": {
+      "model": "realgrid:crossarm/brooks_brown/arm_lrph.obj",
+      "custom": {
+        "flip-v": true
+      },
+      "y": 180
+    },
+    "facing=south,hanger=true,left=true,pin=true,pole=false,right=false": {
+      "model": "realgrid:crossarm/brooks_brown/arm_lih.obj",
+      "custom": {
+        "flip-v": true
+      },
+      "y": 180
+    },
+    "facing=south,hanger=true,left=true,pin=true,pole=false,right=true": {
+      "model": "realgrid:crossarm/brooks_brown/arm_lrih.obj",
+      "custom": {
+        "flip-v": true
+      },
+      "y": 180
+    },
+    "facing=south,hanger=true,left=true,pin=true,pole=true,right=false": {
+      "model": "realgrid:crossarm/brooks_brown/arm_lpih.obj",
+      "custom": {
+        "flip-v": true
+      },
+      "y": 180
+    },
+    "facing=south,hanger=true,left=true,pin=true,pole=true,right=true": {
+      "model": "realgrid:crossarm/brooks_brown/arm_lrpih.obj",
+      "custom": {
+        "flip-v": true
+      },
+      "y": 180
+    },
+    "facing=west,hanger=false,left=false,pin=false,pole=false,right=false": {
       "model": "realgrid:crossarm/brooks_brown/arm_none.obj",
       "custom": {
         "flip-v": true
       },
       "y": 270
     },
-    "facing=west,left=false,pole=false,right=true": {
+    "facing=west,hanger=false,left=false,pin=false,pole=false,right=true": {
       "model": "realgrid:crossarm/brooks_brown/arm_r.obj",
       "custom": {
         "flip-v": true
       },
       "y": 270
     },
-    "facing=west,left=false,pole=true,right=false": {
+    "facing=west,hanger=false,left=false,pin=false,pole=true,right=false": {
       "model": "realgrid:crossarm/brooks_brown/arm_p.obj",
       "custom": {
         "flip-v": true
       },
       "y": 270
     },
-    "facing=west,left=false,pole=true,right=true": {
+    "facing=west,hanger=false,left=false,pin=false,pole=true,right=true": {
       "model": "realgrid:crossarm/brooks_brown/arm_rp.obj",
       "custom": {
         "flip-v": true
       },
       "y": 270
     },
-    "facing=west,left=true,pole=false,right=false": {
+    "facing=west,hanger=false,left=false,pin=true,pole=false,right=false": {
+      "model": "realgrid:crossarm/brooks_brown/arm_i.obj",
+      "custom": {
+        "flip-v": true
+      },
+      "y": 270
+    },
+    "facing=west,hanger=false,left=false,pin=true,pole=false,right=true": {
+      "model": "realgrid:crossarm/brooks_brown/arm_ri.obj",
+      "custom": {
+        "flip-v": true
+      },
+      "y": 270
+    },
+    "facing=west,hanger=false,left=false,pin=true,pole=true,right=false": {
+      "model": "realgrid:crossarm/brooks_brown/arm_pi.obj",
+      "custom": {
+        "flip-v": true
+      },
+      "y": 270
+    },
+    "facing=west,hanger=false,left=false,pin=true,pole=true,right=true": {
+      "model": "realgrid:crossarm/brooks_brown/arm_rpi.obj",
+      "custom": {
+        "flip-v": true
+      },
+      "y": 270
+    },
+    "facing=west,hanger=false,left=true,pin=false,pole=false,right=false": {
       "model": "realgrid:crossarm/brooks_brown/arm_l.obj",
       "custom": {
         "flip-v": true
       },
       "y": 270
     },
-    "facing=west,left=true,pole=false,right=true": {
+    "facing=west,hanger=false,left=true,pin=false,pole=false,right=true": {
       "model": "realgrid:crossarm/brooks_brown/arm_lr.obj",
       "custom": {
         "flip-v": true
       },
       "y": 270
     },
-    "facing=west,left=true,pole=true,right=false": {
+    "facing=west,hanger=false,left=true,pin=false,pole=true,right=false": {
       "model": "realgrid:crossarm/brooks_brown/arm_lp.obj",
       "custom": {
         "flip-v": true
       },
       "y": 270
     },
-    "facing=west,left=true,pole=true,right=true": {
+    "facing=west,hanger=false,left=true,pin=false,pole=true,right=true": {
       "model": "realgrid:crossarm/brooks_brown/arm_lrp.obj",
+      "custom": {
+        "flip-v": true
+      },
+      "y": 270
+    },
+    "facing=west,hanger=false,left=true,pin=true,pole=false,right=false": {
+      "model": "realgrid:crossarm/brooks_brown/arm_li.obj",
+      "custom": {
+        "flip-v": true
+      },
+      "y": 270
+    },
+    "facing=west,hanger=false,left=true,pin=true,pole=false,right=true": {
+      "model": "realgrid:crossarm/brooks_brown/arm_lri.obj",
+      "custom": {
+        "flip-v": true
+      },
+      "y": 270
+    },
+    "facing=west,hanger=false,left=true,pin=true,pole=true,right=false": {
+      "model": "realgrid:crossarm/brooks_brown/arm_lpi.obj",
+      "custom": {
+        "flip-v": true
+      },
+      "y": 270
+    },
+    "facing=west,hanger=false,left=true,pin=true,pole=true,right=true": {
+      "model": "realgrid:crossarm/brooks_brown/arm_lrpi.obj",
+      "custom": {
+        "flip-v": true
+      },
+      "y": 270
+    },
+    "facing=west,hanger=true,left=false,pin=false,pole=false,right=false": {
+      "model": "realgrid:crossarm/brooks_brown/arm_h.obj",
+      "custom": {
+        "flip-v": true
+      },
+      "y": 270
+    },
+    "facing=west,hanger=true,left=false,pin=false,pole=false,right=true": {
+      "model": "realgrid:crossarm/brooks_brown/arm_rh.obj",
+      "custom": {
+        "flip-v": true
+      },
+      "y": 270
+    },
+    "facing=west,hanger=true,left=false,pin=false,pole=true,right=false": {
+      "model": "realgrid:crossarm/brooks_brown/arm_ph.obj",
+      "custom": {
+        "flip-v": true
+      },
+      "y": 270
+    },
+    "facing=west,hanger=true,left=false,pin=false,pole=true,right=true": {
+      "model": "realgrid:crossarm/brooks_brown/arm_rph.obj",
+      "custom": {
+        "flip-v": true
+      },
+      "y": 270
+    },
+    "facing=west,hanger=true,left=false,pin=true,pole=false,right=false": {
+      "model": "realgrid:crossarm/brooks_brown/arm_ih.obj",
+      "custom": {
+        "flip-v": true
+      },
+      "y": 270
+    },
+    "facing=west,hanger=true,left=false,pin=true,pole=false,right=true": {
+      "model": "realgrid:crossarm/brooks_brown/arm_rih.obj",
+      "custom": {
+        "flip-v": true
+      },
+      "y": 270
+    },
+    "facing=west,hanger=true,left=false,pin=true,pole=true,right=false": {
+      "model": "realgrid:crossarm/brooks_brown/arm_pih.obj",
+      "custom": {
+        "flip-v": true
+      },
+      "y": 270
+    },
+    "facing=west,hanger=true,left=false,pin=true,pole=true,right=true": {
+      "model": "realgrid:crossarm/brooks_brown/arm_rpih.obj",
+      "custom": {
+        "flip-v": true
+      },
+      "y": 270
+    },
+    "facing=west,hanger=true,left=true,pin=false,pole=false,right=false": {
+      "model": "realgrid:crossarm/brooks_brown/arm_lh.obj",
+      "custom": {
+        "flip-v": true
+      },
+      "y": 270
+    },
+    "facing=west,hanger=true,left=true,pin=false,pole=false,right=true": {
+      "model": "realgrid:crossarm/brooks_brown/arm_lrh.obj",
+      "custom": {
+        "flip-v": true
+      },
+      "y": 270
+    },
+    "facing=west,hanger=true,left=true,pin=false,pole=true,right=false": {
+      "model": "realgrid:crossarm/brooks_brown/arm_lph.obj",
+      "custom": {
+        "flip-v": true
+      },
+      "y": 270
+    },
+    "facing=west,hanger=true,left=true,pin=false,pole=true,right=true": {
+      "model": "realgrid:crossarm/brooks_brown/arm_lrph.obj",
+      "custom": {
+        "flip-v": true
+      },
+      "y": 270
+    },
+    "facing=west,hanger=true,left=true,pin=true,pole=false,right=false": {
+      "model": "realgrid:crossarm/brooks_brown/arm_lih.obj",
+      "custom": {
+        "flip-v": true
+      },
+      "y": 270
+    },
+    "facing=west,hanger=true,left=true,pin=true,pole=false,right=true": {
+      "model": "realgrid:crossarm/brooks_brown/arm_lrih.obj",
+      "custom": {
+        "flip-v": true
+      },
+      "y": 270
+    },
+    "facing=west,hanger=true,left=true,pin=true,pole=true,right=false": {
+      "model": "realgrid:crossarm/brooks_brown/arm_lpih.obj",
+      "custom": {
+        "flip-v": true
+      },
+      "y": 270
+    },
+    "facing=west,hanger=true,left=true,pin=true,pole=true,right=true": {
+      "model": "realgrid:crossarm/brooks_brown/arm_lrpih.obj",
       "custom": {
         "flip-v": true
       },

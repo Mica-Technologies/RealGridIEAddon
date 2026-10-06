@@ -45,6 +45,12 @@ public final class InsulatorGeometry
         return new InsulatorGeometry(true, northOffset, northBounds);
     }
 
+    /** @return whether this is a top-mount preset, standing on the block below (and so able to sit on a crossarm) */
+    public boolean isTopMount()
+    {
+        return !usesRotation;
+    }
+
     public Vec3d connectionOffset(EnumFacing facing)
     {
         return usesRotation ? BoundsUtil.rotateOffset(northOffset, facing) : northOffset;
