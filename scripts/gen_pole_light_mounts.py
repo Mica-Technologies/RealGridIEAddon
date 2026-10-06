@@ -5,9 +5,12 @@ Run from the repository root:
 
     python scripts/gen_pole_light_mounts.py
 
-The arm follows the SCE / LADWP street-light arms in issue #34: a plate bolted to the pole with a
-mast-arm fitting, a round arm that leaves the fitting level, sweeps up through an elbow and runs
-out on a gentle rise, a slimmer slip-fitter at the tip for the fixture, and a diagonal brace. A
+The arms follow the SCE / LADWP street-light arms in Brandon's photos on issue #34, one shape
+per length (PROFILES): a plate bolted to the pole with a mast-arm fitting, a round arm, and a
+slimmer slip-fitter at the tip for the fixture. The 3-block arm is SCE's curve; the 4-block turns
+up at the pole into a long low run; the 5-block is the old LADWP Owens Valley arm, a straight
+rise; the 6-block is a long sweep; the 7- and 8-block arms are trussed, with a top brace back up
+to the pole's sides. The 1- and 2-block arms keep the original elbow arm and brace for now. A
 porcelain insulator stands on the arm just behind the slip-fitter, next to the fixture; wires
 attach to its top. Once a wire is attached ("wired" models) a short slack loop runs from the
 insulator, under the arm and into the fixture.
@@ -67,6 +70,30 @@ PIN_HEIGHT = 1.5 * PX   # insulator pin between the arm and the porcelain
 PORCELAIN = 3 * PX      # porcelain insulator, a cube this size
 SLACK_DROP = 5 * PX     # how far the slack loop hangs under the arm
 HITBOX_PAD = 3 * PX     # the tip block's box reaches this far round the insulator
+SIDE_MOUNTED = {5}      # lengths whose single insulator stands out of the side the wire comes from
+BLACK_INSULATOR = {5}   # lengths with black insulators (the old LADWP Owens Valley arm)
+INSULATOR_SIDES = ('left', 'right')
+SIDE_BACK = 0.12        # side-mounted insulators stand this much further back, clear of the fixture's block
+
+# Height of the arm along its run, per length, as (fraction of the way from the bracket to the
+# slip-fitter, height) points, smoothed by monotone cubic interpolation so it never overshoots.
+# Read off Brandon's photos on issue #34; every profile ends level at ARM_TIP_Y, in the socket.
+# Lengths not listed keep the original elbow arm (the 1-2 block brackets are their own phase).
+PROFILES = {
+    3: [(0.0, 0.22), (0.06, 0.48), (0.16, 0.76), (0.32, 0.98), (0.55, 1.10), (0.8, 1.145), (1.0, ARM_TIP_Y)],  # SCE curve
+    4: [(0.0, 0.18), (0.025, 0.42), (0.06, 0.58), (0.12, 0.66), (1.0, ARM_TIP_Y)],      # turns up at the pole
+    5: [(0.0, 0.12), (0.05, 0.20), (0.82, 1.09), (0.94, 1.148), (1.0, ARM_TIP_Y)],     # old Owens Valley
+    6: [(0.0, 0.22), (0.07, 0.50), (0.25, 0.86), (0.5, 1.06), (0.78, 1.14), (1.0, ARM_TIP_Y)],  # long sweep
+    7: [(0.0, 0.22), (0.05, 0.34), (0.9, 1.12), (1.0, ARM_TIP_Y)],                      # truss main arm
+    8: [(0.0, 0.22), (0.05, 0.34), (0.9, 1.12), (1.0, ARM_TIP_Y)],
+}
+TRUSSED = {7, 8}        # lengths with a top brace back to the pole's sides
+STYLED = {1, 2}         # lengths that can carry an IE floodlight instead of a CSM street light
+STYLES = ('street', 'flood_up', 'flood_down')
+YOKE_HALF = 3 * PX      # half the width of the floodlight yoke
+TRUSS_TOP_Y = 1.62      # where the top brace meets the pole
+TRUSS_JOIN = 0.35       # the top brace joins the arm this far behind the slip-fitter
+TRUSS_RADIUS = 0.026
 
 
 class Obj:
@@ -173,6 +200,7 @@ class ArmPath:
     """Height of the arm as a function of horizontal distance s from the pivot, along its route."""
 
     def __init__(self, length, swing):
+        self.length = length
         self.route = arm_route(length, swing)
         self.dist = [0.0]
         for a, b in zip(self.route, self.route[1:]):
@@ -182,8 +210,13 @@ class ArmPath:
         self.s_level = min(0.12, 0.1 * d)                      # level run out of the fitting
         self.s_elbow = self.s_level + min(0.7, 0.45 * d)       # top of the elbow
         self.s_tip = d - min(TIP_LENGTH, 0.2 * d)              # start of the slip-fitter
+        self.profile = _MonotoneCubic(PROFILES[length]) if length in PROFILES else None
 
     def y(self, s):
+        if self.profile is not None:
+            if s >= self.s_tip:
+                return ARM_TIP_Y
+            return self.profile(max(0.0, s) / self.s_tip)
         if s <= self.s_level:
             return ARM_START_Y
         if s <= self.s_elbow:
@@ -212,41 +245,95 @@ class ArmPath:
         return (a[0] + (b[0] - a[0]) * f, self.y(s) + dy, a[1] + (b[1] - a[1]) * f)
 
 
+class _MonotoneCubic:
+    """Fritsch-Carlson monotone cubic through (x, y) points: smooth, and never overshoots them."""
+
+    def __init__(self, pts):
+        self.x = [p[0] for p in pts]
+        self.y = [p[1] for p in pts]
+        n = len(pts)
+        d = [(self.y[i + 1] - self.y[i]) / (self.x[i + 1] - self.x[i]) for i in range(n - 1)]
+        m = [d[0]] + [0.0 if d[i - 1] * d[i] <= 0 else (d[i - 1] + d[i]) / 2 for i in range(1, n - 1)] + [d[-1]]
+        for i in range(n - 1):
+            if d[i] == 0:
+                m[i] = m[i + 1] = 0.0
+                continue
+            a, b = m[i] / d[i], m[i + 1] / d[i]
+            h = a * a + b * b
+            if h > 9:
+                t = 3 / math.sqrt(h)
+                m[i], m[i + 1] = t * a * d[i], t * b * d[i]
+        self.m = m
+
+    def __call__(self, x):
+        xs = self.x
+        if x <= xs[0]:
+            return self.y[0]
+        if x >= xs[-1]:
+            return self.y[-1]
+        i = max(k for k in range(len(xs) - 1) if xs[k] <= x)
+        h = xs[i + 1] - xs[i]
+        t = (x - xs[i]) / h
+        h00, h10 = 2 * t ** 3 - 3 * t ** 2 + 1, t ** 3 - 2 * t ** 2 + t
+        h01, h11 = -2 * t ** 3 + 3 * t ** 2, t ** 3 - t ** 2
+        return h00 * self.y[i] + h10 * h * self.m[i] + h01 * self.y[i + 1] + h11 * h * self.m[i + 1]
+
+
 def _samples(a, b, n):
     return [a + (b - a) * i / n for i in range(n + 1)]
 
 
-def arm_model(length, swing, wired):
+def model_name(length, swing, wired, insulator, style='street'):
+    """File name of a model; only side-mounted lengths have a model per insulator side, and only
+    styled lengths one per light style."""
+    side = '_' + insulator if length in SIDE_MOUNTED else ''
+    light = '_' + style if length in STYLED and style != 'street' else ''
+    return 'arm_%d_%s%s%s%s.obj' % (length, swing, side, light, '_wired' if wired else '')
+
+
+def arm_model(length, swing, wired, insulator='right', style='street'):
     path = ArmPath(length, swing)
-    obj = Obj('pole_light_mount_%d_%s%s' % (length, swing, '_wired' if wired else ''))
+    obj = Obj('pole_light_mount_' + model_name(length, swing, wired, insulator, style)[4:-4])
     obj.use('clamp')
     obj.box((5 * PX, 1 * PX, 0.9), (11 * PX, 15 * PX, 1.0))              # plate bolted to the pole
-    obj.box((6.5 * PX, 5 * PX, PIVOT[1]), (9.5 * PX, 8.5 * PX, 0.9))      # mast-arm fitting
+    y0 = path.y(0.0)
+    obj.box((6.5 * PX, y0 - 1.75 * PX, PIVOT[1]), (9.5 * PX, y0 + 1.75 * PX, 0.9))   # mast-arm fitting
     for y in (2.5 * PX, 13.5 * PX):                                        # through-bolt heads
         obj.box((7.5 * PX, y - 0.5 * PX, 0.88), (8.5 * PX, y + 0.5 * PX, 0.9))
     obj.use('metal')
-    ss = ([0.0] + _samples(path.s_level, path.s_elbow, 10)
-          + _samples(path.s_elbow, path.s_tip, 1 if swing == 'straight' else max(1, round(3 * path.reach)))[1:])
-    obj.tube([(PIVOT[0], ARM_START_Y, 0.86)] + [path.point(s) for s in ss], ARM_RADIUS, sides=ARM_SIDES)
+    if path.profile is None:
+        ss = ([0.0] + _samples(path.s_level, path.s_elbow, 10)
+              + _samples(path.s_elbow, path.s_tip, 1 if swing == 'straight' else max(1, round(3 * path.reach)))[1:])
+    else:
+        ss = _profile_samples(path)
+    obj.tube([(PIVOT[0], y0, 0.86)] + [path.point(s) for s in ss], ARM_RADIUS, sides=ARM_SIDES)
     obj.tube([path.point(s) for s in _samples(path.s_tip - 0.01, path.reach, 3)], TIP_RADIUS, sides=ARM_SIDES)
-    brace_s = min(0.9, 0.55 * path.reach)
-    obj.tube([(0.5, 2 * PX, 0.89), path.point(brace_s, -ARM_RADIUS * 0.6)], BRACE_RADIUS, sides=TUBE_SIDES)
-    tip = tip_insulator(path)
-    ax, ay, az = tip['arm']
-    obj.use('clamp')
-    obj.box((ax - 0.5 * PX, ay, az - 0.5 * PX), (ax + 0.5 * PX, tip['porcelain_y'], az + 0.5 * PX))     # pin
-    obj.use('porcelain')
+    if path.profile is None:
+        brace_s = min(0.9, 0.55 * path.reach)
+        obj.tube([(0.5, 2 * PX, 0.89), path.point(brace_s, -ARM_RADIUS * 0.6)], BRACE_RADIUS, sides=TUBE_SIDES)
+    if length in TRUSSED:
+        truss(obj, path)
+    if style != 'street':
+        floodlight_bracket(obj, path, style)
+    mount = insulator if length in SIDE_MOUNTED else 'top'
+    tip = tip_insulator(path, mount, length in SIDE_MOUNTED)
+    cx, cy, cz = tip['centre']
     half = PORCELAIN / 2
-    obj.box((ax - half, tip['porcelain_y'], az - half), (ax + half, tip['wire'][1], az + half))       # insulator
+    obj.use('clamp')
+    obj.tube([tip['pin'][0], tip['pin'][1]], 0.5 * PX, sides=4)                                   # pin
+    obj.use('porcelain_black' if length in BLACK_INSULATOR else 'porcelain')
+    obj.box((cx - half, cy - half, cz - half), (cx + half, cy + half, cz + half))                 # insulator
     if wired:
         # Slight slack: from the insulator, down under the arm beside it, and into the fixture's socket.
         obj.use('cable')
         side = path.side(tip['s'])
+        if mount == 'left':
+            side = (-side[0], -side[1])
         def beside(s, dy):
             p = path.point(s, dy)
             return (p[0] + side[0] * 1.5 * PX, p[1], p[2] + side[1] * 1.5 * PX)
         drop = -ARM_RADIUS - SLACK_DROP
-        pts = [(ax + side[0] * half, tip['wire'][1] - 1 * PX, az + side[1] * half),
+        pts = [(cx + side[0] * half, cy - half, cz + side[1] * half),
                beside(tip['s'] + 0.02, -ARM_RADIUS),
                beside(tip['s'] + 0.06, drop),
                beside((tip['s'] + path.reach) / 2, drop * 0.8),
@@ -256,19 +343,92 @@ def arm_model(length, swing, wired):
     return obj.text()
 
 
-def tip_insulator(path):
-    """Where the insulator on the arm's tip stands and where its wire attaches, in the mount's
-    north-facing coordinates, plus the tip block it sits in and that block's box round it."""
-    s = path.reach - TIP_LENGTH - INSULATOR_BACK
+def _insulator_at(path, s, mount):
+    """Pin ends, porcelain centre and wire point of an insulator on top of the arm or out of its side."""
     ax, ay, az = path.point(s)
-    ay += ARM_RADIUS * 0.8
-    porcelain_y = ay + PIN_HEIGHT
-    wire = (ax, porcelain_y + PORCELAIN, az)
-    block = tuple(math.floor(c) for c in wire)
-    lo = (ax - HITBOX_PAD, ay - 2 * ARM_RADIUS, az - HITBOX_PAD)
-    hi = (ax + HITBOX_PAD, wire[1] + 1 * PX, az + HITBOX_PAD)
+    half = PORCELAIN / 2
+    if mount == 'top':
+        base = ay + ARM_RADIUS * 0.8
+        centre = (ax, base + PIN_HEIGHT + half, az)
+        pin = ((ax, base - 0.5 * PX, az), (ax, base + PIN_HEIGHT, az))
+    else:
+        rx, rz = path.side(s)
+        sign = 1 if mount == 'right' else -1
+        out = lambda d: (ax + sign * rx * d, ay, az + sign * rz * d)
+        centre = out(ARM_RADIUS + PIN_HEIGHT + half)
+        pin = (out(ARM_RADIUS * 0.8), out(ARM_RADIUS + PIN_HEIGHT))
+    wire = (centre[0], centre[1] + half, centre[2])
+    return centre, pin, wire
+
+
+def _profile_samples(path):
+    """Arm samples: close together where the profile bends near the pole, wider along the run."""
+    near = _samples(0.0, min(0.6, path.s_tip * 0.3), 12)
+    far = _samples(near[-1], path.s_tip, max(2, round(4 * path.reach)))[1:]
+    return near + far
+
+
+def floodlight_bracket(obj, path, style):
+    """A yoke at the end of the arm for an IE floodlight: rising into the block the street light
+    would take ('flood_up'), or dropping into the block below it ('flood_down')."""
+    obj.use('metal')
+    ex, ey, ez = path.point(path.reach)
+    rx, rz = path.side(path.reach)
+    if style == 'flood_up':
+        stem_top, yoke_y, arms_to = ey + 2 * PX, ey + 2.5 * PX, ey + 6 * PX
+    else:
+        stem_top, yoke_y, arms_to = ey - 6 * PX, ey - 6.5 * PX, ey - 10 * PX
+    obj.tube([(ex, ey, ez), (ex, stem_top, ez)], BRACE_RADIUS, sides=TUBE_SIDES)                     # stem
+    l = (ex - rx * YOKE_HALF, yoke_y, ez - rz * YOKE_HALF)
+    r = (ex + rx * YOKE_HALF, yoke_y, ez + rz * YOKE_HALF)
+    obj.tube([l, r], BRACE_RADIUS, sides=TUBE_SIDES)                                                   # cross bar
+    for p in (l, r):
+        obj.tube([p, (p[0], arms_to, p[2])], BRACE_RADIUS, sides=TUBE_SIDES)                         # yoke arms
+
+
+def truss(obj, path):
+    """The 7-8 block arm's top brace: from just behind the fixture, where it joins the arm, back up to
+    the pole, where it splits to clamp onto the pole's left and right sides. One inner diagonal
+    ties it to the arm; otherwise the frame is open."""
+    obj.use('metal')
+    s_join = path.s_tip - TRUSS_JOIN
+    y_join = path.y(s_join) + ARM_RADIUS * 0.5
+
+    def top(s):
+        u = s / s_join
+        x, _, z = path.point(s)
+        return (x, TRUSS_TOP_Y + (y_join - TRUSS_TOP_Y) * u, z)
+    pts = [top(s) for s in _samples(0.0, s_join, max(4, round(3 * path.reach)))]
+    back = (PIVOT[0], TRUSS_TOP_Y, 0.9)
+    obj.tube([back] + pts, TRUSS_RADIUS, sides=TUBE_SIDES)
+    # Inner diagonal from the arm up to the top brace.
+    a, b = 0.25 * s_join, 0.55 * s_join
+    obj.tube([path.point(a, ARM_RADIUS * 0.5), top(b)], BRACE_RADIUS, sides=TUBE_SIDES)
+    # Legs round the front of the pole to clamps on its left and right sides.
+    for x in (-0.035, 1.035):
+        obj.tube([back, (x, TRUSS_TOP_Y, 0.97), (x, TRUSS_TOP_Y, 1.4)], BRACE_RADIUS, sides=TUBE_SIDES)
+        obj.use('clamp')
+        obj.box((x - 1 * PX, TRUSS_TOP_Y - 2 * PX, 1.25), (x + 1 * PX, TRUSS_TOP_Y + 2 * PX, 1.5))
+        obj.use('metal')
+
+
+def tip_insulator(path, mount='top', side_mounted=False):
+    """Where the tip insulator stands ('top', or out of the 'left' or 'right' side) and where its
+    wire attaches, in the mount's north-facing coordinates, plus the tip block it sits in and that
+    block's box. The tip block is the one holding the top-mounted wire point; on a side-mounted
+    arm both side insulators must fit in it, and its box covers both."""
+    s = path.reach - TIP_LENGTH - INSULATOR_BACK - (SIDE_BACK if side_mounted else 0.0)
+    centre, pin, wire = _insulator_at(path, s, mount)
+    block = tuple(math.floor(c) for c in _insulator_at(path, s, 'top')[2])
+    half = PORCELAIN / 2
+    ay = path.point(s)[1]
+    pts = [_insulator_at(path, s, m)[0] for m in (('left', 'right') if side_mounted else ('top',))]
+    for p in pts:
+        assert all(block[i] <= p[i] < block[i] + 1 for i in range(3)), ('insulator outside its tip block', p, block)
+    lo = (min(p[0] for p in pts) - HITBOX_PAD, ay - 2 * ARM_RADIUS, min(p[2] for p in pts) - HITBOX_PAD)
+    hi = (max(p[0] for p in pts) + HITBOX_PAD, max(p[1] for p in pts) + half + 1 * PX, max(p[2] for p in pts) + HITBOX_PAD)
     box = tuple(max(0.0, min(1.0, v - block[i % 3])) for i, v in enumerate(lo + hi))
-    return {'s': s, 'arm': (ax, ay, az), 'porcelain_y': porcelain_y, 'wire': wire, 'block': block, 'box': box}
+    return {'s': s, 'centre': centre, 'pin': pin, 'wire': wire, 'block': block, 'box': box}
 
 
 MTL = HEADER + """newmtl metal
@@ -287,19 +447,23 @@ map_Kd realgrid:blocks/pole_light_mount_cable
 def blockstate(length):
     """Every facing/swing/wired combination is listed: the wired models differ per swing (the cable
     follows the arm), which per-property variants cannot express."""
-    def base(swing, wired):
-        return 'realgrid:block/pole_light_mount/arm_%d_%s%s.obj' % (length, swing, '_wired' if wired else '')
+    def base(swing, wired, insulator, style):
+        return 'realgrid:block/pole_light_mount/' + model_name(length, swing, wired, insulator, style)
     variants = {}
     for facing, y in FACINGS:
-        for swing in SWINGS:
-            for wired in (False, True):
-                variants['facing=%s,swing=%s,wired=%s' % (facing, swing, str(wired).lower())] = {
-                    'model': 'immersiveengineering:smartmodel/connector',
-                    'custom': {'base': base(swing, wired), 'flip-v': True},
-                    'y': y,
-                }
+        for insulator in INSULATOR_SIDES:
+            for style in STYLES:
+                for swing in SWINGS:
+                    for wired in (False, True):
+                        key = 'facing=%s,insulator=%s,style=%s,swing=%s,wired=%s' % (
+                            facing, insulator, style, swing, str(wired).lower())
+                        variants[key] = {
+                            'model': 'immersiveengineering:smartmodel/connector',
+                            'custom': {'base': base(swing, wired, insulator, style), 'flip-v': True},
+                            'y': y,
+                        }
     # A blockstate 'model' has block/ put in front of it by Forge, so the inventory entry leaves it off.
-    item = 'realgrid:pole_light_mount/arm_%d_straight.obj' % length
+    item = 'realgrid:pole_light_mount/' + model_name(length, 'straight', False, 'right')
     scale = round(0.9 / (length + 1.2), 3)
     variants['inventory'] = {
         'model': item,
@@ -342,10 +506,13 @@ def tips_java():
     for length in LENGTHS:
         cells = []
         for swing in SWINGS:
-            t = tip_insulator(ArmPath(length, swing))
+            path = ArmPath(length, swing)
+            side_mounted = length in SIDE_MOUNTED
+            t = tip_insulator(path, 'right' if side_mounted else 'top', side_mounted)
+            left = tip_insulator(path, 'left' if side_mounted else 'top', side_mounted)
             fixture = fixture_block(length, swing)
             assert t['block'] != (0, 0, 0) and t['block'] != fixture, (length, swing, t['block'])
-            vals = list(t['wire']) + list(t['block']) + list(t['box']) + list(fixture)
+            vals = list(t['wire']) + list(t['block']) + list(t['box']) + list(fixture) + list(left['wire'])
             cells.append('            {' + ', '.join('%.5ff' % v for v in vals) + '}, // %s' % swing)
         rows.append('        { // %d block%s\n%s\n        }' % (length, '' if length == 1 else 's', '\n'.join(cells)))
     return JAVA_TEMPLATE % ',\n'.join(rows)
@@ -365,9 +532,11 @@ package com.micatechnologies.realgrid.blocks.lightmounts;
 /**
  * Where each pole light mount's tip insulator is, for a north-facing mount, indexed
  * [arm length - 1][swing ordinal]. Each row holds, all relative to the mount block:
- * the wire point (x, y, z); the tip block holding the insulator (dx, dy, dz); that tip block's
- * box round the insulator, in its own coordinates (minX, minY, minZ, maxX, maxY, maxZ); and the
- * block the fixture goes in (dx, dy, dz).
+ * the wire point (x, y, z), on the right-hand insulator where the arm has one on each side; the
+ * tip block holding the insulator (dx, dy, dz); that tip block's box round the insulator, in its
+ * own coordinates (minX, minY, minZ, maxX, maxY, maxZ); the block the fixture goes in
+ * (dx, dy, dz); and the wire point on the left-hand insulator (x, y, z), the same as the first
+ * where the insulator stands on top.
  */
 final class PoleLightMountTips
 {
@@ -375,6 +544,7 @@ final class PoleLightMountTips
     static final int TIP_BLOCK = 3;
     static final int TIP_BOX = 6;
     static final int FIXTURE_BLOCK = 12;
+    static final int WIRE_LEFT = 15;
 
     static final float[][][] TIPS = {
 %s
@@ -390,10 +560,12 @@ def main():
     keep = set()
     for length in LENGTHS:
         for swing in SWINGS:
-            for wired in (False, True):
-                name = 'arm_%d_%s%s.obj' % (length, swing, '_wired' if wired else '')
-                keep.add(name)
-                write(os.path.join(MODEL_DIR, name), arm_model(length, swing, wired))
+            for insulator in (INSULATOR_SIDES if length in SIDE_MOUNTED else ('right',)):
+                for style in (STYLES if length in STYLED else ('street',)):
+                    for wired in (False, True):
+                        name = model_name(length, swing, wired, insulator, style)
+                        keep.add(name)
+                        write(os.path.join(MODEL_DIR, name), arm_model(length, swing, wired, insulator, style))
         write(os.path.join(BLOCKSTATE_DIR, 'pole_light_mount_%d.json' % length),
               json.dumps(blockstate(length), indent=2) + '\n')
     for stale in os.listdir(MODEL_DIR):

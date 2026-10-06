@@ -1,7 +1,7 @@
 {
   "forge_marker": 1,
   "variants": {
-    "facing=north,swing=straight,wired=false": {
+    "facing=north,insulator=left,style=street,swing=straight,wired=false": {
       "model": "immersiveengineering:smartmodel/connector",
       "custom": {
         "base": "realgrid:block/pole_light_mount/arm_6_straight.obj",
@@ -9,7 +9,7 @@
       },
       "y": 0
     },
-    "facing=north,swing=straight,wired=true": {
+    "facing=north,insulator=left,style=street,swing=straight,wired=true": {
       "model": "immersiveengineering:smartmodel/connector",
       "custom": {
         "base": "realgrid:block/pole_light_mount/arm_6_straight_wired.obj",
@@ -17,7 +17,7 @@
       },
       "y": 0
     },
-    "facing=north,swing=left,wired=false": {
+    "facing=north,insulator=left,style=street,swing=left,wired=false": {
       "model": "immersiveengineering:smartmodel/connector",
       "custom": {
         "base": "realgrid:block/pole_light_mount/arm_6_left.obj",
@@ -25,7 +25,7 @@
       },
       "y": 0
     },
-    "facing=north,swing=left,wired=true": {
+    "facing=north,insulator=left,style=street,swing=left,wired=true": {
       "model": "immersiveengineering:smartmodel/connector",
       "custom": {
         "base": "realgrid:block/pole_light_mount/arm_6_left_wired.obj",
@@ -33,7 +33,7 @@
       },
       "y": 0
     },
-    "facing=north,swing=right,wired=false": {
+    "facing=north,insulator=left,style=street,swing=right,wired=false": {
       "model": "immersiveengineering:smartmodel/connector",
       "custom": {
         "base": "realgrid:block/pole_light_mount/arm_6_right.obj",
@@ -41,7 +41,7 @@
       },
       "y": 0
     },
-    "facing=north,swing=right,wired=true": {
+    "facing=north,insulator=left,style=street,swing=right,wired=true": {
       "model": "immersiveengineering:smartmodel/connector",
       "custom": {
         "base": "realgrid:block/pole_light_mount/arm_6_right_wired.obj",
@@ -49,7 +49,247 @@
       },
       "y": 0
     },
-    "facing=east,swing=straight,wired=false": {
+    "facing=north,insulator=left,style=flood_up,swing=straight,wired=false": {
+      "model": "immersiveengineering:smartmodel/connector",
+      "custom": {
+        "base": "realgrid:block/pole_light_mount/arm_6_straight.obj",
+        "flip-v": true
+      },
+      "y": 0
+    },
+    "facing=north,insulator=left,style=flood_up,swing=straight,wired=true": {
+      "model": "immersiveengineering:smartmodel/connector",
+      "custom": {
+        "base": "realgrid:block/pole_light_mount/arm_6_straight_wired.obj",
+        "flip-v": true
+      },
+      "y": 0
+    },
+    "facing=north,insulator=left,style=flood_up,swing=left,wired=false": {
+      "model": "immersiveengineering:smartmodel/connector",
+      "custom": {
+        "base": "realgrid:block/pole_light_mount/arm_6_left.obj",
+        "flip-v": true
+      },
+      "y": 0
+    },
+    "facing=north,insulator=left,style=flood_up,swing=left,wired=true": {
+      "model": "immersiveengineering:smartmodel/connector",
+      "custom": {
+        "base": "realgrid:block/pole_light_mount/arm_6_left_wired.obj",
+        "flip-v": true
+      },
+      "y": 0
+    },
+    "facing=north,insulator=left,style=flood_up,swing=right,wired=false": {
+      "model": "immersiveengineering:smartmodel/connector",
+      "custom": {
+        "base": "realgrid:block/pole_light_mount/arm_6_right.obj",
+        "flip-v": true
+      },
+      "y": 0
+    },
+    "facing=north,insulator=left,style=flood_up,swing=right,wired=true": {
+      "model": "immersiveengineering:smartmodel/connector",
+      "custom": {
+        "base": "realgrid:block/pole_light_mount/arm_6_right_wired.obj",
+        "flip-v": true
+      },
+      "y": 0
+    },
+    "facing=north,insulator=left,style=flood_down,swing=straight,wired=false": {
+      "model": "immersiveengineering:smartmodel/connector",
+      "custom": {
+        "base": "realgrid:block/pole_light_mount/arm_6_straight.obj",
+        "flip-v": true
+      },
+      "y": 0
+    },
+    "facing=north,insulator=left,style=flood_down,swing=straight,wired=true": {
+      "model": "immersiveengineering:smartmodel/connector",
+      "custom": {
+        "base": "realgrid:block/pole_light_mount/arm_6_straight_wired.obj",
+        "flip-v": true
+      },
+      "y": 0
+    },
+    "facing=north,insulator=left,style=flood_down,swing=left,wired=false": {
+      "model": "immersiveengineering:smartmodel/connector",
+      "custom": {
+        "base": "realgrid:block/pole_light_mount/arm_6_left.obj",
+        "flip-v": true
+      },
+      "y": 0
+    },
+    "facing=north,insulator=left,style=flood_down,swing=left,wired=true": {
+      "model": "immersiveengineering:smartmodel/connector",
+      "custom": {
+        "base": "realgrid:block/pole_light_mount/arm_6_left_wired.obj",
+        "flip-v": true
+      },
+      "y": 0
+    },
+    "facing=north,insulator=left,style=flood_down,swing=right,wired=false": {
+      "model": "immersiveengineering:smartmodel/connector",
+      "custom": {
+        "base": "realgrid:block/pole_light_mount/arm_6_right.obj",
+        "flip-v": true
+      },
+      "y": 0
+    },
+    "facing=north,insulator=left,style=flood_down,swing=right,wired=true": {
+      "model": "immersiveengineering:smartmodel/connector",
+      "custom": {
+        "base": "realgrid:block/pole_light_mount/arm_6_right_wired.obj",
+        "flip-v": true
+      },
+      "y": 0
+    },
+    "facing=north,insulator=right,style=street,swing=straight,wired=false": {
+      "model": "immersiveengineering:smartmodel/connector",
+      "custom": {
+        "base": "realgrid:block/pole_light_mount/arm_6_straight.obj",
+        "flip-v": true
+      },
+      "y": 0
+    },
+    "facing=north,insulator=right,style=street,swing=straight,wired=true": {
+      "model": "immersiveengineering:smartmodel/connector",
+      "custom": {
+        "base": "realgrid:block/pole_light_mount/arm_6_straight_wired.obj",
+        "flip-v": true
+      },
+      "y": 0
+    },
+    "facing=north,insulator=right,style=street,swing=left,wired=false": {
+      "model": "immersiveengineering:smartmodel/connector",
+      "custom": {
+        "base": "realgrid:block/pole_light_mount/arm_6_left.obj",
+        "flip-v": true
+      },
+      "y": 0
+    },
+    "facing=north,insulator=right,style=street,swing=left,wired=true": {
+      "model": "immersiveengineering:smartmodel/connector",
+      "custom": {
+        "base": "realgrid:block/pole_light_mount/arm_6_left_wired.obj",
+        "flip-v": true
+      },
+      "y": 0
+    },
+    "facing=north,insulator=right,style=street,swing=right,wired=false": {
+      "model": "immersiveengineering:smartmodel/connector",
+      "custom": {
+        "base": "realgrid:block/pole_light_mount/arm_6_right.obj",
+        "flip-v": true
+      },
+      "y": 0
+    },
+    "facing=north,insulator=right,style=street,swing=right,wired=true": {
+      "model": "immersiveengineering:smartmodel/connector",
+      "custom": {
+        "base": "realgrid:block/pole_light_mount/arm_6_right_wired.obj",
+        "flip-v": true
+      },
+      "y": 0
+    },
+    "facing=north,insulator=right,style=flood_up,swing=straight,wired=false": {
+      "model": "immersiveengineering:smartmodel/connector",
+      "custom": {
+        "base": "realgrid:block/pole_light_mount/arm_6_straight.obj",
+        "flip-v": true
+      },
+      "y": 0
+    },
+    "facing=north,insulator=right,style=flood_up,swing=straight,wired=true": {
+      "model": "immersiveengineering:smartmodel/connector",
+      "custom": {
+        "base": "realgrid:block/pole_light_mount/arm_6_straight_wired.obj",
+        "flip-v": true
+      },
+      "y": 0
+    },
+    "facing=north,insulator=right,style=flood_up,swing=left,wired=false": {
+      "model": "immersiveengineering:smartmodel/connector",
+      "custom": {
+        "base": "realgrid:block/pole_light_mount/arm_6_left.obj",
+        "flip-v": true
+      },
+      "y": 0
+    },
+    "facing=north,insulator=right,style=flood_up,swing=left,wired=true": {
+      "model": "immersiveengineering:smartmodel/connector",
+      "custom": {
+        "base": "realgrid:block/pole_light_mount/arm_6_left_wired.obj",
+        "flip-v": true
+      },
+      "y": 0
+    },
+    "facing=north,insulator=right,style=flood_up,swing=right,wired=false": {
+      "model": "immersiveengineering:smartmodel/connector",
+      "custom": {
+        "base": "realgrid:block/pole_light_mount/arm_6_right.obj",
+        "flip-v": true
+      },
+      "y": 0
+    },
+    "facing=north,insulator=right,style=flood_up,swing=right,wired=true": {
+      "model": "immersiveengineering:smartmodel/connector",
+      "custom": {
+        "base": "realgrid:block/pole_light_mount/arm_6_right_wired.obj",
+        "flip-v": true
+      },
+      "y": 0
+    },
+    "facing=north,insulator=right,style=flood_down,swing=straight,wired=false": {
+      "model": "immersiveengineering:smartmodel/connector",
+      "custom": {
+        "base": "realgrid:block/pole_light_mount/arm_6_straight.obj",
+        "flip-v": true
+      },
+      "y": 0
+    },
+    "facing=north,insulator=right,style=flood_down,swing=straight,wired=true": {
+      "model": "immersiveengineering:smartmodel/connector",
+      "custom": {
+        "base": "realgrid:block/pole_light_mount/arm_6_straight_wired.obj",
+        "flip-v": true
+      },
+      "y": 0
+    },
+    "facing=north,insulator=right,style=flood_down,swing=left,wired=false": {
+      "model": "immersiveengineering:smartmodel/connector",
+      "custom": {
+        "base": "realgrid:block/pole_light_mount/arm_6_left.obj",
+        "flip-v": true
+      },
+      "y": 0
+    },
+    "facing=north,insulator=right,style=flood_down,swing=left,wired=true": {
+      "model": "immersiveengineering:smartmodel/connector",
+      "custom": {
+        "base": "realgrid:block/pole_light_mount/arm_6_left_wired.obj",
+        "flip-v": true
+      },
+      "y": 0
+    },
+    "facing=north,insulator=right,style=flood_down,swing=right,wired=false": {
+      "model": "immersiveengineering:smartmodel/connector",
+      "custom": {
+        "base": "realgrid:block/pole_light_mount/arm_6_right.obj",
+        "flip-v": true
+      },
+      "y": 0
+    },
+    "facing=north,insulator=right,style=flood_down,swing=right,wired=true": {
+      "model": "immersiveengineering:smartmodel/connector",
+      "custom": {
+        "base": "realgrid:block/pole_light_mount/arm_6_right_wired.obj",
+        "flip-v": true
+      },
+      "y": 0
+    },
+    "facing=east,insulator=left,style=street,swing=straight,wired=false": {
       "model": "immersiveengineering:smartmodel/connector",
       "custom": {
         "base": "realgrid:block/pole_light_mount/arm_6_straight.obj",
@@ -57,7 +297,7 @@
       },
       "y": 90
     },
-    "facing=east,swing=straight,wired=true": {
+    "facing=east,insulator=left,style=street,swing=straight,wired=true": {
       "model": "immersiveengineering:smartmodel/connector",
       "custom": {
         "base": "realgrid:block/pole_light_mount/arm_6_straight_wired.obj",
@@ -65,7 +305,7 @@
       },
       "y": 90
     },
-    "facing=east,swing=left,wired=false": {
+    "facing=east,insulator=left,style=street,swing=left,wired=false": {
       "model": "immersiveengineering:smartmodel/connector",
       "custom": {
         "base": "realgrid:block/pole_light_mount/arm_6_left.obj",
@@ -73,7 +313,7 @@
       },
       "y": 90
     },
-    "facing=east,swing=left,wired=true": {
+    "facing=east,insulator=left,style=street,swing=left,wired=true": {
       "model": "immersiveengineering:smartmodel/connector",
       "custom": {
         "base": "realgrid:block/pole_light_mount/arm_6_left_wired.obj",
@@ -81,7 +321,7 @@
       },
       "y": 90
     },
-    "facing=east,swing=right,wired=false": {
+    "facing=east,insulator=left,style=street,swing=right,wired=false": {
       "model": "immersiveengineering:smartmodel/connector",
       "custom": {
         "base": "realgrid:block/pole_light_mount/arm_6_right.obj",
@@ -89,7 +329,7 @@
       },
       "y": 90
     },
-    "facing=east,swing=right,wired=true": {
+    "facing=east,insulator=left,style=street,swing=right,wired=true": {
       "model": "immersiveengineering:smartmodel/connector",
       "custom": {
         "base": "realgrid:block/pole_light_mount/arm_6_right_wired.obj",
@@ -97,7 +337,247 @@
       },
       "y": 90
     },
-    "facing=south,swing=straight,wired=false": {
+    "facing=east,insulator=left,style=flood_up,swing=straight,wired=false": {
+      "model": "immersiveengineering:smartmodel/connector",
+      "custom": {
+        "base": "realgrid:block/pole_light_mount/arm_6_straight.obj",
+        "flip-v": true
+      },
+      "y": 90
+    },
+    "facing=east,insulator=left,style=flood_up,swing=straight,wired=true": {
+      "model": "immersiveengineering:smartmodel/connector",
+      "custom": {
+        "base": "realgrid:block/pole_light_mount/arm_6_straight_wired.obj",
+        "flip-v": true
+      },
+      "y": 90
+    },
+    "facing=east,insulator=left,style=flood_up,swing=left,wired=false": {
+      "model": "immersiveengineering:smartmodel/connector",
+      "custom": {
+        "base": "realgrid:block/pole_light_mount/arm_6_left.obj",
+        "flip-v": true
+      },
+      "y": 90
+    },
+    "facing=east,insulator=left,style=flood_up,swing=left,wired=true": {
+      "model": "immersiveengineering:smartmodel/connector",
+      "custom": {
+        "base": "realgrid:block/pole_light_mount/arm_6_left_wired.obj",
+        "flip-v": true
+      },
+      "y": 90
+    },
+    "facing=east,insulator=left,style=flood_up,swing=right,wired=false": {
+      "model": "immersiveengineering:smartmodel/connector",
+      "custom": {
+        "base": "realgrid:block/pole_light_mount/arm_6_right.obj",
+        "flip-v": true
+      },
+      "y": 90
+    },
+    "facing=east,insulator=left,style=flood_up,swing=right,wired=true": {
+      "model": "immersiveengineering:smartmodel/connector",
+      "custom": {
+        "base": "realgrid:block/pole_light_mount/arm_6_right_wired.obj",
+        "flip-v": true
+      },
+      "y": 90
+    },
+    "facing=east,insulator=left,style=flood_down,swing=straight,wired=false": {
+      "model": "immersiveengineering:smartmodel/connector",
+      "custom": {
+        "base": "realgrid:block/pole_light_mount/arm_6_straight.obj",
+        "flip-v": true
+      },
+      "y": 90
+    },
+    "facing=east,insulator=left,style=flood_down,swing=straight,wired=true": {
+      "model": "immersiveengineering:smartmodel/connector",
+      "custom": {
+        "base": "realgrid:block/pole_light_mount/arm_6_straight_wired.obj",
+        "flip-v": true
+      },
+      "y": 90
+    },
+    "facing=east,insulator=left,style=flood_down,swing=left,wired=false": {
+      "model": "immersiveengineering:smartmodel/connector",
+      "custom": {
+        "base": "realgrid:block/pole_light_mount/arm_6_left.obj",
+        "flip-v": true
+      },
+      "y": 90
+    },
+    "facing=east,insulator=left,style=flood_down,swing=left,wired=true": {
+      "model": "immersiveengineering:smartmodel/connector",
+      "custom": {
+        "base": "realgrid:block/pole_light_mount/arm_6_left_wired.obj",
+        "flip-v": true
+      },
+      "y": 90
+    },
+    "facing=east,insulator=left,style=flood_down,swing=right,wired=false": {
+      "model": "immersiveengineering:smartmodel/connector",
+      "custom": {
+        "base": "realgrid:block/pole_light_mount/arm_6_right.obj",
+        "flip-v": true
+      },
+      "y": 90
+    },
+    "facing=east,insulator=left,style=flood_down,swing=right,wired=true": {
+      "model": "immersiveengineering:smartmodel/connector",
+      "custom": {
+        "base": "realgrid:block/pole_light_mount/arm_6_right_wired.obj",
+        "flip-v": true
+      },
+      "y": 90
+    },
+    "facing=east,insulator=right,style=street,swing=straight,wired=false": {
+      "model": "immersiveengineering:smartmodel/connector",
+      "custom": {
+        "base": "realgrid:block/pole_light_mount/arm_6_straight.obj",
+        "flip-v": true
+      },
+      "y": 90
+    },
+    "facing=east,insulator=right,style=street,swing=straight,wired=true": {
+      "model": "immersiveengineering:smartmodel/connector",
+      "custom": {
+        "base": "realgrid:block/pole_light_mount/arm_6_straight_wired.obj",
+        "flip-v": true
+      },
+      "y": 90
+    },
+    "facing=east,insulator=right,style=street,swing=left,wired=false": {
+      "model": "immersiveengineering:smartmodel/connector",
+      "custom": {
+        "base": "realgrid:block/pole_light_mount/arm_6_left.obj",
+        "flip-v": true
+      },
+      "y": 90
+    },
+    "facing=east,insulator=right,style=street,swing=left,wired=true": {
+      "model": "immersiveengineering:smartmodel/connector",
+      "custom": {
+        "base": "realgrid:block/pole_light_mount/arm_6_left_wired.obj",
+        "flip-v": true
+      },
+      "y": 90
+    },
+    "facing=east,insulator=right,style=street,swing=right,wired=false": {
+      "model": "immersiveengineering:smartmodel/connector",
+      "custom": {
+        "base": "realgrid:block/pole_light_mount/arm_6_right.obj",
+        "flip-v": true
+      },
+      "y": 90
+    },
+    "facing=east,insulator=right,style=street,swing=right,wired=true": {
+      "model": "immersiveengineering:smartmodel/connector",
+      "custom": {
+        "base": "realgrid:block/pole_light_mount/arm_6_right_wired.obj",
+        "flip-v": true
+      },
+      "y": 90
+    },
+    "facing=east,insulator=right,style=flood_up,swing=straight,wired=false": {
+      "model": "immersiveengineering:smartmodel/connector",
+      "custom": {
+        "base": "realgrid:block/pole_light_mount/arm_6_straight.obj",
+        "flip-v": true
+      },
+      "y": 90
+    },
+    "facing=east,insulator=right,style=flood_up,swing=straight,wired=true": {
+      "model": "immersiveengineering:smartmodel/connector",
+      "custom": {
+        "base": "realgrid:block/pole_light_mount/arm_6_straight_wired.obj",
+        "flip-v": true
+      },
+      "y": 90
+    },
+    "facing=east,insulator=right,style=flood_up,swing=left,wired=false": {
+      "model": "immersiveengineering:smartmodel/connector",
+      "custom": {
+        "base": "realgrid:block/pole_light_mount/arm_6_left.obj",
+        "flip-v": true
+      },
+      "y": 90
+    },
+    "facing=east,insulator=right,style=flood_up,swing=left,wired=true": {
+      "model": "immersiveengineering:smartmodel/connector",
+      "custom": {
+        "base": "realgrid:block/pole_light_mount/arm_6_left_wired.obj",
+        "flip-v": true
+      },
+      "y": 90
+    },
+    "facing=east,insulator=right,style=flood_up,swing=right,wired=false": {
+      "model": "immersiveengineering:smartmodel/connector",
+      "custom": {
+        "base": "realgrid:block/pole_light_mount/arm_6_right.obj",
+        "flip-v": true
+      },
+      "y": 90
+    },
+    "facing=east,insulator=right,style=flood_up,swing=right,wired=true": {
+      "model": "immersiveengineering:smartmodel/connector",
+      "custom": {
+        "base": "realgrid:block/pole_light_mount/arm_6_right_wired.obj",
+        "flip-v": true
+      },
+      "y": 90
+    },
+    "facing=east,insulator=right,style=flood_down,swing=straight,wired=false": {
+      "model": "immersiveengineering:smartmodel/connector",
+      "custom": {
+        "base": "realgrid:block/pole_light_mount/arm_6_straight.obj",
+        "flip-v": true
+      },
+      "y": 90
+    },
+    "facing=east,insulator=right,style=flood_down,swing=straight,wired=true": {
+      "model": "immersiveengineering:smartmodel/connector",
+      "custom": {
+        "base": "realgrid:block/pole_light_mount/arm_6_straight_wired.obj",
+        "flip-v": true
+      },
+      "y": 90
+    },
+    "facing=east,insulator=right,style=flood_down,swing=left,wired=false": {
+      "model": "immersiveengineering:smartmodel/connector",
+      "custom": {
+        "base": "realgrid:block/pole_light_mount/arm_6_left.obj",
+        "flip-v": true
+      },
+      "y": 90
+    },
+    "facing=east,insulator=right,style=flood_down,swing=left,wired=true": {
+      "model": "immersiveengineering:smartmodel/connector",
+      "custom": {
+        "base": "realgrid:block/pole_light_mount/arm_6_left_wired.obj",
+        "flip-v": true
+      },
+      "y": 90
+    },
+    "facing=east,insulator=right,style=flood_down,swing=right,wired=false": {
+      "model": "immersiveengineering:smartmodel/connector",
+      "custom": {
+        "base": "realgrid:block/pole_light_mount/arm_6_right.obj",
+        "flip-v": true
+      },
+      "y": 90
+    },
+    "facing=east,insulator=right,style=flood_down,swing=right,wired=true": {
+      "model": "immersiveengineering:smartmodel/connector",
+      "custom": {
+        "base": "realgrid:block/pole_light_mount/arm_6_right_wired.obj",
+        "flip-v": true
+      },
+      "y": 90
+    },
+    "facing=south,insulator=left,style=street,swing=straight,wired=false": {
       "model": "immersiveengineering:smartmodel/connector",
       "custom": {
         "base": "realgrid:block/pole_light_mount/arm_6_straight.obj",
@@ -105,7 +585,7 @@
       },
       "y": 180
     },
-    "facing=south,swing=straight,wired=true": {
+    "facing=south,insulator=left,style=street,swing=straight,wired=true": {
       "model": "immersiveengineering:smartmodel/connector",
       "custom": {
         "base": "realgrid:block/pole_light_mount/arm_6_straight_wired.obj",
@@ -113,7 +593,7 @@
       },
       "y": 180
     },
-    "facing=south,swing=left,wired=false": {
+    "facing=south,insulator=left,style=street,swing=left,wired=false": {
       "model": "immersiveengineering:smartmodel/connector",
       "custom": {
         "base": "realgrid:block/pole_light_mount/arm_6_left.obj",
@@ -121,7 +601,7 @@
       },
       "y": 180
     },
-    "facing=south,swing=left,wired=true": {
+    "facing=south,insulator=left,style=street,swing=left,wired=true": {
       "model": "immersiveengineering:smartmodel/connector",
       "custom": {
         "base": "realgrid:block/pole_light_mount/arm_6_left_wired.obj",
@@ -129,7 +609,7 @@
       },
       "y": 180
     },
-    "facing=south,swing=right,wired=false": {
+    "facing=south,insulator=left,style=street,swing=right,wired=false": {
       "model": "immersiveengineering:smartmodel/connector",
       "custom": {
         "base": "realgrid:block/pole_light_mount/arm_6_right.obj",
@@ -137,7 +617,7 @@
       },
       "y": 180
     },
-    "facing=south,swing=right,wired=true": {
+    "facing=south,insulator=left,style=street,swing=right,wired=true": {
       "model": "immersiveengineering:smartmodel/connector",
       "custom": {
         "base": "realgrid:block/pole_light_mount/arm_6_right_wired.obj",
@@ -145,7 +625,247 @@
       },
       "y": 180
     },
-    "facing=west,swing=straight,wired=false": {
+    "facing=south,insulator=left,style=flood_up,swing=straight,wired=false": {
+      "model": "immersiveengineering:smartmodel/connector",
+      "custom": {
+        "base": "realgrid:block/pole_light_mount/arm_6_straight.obj",
+        "flip-v": true
+      },
+      "y": 180
+    },
+    "facing=south,insulator=left,style=flood_up,swing=straight,wired=true": {
+      "model": "immersiveengineering:smartmodel/connector",
+      "custom": {
+        "base": "realgrid:block/pole_light_mount/arm_6_straight_wired.obj",
+        "flip-v": true
+      },
+      "y": 180
+    },
+    "facing=south,insulator=left,style=flood_up,swing=left,wired=false": {
+      "model": "immersiveengineering:smartmodel/connector",
+      "custom": {
+        "base": "realgrid:block/pole_light_mount/arm_6_left.obj",
+        "flip-v": true
+      },
+      "y": 180
+    },
+    "facing=south,insulator=left,style=flood_up,swing=left,wired=true": {
+      "model": "immersiveengineering:smartmodel/connector",
+      "custom": {
+        "base": "realgrid:block/pole_light_mount/arm_6_left_wired.obj",
+        "flip-v": true
+      },
+      "y": 180
+    },
+    "facing=south,insulator=left,style=flood_up,swing=right,wired=false": {
+      "model": "immersiveengineering:smartmodel/connector",
+      "custom": {
+        "base": "realgrid:block/pole_light_mount/arm_6_right.obj",
+        "flip-v": true
+      },
+      "y": 180
+    },
+    "facing=south,insulator=left,style=flood_up,swing=right,wired=true": {
+      "model": "immersiveengineering:smartmodel/connector",
+      "custom": {
+        "base": "realgrid:block/pole_light_mount/arm_6_right_wired.obj",
+        "flip-v": true
+      },
+      "y": 180
+    },
+    "facing=south,insulator=left,style=flood_down,swing=straight,wired=false": {
+      "model": "immersiveengineering:smartmodel/connector",
+      "custom": {
+        "base": "realgrid:block/pole_light_mount/arm_6_straight.obj",
+        "flip-v": true
+      },
+      "y": 180
+    },
+    "facing=south,insulator=left,style=flood_down,swing=straight,wired=true": {
+      "model": "immersiveengineering:smartmodel/connector",
+      "custom": {
+        "base": "realgrid:block/pole_light_mount/arm_6_straight_wired.obj",
+        "flip-v": true
+      },
+      "y": 180
+    },
+    "facing=south,insulator=left,style=flood_down,swing=left,wired=false": {
+      "model": "immersiveengineering:smartmodel/connector",
+      "custom": {
+        "base": "realgrid:block/pole_light_mount/arm_6_left.obj",
+        "flip-v": true
+      },
+      "y": 180
+    },
+    "facing=south,insulator=left,style=flood_down,swing=left,wired=true": {
+      "model": "immersiveengineering:smartmodel/connector",
+      "custom": {
+        "base": "realgrid:block/pole_light_mount/arm_6_left_wired.obj",
+        "flip-v": true
+      },
+      "y": 180
+    },
+    "facing=south,insulator=left,style=flood_down,swing=right,wired=false": {
+      "model": "immersiveengineering:smartmodel/connector",
+      "custom": {
+        "base": "realgrid:block/pole_light_mount/arm_6_right.obj",
+        "flip-v": true
+      },
+      "y": 180
+    },
+    "facing=south,insulator=left,style=flood_down,swing=right,wired=true": {
+      "model": "immersiveengineering:smartmodel/connector",
+      "custom": {
+        "base": "realgrid:block/pole_light_mount/arm_6_right_wired.obj",
+        "flip-v": true
+      },
+      "y": 180
+    },
+    "facing=south,insulator=right,style=street,swing=straight,wired=false": {
+      "model": "immersiveengineering:smartmodel/connector",
+      "custom": {
+        "base": "realgrid:block/pole_light_mount/arm_6_straight.obj",
+        "flip-v": true
+      },
+      "y": 180
+    },
+    "facing=south,insulator=right,style=street,swing=straight,wired=true": {
+      "model": "immersiveengineering:smartmodel/connector",
+      "custom": {
+        "base": "realgrid:block/pole_light_mount/arm_6_straight_wired.obj",
+        "flip-v": true
+      },
+      "y": 180
+    },
+    "facing=south,insulator=right,style=street,swing=left,wired=false": {
+      "model": "immersiveengineering:smartmodel/connector",
+      "custom": {
+        "base": "realgrid:block/pole_light_mount/arm_6_left.obj",
+        "flip-v": true
+      },
+      "y": 180
+    },
+    "facing=south,insulator=right,style=street,swing=left,wired=true": {
+      "model": "immersiveengineering:smartmodel/connector",
+      "custom": {
+        "base": "realgrid:block/pole_light_mount/arm_6_left_wired.obj",
+        "flip-v": true
+      },
+      "y": 180
+    },
+    "facing=south,insulator=right,style=street,swing=right,wired=false": {
+      "model": "immersiveengineering:smartmodel/connector",
+      "custom": {
+        "base": "realgrid:block/pole_light_mount/arm_6_right.obj",
+        "flip-v": true
+      },
+      "y": 180
+    },
+    "facing=south,insulator=right,style=street,swing=right,wired=true": {
+      "model": "immersiveengineering:smartmodel/connector",
+      "custom": {
+        "base": "realgrid:block/pole_light_mount/arm_6_right_wired.obj",
+        "flip-v": true
+      },
+      "y": 180
+    },
+    "facing=south,insulator=right,style=flood_up,swing=straight,wired=false": {
+      "model": "immersiveengineering:smartmodel/connector",
+      "custom": {
+        "base": "realgrid:block/pole_light_mount/arm_6_straight.obj",
+        "flip-v": true
+      },
+      "y": 180
+    },
+    "facing=south,insulator=right,style=flood_up,swing=straight,wired=true": {
+      "model": "immersiveengineering:smartmodel/connector",
+      "custom": {
+        "base": "realgrid:block/pole_light_mount/arm_6_straight_wired.obj",
+        "flip-v": true
+      },
+      "y": 180
+    },
+    "facing=south,insulator=right,style=flood_up,swing=left,wired=false": {
+      "model": "immersiveengineering:smartmodel/connector",
+      "custom": {
+        "base": "realgrid:block/pole_light_mount/arm_6_left.obj",
+        "flip-v": true
+      },
+      "y": 180
+    },
+    "facing=south,insulator=right,style=flood_up,swing=left,wired=true": {
+      "model": "immersiveengineering:smartmodel/connector",
+      "custom": {
+        "base": "realgrid:block/pole_light_mount/arm_6_left_wired.obj",
+        "flip-v": true
+      },
+      "y": 180
+    },
+    "facing=south,insulator=right,style=flood_up,swing=right,wired=false": {
+      "model": "immersiveengineering:smartmodel/connector",
+      "custom": {
+        "base": "realgrid:block/pole_light_mount/arm_6_right.obj",
+        "flip-v": true
+      },
+      "y": 180
+    },
+    "facing=south,insulator=right,style=flood_up,swing=right,wired=true": {
+      "model": "immersiveengineering:smartmodel/connector",
+      "custom": {
+        "base": "realgrid:block/pole_light_mount/arm_6_right_wired.obj",
+        "flip-v": true
+      },
+      "y": 180
+    },
+    "facing=south,insulator=right,style=flood_down,swing=straight,wired=false": {
+      "model": "immersiveengineering:smartmodel/connector",
+      "custom": {
+        "base": "realgrid:block/pole_light_mount/arm_6_straight.obj",
+        "flip-v": true
+      },
+      "y": 180
+    },
+    "facing=south,insulator=right,style=flood_down,swing=straight,wired=true": {
+      "model": "immersiveengineering:smartmodel/connector",
+      "custom": {
+        "base": "realgrid:block/pole_light_mount/arm_6_straight_wired.obj",
+        "flip-v": true
+      },
+      "y": 180
+    },
+    "facing=south,insulator=right,style=flood_down,swing=left,wired=false": {
+      "model": "immersiveengineering:smartmodel/connector",
+      "custom": {
+        "base": "realgrid:block/pole_light_mount/arm_6_left.obj",
+        "flip-v": true
+      },
+      "y": 180
+    },
+    "facing=south,insulator=right,style=flood_down,swing=left,wired=true": {
+      "model": "immersiveengineering:smartmodel/connector",
+      "custom": {
+        "base": "realgrid:block/pole_light_mount/arm_6_left_wired.obj",
+        "flip-v": true
+      },
+      "y": 180
+    },
+    "facing=south,insulator=right,style=flood_down,swing=right,wired=false": {
+      "model": "immersiveengineering:smartmodel/connector",
+      "custom": {
+        "base": "realgrid:block/pole_light_mount/arm_6_right.obj",
+        "flip-v": true
+      },
+      "y": 180
+    },
+    "facing=south,insulator=right,style=flood_down,swing=right,wired=true": {
+      "model": "immersiveengineering:smartmodel/connector",
+      "custom": {
+        "base": "realgrid:block/pole_light_mount/arm_6_right_wired.obj",
+        "flip-v": true
+      },
+      "y": 180
+    },
+    "facing=west,insulator=left,style=street,swing=straight,wired=false": {
       "model": "immersiveengineering:smartmodel/connector",
       "custom": {
         "base": "realgrid:block/pole_light_mount/arm_6_straight.obj",
@@ -153,7 +873,7 @@
       },
       "y": 270
     },
-    "facing=west,swing=straight,wired=true": {
+    "facing=west,insulator=left,style=street,swing=straight,wired=true": {
       "model": "immersiveengineering:smartmodel/connector",
       "custom": {
         "base": "realgrid:block/pole_light_mount/arm_6_straight_wired.obj",
@@ -161,7 +881,7 @@
       },
       "y": 270
     },
-    "facing=west,swing=left,wired=false": {
+    "facing=west,insulator=left,style=street,swing=left,wired=false": {
       "model": "immersiveengineering:smartmodel/connector",
       "custom": {
         "base": "realgrid:block/pole_light_mount/arm_6_left.obj",
@@ -169,7 +889,7 @@
       },
       "y": 270
     },
-    "facing=west,swing=left,wired=true": {
+    "facing=west,insulator=left,style=street,swing=left,wired=true": {
       "model": "immersiveengineering:smartmodel/connector",
       "custom": {
         "base": "realgrid:block/pole_light_mount/arm_6_left_wired.obj",
@@ -177,7 +897,7 @@
       },
       "y": 270
     },
-    "facing=west,swing=right,wired=false": {
+    "facing=west,insulator=left,style=street,swing=right,wired=false": {
       "model": "immersiveengineering:smartmodel/connector",
       "custom": {
         "base": "realgrid:block/pole_light_mount/arm_6_right.obj",
@@ -185,7 +905,247 @@
       },
       "y": 270
     },
-    "facing=west,swing=right,wired=true": {
+    "facing=west,insulator=left,style=street,swing=right,wired=true": {
+      "model": "immersiveengineering:smartmodel/connector",
+      "custom": {
+        "base": "realgrid:block/pole_light_mount/arm_6_right_wired.obj",
+        "flip-v": true
+      },
+      "y": 270
+    },
+    "facing=west,insulator=left,style=flood_up,swing=straight,wired=false": {
+      "model": "immersiveengineering:smartmodel/connector",
+      "custom": {
+        "base": "realgrid:block/pole_light_mount/arm_6_straight.obj",
+        "flip-v": true
+      },
+      "y": 270
+    },
+    "facing=west,insulator=left,style=flood_up,swing=straight,wired=true": {
+      "model": "immersiveengineering:smartmodel/connector",
+      "custom": {
+        "base": "realgrid:block/pole_light_mount/arm_6_straight_wired.obj",
+        "flip-v": true
+      },
+      "y": 270
+    },
+    "facing=west,insulator=left,style=flood_up,swing=left,wired=false": {
+      "model": "immersiveengineering:smartmodel/connector",
+      "custom": {
+        "base": "realgrid:block/pole_light_mount/arm_6_left.obj",
+        "flip-v": true
+      },
+      "y": 270
+    },
+    "facing=west,insulator=left,style=flood_up,swing=left,wired=true": {
+      "model": "immersiveengineering:smartmodel/connector",
+      "custom": {
+        "base": "realgrid:block/pole_light_mount/arm_6_left_wired.obj",
+        "flip-v": true
+      },
+      "y": 270
+    },
+    "facing=west,insulator=left,style=flood_up,swing=right,wired=false": {
+      "model": "immersiveengineering:smartmodel/connector",
+      "custom": {
+        "base": "realgrid:block/pole_light_mount/arm_6_right.obj",
+        "flip-v": true
+      },
+      "y": 270
+    },
+    "facing=west,insulator=left,style=flood_up,swing=right,wired=true": {
+      "model": "immersiveengineering:smartmodel/connector",
+      "custom": {
+        "base": "realgrid:block/pole_light_mount/arm_6_right_wired.obj",
+        "flip-v": true
+      },
+      "y": 270
+    },
+    "facing=west,insulator=left,style=flood_down,swing=straight,wired=false": {
+      "model": "immersiveengineering:smartmodel/connector",
+      "custom": {
+        "base": "realgrid:block/pole_light_mount/arm_6_straight.obj",
+        "flip-v": true
+      },
+      "y": 270
+    },
+    "facing=west,insulator=left,style=flood_down,swing=straight,wired=true": {
+      "model": "immersiveengineering:smartmodel/connector",
+      "custom": {
+        "base": "realgrid:block/pole_light_mount/arm_6_straight_wired.obj",
+        "flip-v": true
+      },
+      "y": 270
+    },
+    "facing=west,insulator=left,style=flood_down,swing=left,wired=false": {
+      "model": "immersiveengineering:smartmodel/connector",
+      "custom": {
+        "base": "realgrid:block/pole_light_mount/arm_6_left.obj",
+        "flip-v": true
+      },
+      "y": 270
+    },
+    "facing=west,insulator=left,style=flood_down,swing=left,wired=true": {
+      "model": "immersiveengineering:smartmodel/connector",
+      "custom": {
+        "base": "realgrid:block/pole_light_mount/arm_6_left_wired.obj",
+        "flip-v": true
+      },
+      "y": 270
+    },
+    "facing=west,insulator=left,style=flood_down,swing=right,wired=false": {
+      "model": "immersiveengineering:smartmodel/connector",
+      "custom": {
+        "base": "realgrid:block/pole_light_mount/arm_6_right.obj",
+        "flip-v": true
+      },
+      "y": 270
+    },
+    "facing=west,insulator=left,style=flood_down,swing=right,wired=true": {
+      "model": "immersiveengineering:smartmodel/connector",
+      "custom": {
+        "base": "realgrid:block/pole_light_mount/arm_6_right_wired.obj",
+        "flip-v": true
+      },
+      "y": 270
+    },
+    "facing=west,insulator=right,style=street,swing=straight,wired=false": {
+      "model": "immersiveengineering:smartmodel/connector",
+      "custom": {
+        "base": "realgrid:block/pole_light_mount/arm_6_straight.obj",
+        "flip-v": true
+      },
+      "y": 270
+    },
+    "facing=west,insulator=right,style=street,swing=straight,wired=true": {
+      "model": "immersiveengineering:smartmodel/connector",
+      "custom": {
+        "base": "realgrid:block/pole_light_mount/arm_6_straight_wired.obj",
+        "flip-v": true
+      },
+      "y": 270
+    },
+    "facing=west,insulator=right,style=street,swing=left,wired=false": {
+      "model": "immersiveengineering:smartmodel/connector",
+      "custom": {
+        "base": "realgrid:block/pole_light_mount/arm_6_left.obj",
+        "flip-v": true
+      },
+      "y": 270
+    },
+    "facing=west,insulator=right,style=street,swing=left,wired=true": {
+      "model": "immersiveengineering:smartmodel/connector",
+      "custom": {
+        "base": "realgrid:block/pole_light_mount/arm_6_left_wired.obj",
+        "flip-v": true
+      },
+      "y": 270
+    },
+    "facing=west,insulator=right,style=street,swing=right,wired=false": {
+      "model": "immersiveengineering:smartmodel/connector",
+      "custom": {
+        "base": "realgrid:block/pole_light_mount/arm_6_right.obj",
+        "flip-v": true
+      },
+      "y": 270
+    },
+    "facing=west,insulator=right,style=street,swing=right,wired=true": {
+      "model": "immersiveengineering:smartmodel/connector",
+      "custom": {
+        "base": "realgrid:block/pole_light_mount/arm_6_right_wired.obj",
+        "flip-v": true
+      },
+      "y": 270
+    },
+    "facing=west,insulator=right,style=flood_up,swing=straight,wired=false": {
+      "model": "immersiveengineering:smartmodel/connector",
+      "custom": {
+        "base": "realgrid:block/pole_light_mount/arm_6_straight.obj",
+        "flip-v": true
+      },
+      "y": 270
+    },
+    "facing=west,insulator=right,style=flood_up,swing=straight,wired=true": {
+      "model": "immersiveengineering:smartmodel/connector",
+      "custom": {
+        "base": "realgrid:block/pole_light_mount/arm_6_straight_wired.obj",
+        "flip-v": true
+      },
+      "y": 270
+    },
+    "facing=west,insulator=right,style=flood_up,swing=left,wired=false": {
+      "model": "immersiveengineering:smartmodel/connector",
+      "custom": {
+        "base": "realgrid:block/pole_light_mount/arm_6_left.obj",
+        "flip-v": true
+      },
+      "y": 270
+    },
+    "facing=west,insulator=right,style=flood_up,swing=left,wired=true": {
+      "model": "immersiveengineering:smartmodel/connector",
+      "custom": {
+        "base": "realgrid:block/pole_light_mount/arm_6_left_wired.obj",
+        "flip-v": true
+      },
+      "y": 270
+    },
+    "facing=west,insulator=right,style=flood_up,swing=right,wired=false": {
+      "model": "immersiveengineering:smartmodel/connector",
+      "custom": {
+        "base": "realgrid:block/pole_light_mount/arm_6_right.obj",
+        "flip-v": true
+      },
+      "y": 270
+    },
+    "facing=west,insulator=right,style=flood_up,swing=right,wired=true": {
+      "model": "immersiveengineering:smartmodel/connector",
+      "custom": {
+        "base": "realgrid:block/pole_light_mount/arm_6_right_wired.obj",
+        "flip-v": true
+      },
+      "y": 270
+    },
+    "facing=west,insulator=right,style=flood_down,swing=straight,wired=false": {
+      "model": "immersiveengineering:smartmodel/connector",
+      "custom": {
+        "base": "realgrid:block/pole_light_mount/arm_6_straight.obj",
+        "flip-v": true
+      },
+      "y": 270
+    },
+    "facing=west,insulator=right,style=flood_down,swing=straight,wired=true": {
+      "model": "immersiveengineering:smartmodel/connector",
+      "custom": {
+        "base": "realgrid:block/pole_light_mount/arm_6_straight_wired.obj",
+        "flip-v": true
+      },
+      "y": 270
+    },
+    "facing=west,insulator=right,style=flood_down,swing=left,wired=false": {
+      "model": "immersiveengineering:smartmodel/connector",
+      "custom": {
+        "base": "realgrid:block/pole_light_mount/arm_6_left.obj",
+        "flip-v": true
+      },
+      "y": 270
+    },
+    "facing=west,insulator=right,style=flood_down,swing=left,wired=true": {
+      "model": "immersiveengineering:smartmodel/connector",
+      "custom": {
+        "base": "realgrid:block/pole_light_mount/arm_6_left_wired.obj",
+        "flip-v": true
+      },
+      "y": 270
+    },
+    "facing=west,insulator=right,style=flood_down,swing=right,wired=false": {
+      "model": "immersiveengineering:smartmodel/connector",
+      "custom": {
+        "base": "realgrid:block/pole_light_mount/arm_6_right.obj",
+        "flip-v": true
+      },
+      "y": 270
+    },
+    "facing=west,insulator=right,style=flood_down,swing=right,wired=true": {
       "model": "immersiveengineering:smartmodel/connector",
       "custom": {
         "base": "realgrid:block/pole_light_mount/arm_6_right_wired.obj",

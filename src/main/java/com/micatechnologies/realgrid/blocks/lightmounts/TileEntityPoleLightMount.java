@@ -3,13 +3,16 @@ package com.micatechnologies.realgrid.blocks.lightmounts;
 import blusunrize.immersiveengineering.api.ApiUtils;
 import blusunrize.immersiveengineering.api.TargetingInfo;
 import blusunrize.immersiveengineering.api.energy.wires.IImmersiveConnectable;
+import blusunrize.immersiveengineering.api.energy.wires.ImmersiveNetHandler;
 import blusunrize.immersiveengineering.api.energy.wires.ImmersiveNetHandler.Connection;
 import blusunrize.immersiveengineering.api.energy.wires.WireType;
+import blusunrize.immersiveengineering.common.blocks.metal.TileEntityFloodlight;
 import com.google.common.collect.ImmutableSet;
 import com.micatechnologies.realgrid.blocks.insulators.InsulatorGeometry;
 import com.micatechnologies.realgrid.blocks.insulators.TileEntityInsulatorBase;
 import net.minecraft.block.state.IBlockState;
 import net.minecraft.entity.EntityLivingBase;
+import net.minecraft.nbt.NBTTagCompound;
 import net.minecraft.util.EnumFacing;
 import net.minecraft.util.math.BlockPos;
 import net.minecraft.util.math.Vec3d;
@@ -24,9 +27,10 @@ import javax.annotation.Nullable;
  * are attached by clicking the tip block ({@link BlockPoleLightMountTip}), which sends IE here;
  * clicks on the bracket are turned away.
  *
- * <p>It takes Steel Cable, which carries a light's messenger wire to it, or LV copper, which can
- * feed an Immersive Engineering floodlight hung at the arm. One type at a time, several wires of
- * it, passing energy through like the insulators. The wire-count and wire-type bookkeeping, and
+ * <p>It takes Steel Cable, which carries a light's messenger wire to it. LV copper, which feeds an
+ * Immersive Engineering floodlight, is taken only when a 1- or 2-block mount is set up for a
+ * floodlight ({@link LightStyle}) and the floodlight is in place; copper already attached is kept
+ * either way. One type at a time, several wires of it, passing energy through like the insulators. The wire-count and wire-type bookkeeping, and
  * its repair from IE's live connections, all come from {@link TileEntityInsulatorBase}, which also
  * routes IE's three-argument canConnectCable to the rules below.
  */
@@ -41,9 +45,42 @@ public class TileEntityPoleLightMount extends TileEntityInsulatorBase
      */
     static final InsulatorGeometry GEOMETRY = InsulatorGeometry.rotatable(new Vec3d(0.5, 0.5, 0.85), BRACKET_BOUNDS);
 
+    /** What the arm carries; only the 1- and 2-block arms offer anything but a street light. */
+    private LightStyle style = LightStyle.STREET;
+
     public TileEntityPoleLightMount()
     {
         super(GEOMETRY);
+    }
+
+    public LightStyle getStyle()
+    {
+        return style;
+    }
+
+    public void setStyle(LightStyle style)
+    {
+        this.style = style;
+        markDirty();
+        if (world != null)
+        {
+            IBlockState state = world.getBlockState(pos);
+            world.notifyBlockUpdate(pos, state, state, 3);
+        }
+    }
+
+    @Override
+    public void writeCustomNBT(NBTTagCompound nbt, boolean descPacket)
+    {
+        super.writeCustomNBT(nbt, descPacket);
+        nbt.setString("lightStyle", style.getName());
+    }
+
+    @Override
+    public void readCustomNBT(NBTTagCompound nbt, boolean descPacket)
+    {
+        super.readCustomNBT(nbt, descPacket);
+        style = LightStyle.byName(nbt.getString("lightStyle"));
     }
 
     /**
@@ -61,9 +98,20 @@ public class TileEntityPoleLightMount extends TileEntityInsulatorBase
     @Override
     public boolean canConnectCable(WireType cableType, TargetingInfo target)
     {
-        if (cableType != WireType.STRUCTURE_STEEL && cableType != WireType.COPPER)
+        if (cableType != WireType.STRUCTURE_STEEL && !(cableType == WireType.COPPER && feedsFloodlight()))
             return false;
         return limitType == null || limitType == cableType;
+    }
+
+    /** @return whether this mount is set up for a floodlight and an IE floodlight is in its place */
+    public boolean feedsFloodlight()
+    {
+        IBlockState state = mountState();
+        if (state == null || !style.isFloodlight())
+            return false;
+        BlockPos light = PoleLightMountGeometry.fixturePos(pos, armLength(state), state.getValue(BlockPoleLightMount.SWING),
+            state.getValue(BlockPoleLightMount.FACING), style);
+        return world.getTileEntity(light) instanceof TileEntityFloodlight;
     }
 
     /**
@@ -109,7 +157,39 @@ public class TileEntityPoleLightMount extends TileEntityInsulatorBase
         if (state == null)
             return new Vec3d(0.5, 0.5, 0.5);
         return PoleLightMountGeometry.wirePoint(armLength(state), state.getValue(BlockPoleLightMount.SWING),
-            state.getValue(BlockPoleLightMount.FACING));
+            state.getValue(BlockPoleLightMount.FACING), insulatorSide(con));
+    }
+
+    /**
+     * Which side the tip insulator stands out of, on an arm that mounts it on a side: the side of the
+     * tip most of its wires come from, seen looking along the arm from the pole. Every wire then
+     * attaches to that one insulator. Measured from the tip, not the mount: a swung arm's tip is
+     * blocks to one side of the pole. Arms with the insulator on top answer {@link InsulatorSide#RIGHT}.
+     *
+     * @param extra a wire to count as well, such as one IE is about to attach; may be null
+     */
+    public InsulatorSide insulatorSide(@Nullable Connection extra)
+    {
+        IBlockState state = mountState();
+        if (state == null || !PoleLightMountGeometry.isSideMounted(armLength(state), state.getValue(BlockPoleLightMount.SWING)))
+            return InsulatorSide.RIGHT;
+        EnumFacing right = state.getValue(BlockPoleLightMount.FACING).rotateY();
+        BlockPos tip = PoleLightMountGeometry.tipPos(state, pos);
+        long across = 0;
+        Set<Connection> conns = ImmersiveNetHandler.INSTANCE.getConnections(world, pos);
+        if (conns != null)
+            for (Connection c : conns)
+                across += across(c, tip, right);
+        if (extra != null && (conns == null || !conns.contains(extra)))
+            across += across(extra, tip, right);
+        return across < 0 ? InsulatorSide.LEFT : InsulatorSide.RIGHT;
+    }
+
+    /** @return how far a wire's far end lies to the right of the tip (negative: to its left) */
+    private long across(Connection c, BlockPos tip, EnumFacing right)
+    {
+        BlockPos far = pos.equals(c.start) ? c.end : c.start;
+        return (long) (far.getX() - tip.getX()) * right.getXOffset() + (long) (far.getZ() - tip.getZ()) * right.getZOffset();
     }
 
     /**
@@ -126,7 +206,7 @@ public class TileEntityPoleLightMount extends TileEntityInsulatorBase
         ArmSwing swing = state.getValue(BlockPoleLightMount.SWING);
         EnumFacing facing = state.getValue(BlockPoleLightMount.FACING);
         return ImmutableSet.of(pos, PoleLightMountGeometry.tipPos(pos, length, swing, facing),
-            PoleLightMountGeometry.fixturePos(pos, length, swing, facing));
+            PoleLightMountGeometry.fixturePos(pos, length, swing, facing, style));
     }
 
     private static int armLength(IBlockState state)

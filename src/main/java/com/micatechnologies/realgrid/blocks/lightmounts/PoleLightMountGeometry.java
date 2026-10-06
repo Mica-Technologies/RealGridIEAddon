@@ -42,18 +42,34 @@ public final class PoleLightMountGeometry
         return offset(mount, row(length, swing), PoleLightMountTips.TIP_BLOCK, facing);
     }
 
-    /** @return the block the CSM fixture goes in, for a mount at {@code mount} */
-    public static BlockPos fixturePos(BlockPos mount, int length, ArmSwing swing, EnumFacing facing)
+    /**
+     * @return the block the light goes in, for a mount at {@code mount}: the CSM street light or the
+     *         standing floodlight one block up and out, a hanging floodlight the block below that
+     */
+    public static BlockPos fixturePos(BlockPos mount, int length, ArmSwing swing, EnumFacing facing, LightStyle style)
     {
-        return offset(mount, row(length, swing), PoleLightMountTips.FIXTURE_BLOCK, facing);
+        BlockPos street = offset(mount, row(length, swing), PoleLightMountTips.FIXTURE_BLOCK, facing);
+        return style == LightStyle.FLOOD_DOWN ? street.down() : street;
     }
 
-    /** @return where wires attach, on top of the tip insulator, relative to the mount block */
-    public static Vec3d wirePoint(int length, ArmSwing swing, EnumFacing facing)
+    /**
+     * @param side which side the insulator stands out of, where the arm mounts it on a side (the
+     *             5-block arm); ignored where it stands on top
+     * @return where wires attach, on top of the tip insulator, relative to the mount block
+     */
+    public static Vec3d wirePoint(int length, ArmSwing swing, EnumFacing facing, InsulatorSide side)
     {
         float[] r = row(length, swing);
-        int w = PoleLightMountTips.WIRE;
+        int w = side == InsulatorSide.LEFT ? PoleLightMountTips.WIRE_LEFT : PoleLightMountTips.WIRE;
         return BoundsUtil.rotateOffset(new Vec3d(r[w], r[w + 1], r[w + 2]), facing);
+    }
+
+    /** @return whether this arm's tip insulator stands out of one side rather than on top */
+    public static boolean isSideMounted(int length, ArmSwing swing)
+    {
+        float[] r = row(length, swing);
+        int w = PoleLightMountTips.WIRE, l = PoleLightMountTips.WIRE_LEFT;
+        return r[w] != r[l] || r[w + 1] != r[l + 1] || r[w + 2] != r[l + 2];
     }
 
     /** @return the tip block's box round the insulator, in the tip block's own coordinates */
