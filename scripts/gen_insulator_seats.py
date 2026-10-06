@@ -1,5 +1,5 @@
 #!/usr/bin/env python3
-"""Generates the "seated on a crossarm" models and blockstates for the top-mounted insulators.
+"""Generates the "on a crossarm" models and blockstates for the insulators and cutoff switches.
 
 Run from the repository root:
 
@@ -17,10 +17,21 @@ transform; instead this writes four shifted copies of each model (`<model>_seat_
 in the model's own directions) and lists every facing x seat combination in the blockstate, picking
 the copy whose shift, once the facing's rotation is applied, points the right way. Rerun it after
 editing an insulator's model.
+
+Blocks that hang from their back (side-mount and dead-end insulators, cutoff switches) are fixed to
+an arm's front face, back face or an end instead: the `arm` property (ArmSeat in Java), worked out
+from the block behind them. Their moves are fixed in the block's own facing frame (closing the
+10 px gap to an arm's front face, or 5 px sideways to an end's centre line, and lifting the wire
+point to the arm's centre line), so each model needs only one copy per kind,
+`<model>_arm_<front|back|end_left|end_right>`, whatever the facing. Which models these are is
+read from the Java sources (InsulatorGeometry presets, the cutoff blocks), and the lifts must match
+InsulatorGeometry and BlockCutoffSwitchBase.ARM_LIFT_PX.
 """
 
+import glob
 import json
 import os
+import re
 
 ROOT = os.path.join(os.path.dirname(os.path.abspath(__file__)), '..', 'src', 'main', 'resources', 'assets', 'realgrid')
 MODEL_DIR = os.path.join(ROOT, 'models', 'block')
@@ -38,6 +49,15 @@ TOP_INSULATORS = [
     'maclean_pti_2core', 'maclean_pti_3core', 'maclean_pti_5core', 'maclean_pti_5core_2', 'maclean_pti_5core_3',
     'maclean_pti_6core',
 ]
+
+JAVA = os.path.join(os.path.dirname(os.path.abspath(__file__)), '..', 'src', 'main', 'java', 'com', 'micatechnologies',
+                    'realgrid', 'blocks')
+
+# Pixels each kind of back-hung block rises on an arm (InsulatorGeometry / BlockCutoffSwitchBase).
+LIFTS = {'SIDE_MOUNT': 4, 'DEAD_END': 2, 'CUTOFF': 2}
+FRONT_GAP = 10          # pixels from an arm block's front to the arm's front face
+END_SHIFT = 5           # pixels from a block's centre to the arm's centre line
+ARM_KINDS = ('front', 'back', 'end_left', 'end_right')
 
 # (dx, dz) per direction, in block coordinates (north is -z).
 DIRS = {'north': (0, -1), 'east': (1, 0), 'south': (0, 1), 'west': (-1, 0)}
@@ -68,7 +88,103 @@ def shifted(model, d):
     return out
 
 
+def cw(d):
+    return -d[1], d[0]
+
+
+def ccw(d):
+    return d[1], -d[0]
+
+
+def back_hung():
+    """(registry name, lift) of every side-mount and dead-end insulator and every cutoff switch."""
+    out = []
+    for te in sorted(glob.glob(os.path.join(JAVA, 'insulators', 'TileEntity*.java'))):
+        m = re.search(r'InsulatorGeometry\.(DEAD_END|SIDE_MOUNT)', open(te, encoding='utf-8').read())
+        if not m:
+            continue
+        block = os.path.join(os.path.dirname(te), 'Block' + os.path.basename(te)[len('TileEntity'):])
+        reg = re.search(r'super\("([^"]+)"', open(block, encoding='utf-8').read())
+        if reg:
+            out.append((reg.group(1), LIFTS[m.group(1)]))
+    for block in sorted(glob.glob(os.path.join(JAVA, 'cutoffs', 'BlockCutoffSwitch[0-9]*.java')) +
+                        glob.glob(os.path.join(JAVA, 'cutoffs', 'BlockCutoffSwitch.java'))):
+        reg = re.search(r'super\("([^"]+)"', open(block, encoding='utf-8').read())
+        if reg:
+            out.append((reg.group(1), LIFTS['CUTOFF']))
+    return out
+
+
+def moved(model, dx, dy, dz):
+    out = json.loads(json.dumps(model))
+    for e in out.get('elements', []):
+        for k in ('from', 'to'):
+            e[k] = [e[k][0] + dx, e[k][1] + dy, e[k][2] + dz]
+        if 'rotation' in e and 'origin' in e['rotation']:
+            o = e['rotation']['origin']
+            e['rotation']['origin'] = [o[0] + dx, o[1] + dy, o[2] + dz]
+    return out
+
+
+def arm_offsets(y_north, lift):
+    """Model-space (dx, dy, dz) per arm kind, for a model the blockstate turns by y_north to face north."""
+    fwd = rotate(DIRS['north'], -y_north % 360)
+    left, right = ccw(fwd), cw(fwd)
+    return {
+        'front': (-fwd[0] * FRONT_GAP, lift, -fwd[1] * FRONT_GAP),
+        'back': (0, lift, 0),
+        'end_left': (left[0] * END_SHIFT, lift, left[1] * END_SHIFT),
+        'end_right': (right[0] * END_SHIFT, lift, right[1] * END_SHIFT),
+    }
+
+
+def model_path(base):
+    return os.path.join(MODEL_DIR, base.split(':')[1].split('/', 1)[1] + '.json')
+
+
+def back_hung_blockstate(reg, lift):
+    bs_path = os.path.join(BLOCKSTATE_DIR, reg + '.json')
+    bs = json.load(open(bs_path, encoding='utf-8'))
+    v = bs['variants']
+    if 'facing' in v:                                            # first run: the hand-written form
+        ys = {f: fv.get('y', 0) for f, fv in v['facing'].items()}
+        actives = {a: av['custom']['base'] for a, av in v['active'].items()} if 'active' in v else None
+    else:                                                         # rerun: read the combined form back
+        ys, actives = {}, {}
+        for k, val in v.items():
+            if k == 'inventory' or 'arm=none' not in k:
+                continue
+            props = dict(kv.split('=') for kv in k.split(','))
+            ys[props['facing']] = val.get('y', 0)
+            if 'active' in props:
+                actives[props['active']] = val['custom']['base']
+        actives = actives or None
+    default_base = bs['defaults']['custom']['base']
+    bases = set(actives.values()) if actives else {default_base}
+    offsets = arm_offsets(ys['north'], lift)
+    for base in bases:
+        model = json.load(open(model_path(base), encoding='utf-8'))
+        for kind, off in offsets.items():
+            with open(model_path(base)[:-5] + '_arm_%s.json' % kind, 'w', newline='\n') as f:
+                json.dump(moved(model, *off), f, indent=2)
+                f.write('\n')
+    variants = {}
+    for facing, y in ys.items():
+        for kind in ('none',) + ARM_KINDS:
+            for active, base in (actives.items() if actives else [(None, default_base)]):
+                b = base if kind == 'none' else '%s_arm_%s' % (base, kind)
+                key = 'active=%s,arm=%s,facing=%s' % (active, kind, facing) if active else 'arm=%s,facing=%s' % (kind, facing)
+                variants[key] = {'model': bs['defaults']['model'], 'custom': {'base': b}, 'y': y}
+    variants['inventory'] = v['inventory']
+    bs['variants'] = variants
+    with open(bs_path, 'w', newline='\n') as f:
+        json.dump(bs, f, indent=2)
+        f.write('\n')
+
+
 def main():
+    for reg, lift in back_hung():
+        back_hung_blockstate(reg, lift)
     for reg in TOP_INSULATORS:
         bs_path = os.path.join(BLOCKSTATE_DIR, reg + '.json')
         bs = json.load(open(bs_path, encoding='utf-8'))

@@ -10,6 +10,7 @@ import blusunrize.immersiveengineering.api.energy.wires.WireType;
 import blusunrize.immersiveengineering.common.blocks.IEBlockInterfaces.IBlockBounds;
 import blusunrize.immersiveengineering.common.blocks.IEBlockInterfaces.ICacheData;
 import blusunrize.immersiveengineering.common.blocks.IEBlockInterfaces.IDirectionalTile;
+import com.micatechnologies.realgrid.blocks.crossarms.ArmSeat;
 import net.minecraft.block.state.IBlockState;
 import net.minecraft.entity.EntityLivingBase;
 import net.minecraft.nbt.NBTTagCompound;
@@ -205,17 +206,18 @@ public abstract class TileEntityInsulatorBase extends TileEntityImmersiveConnect
     @Override
     public Vec3d getConnectionOffset(Connection con)
     {
-        return geometry.connectionOffset(facing).add(seat().shift());
+        return geometry.connectionOffset(facing).add(seatShift());
     }
 
     @Override
     public float[] getBlockBounds()
     {
         float[] b = geometry.blockBounds(facing);
-        Vec3d s = seat().shift();
+        Vec3d s = seatShift();
         if (s == Vec3d.ZERO)
             return b;
-        return new float[]{(float) (b[0] + s.x), b[1], (float) (b[2] + s.z), (float) (b[3] + s.x), b[4], (float) (b[5] + s.z)};
+        return new float[]{(float) (b[0] + s.x), (float) (b[1] + s.y), (float) (b[2] + s.z),
+                           (float) (b[3] + s.x), (float) (b[4] + s.y), (float) (b[5] + s.z)};
     }
 
     /**
@@ -228,6 +230,20 @@ public abstract class TileEntityInsulatorBase extends TileEntityImmersiveConnect
         if (!geometry.isTopMount() || world == null)
             return InsulatorSeat.NONE;
         return InsulatorSeat.at(world, pos);
+    }
+
+    /**
+     * How far this insulator is drawn from where its geometry puts it: onto a crossarm below it (top
+     * mounts) or behind it (side mounts and dead-ends, see {@link ArmSeat}). The wire point and box
+     * move by the same amount.
+     */
+    protected Vec3d seatShift()
+    {
+        if (world == null)
+            return Vec3d.ZERO;
+        if (geometry.isTopMount())
+            return seat().shift();
+        return ArmSeat.of(world, pos, facing).offset(facing, geometry.armLiftPx());
     }
 
     /**

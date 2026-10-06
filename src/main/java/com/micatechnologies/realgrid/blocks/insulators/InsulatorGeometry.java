@@ -25,24 +25,41 @@ public final class InsulatorGeometry
     private final boolean usesRotation;
     private final Vec3d northOffset;
     private final float[] northBounds;
+    private final double armLiftPx;
 
-    private InsulatorGeometry(boolean usesRotation, Vec3d northOffset, float[] northBounds)
+    private InsulatorGeometry(boolean usesRotation, Vec3d northOffset, float[] northBounds, double armLiftPx)
     {
         this.usesRotation = usesRotation;
         this.northOffset = northOffset;
         this.northBounds = northBounds;
+        this.armLiftPx = armLiftPx;
     }
 
     /** Creates a top-mount geometry with fixed (non-rotating) bounds and offset. */
     public static InsulatorGeometry top(Vec3d offset, float[] bounds)
     {
-        return new InsulatorGeometry(false, offset, bounds);
+        return new InsulatorGeometry(false, offset, bounds, 0);
     }
 
     /** Creates a direction-dependent geometry that rotates bounds/offset by facing. */
     public static InsulatorGeometry rotatable(Vec3d northOffset, float[] northBounds)
     {
-        return new InsulatorGeometry(true, northOffset, northBounds);
+        return rotatable(northOffset, northBounds, 0);
+    }
+
+    /**
+     * @param armLiftPx how far the model rises when hung off a crossarm, so the wire point meets the
+     *                  arm's centre line (13 px up its block); see {@link com.micatechnologies.realgrid.blocks.crossarms.ArmSeat}
+     */
+    public static InsulatorGeometry rotatable(Vec3d northOffset, float[] northBounds, double armLiftPx)
+    {
+        return new InsulatorGeometry(true, northOffset, northBounds, armLiftPx);
+    }
+
+    /** @return how far a direction-dependent preset rises when hung off a crossarm, in pixels */
+    public double armLiftPx()
+    {
+        return armLiftPx;
     }
 
     /** @return whether this is a top-mount preset, standing on the block below (and so able to sit on a crossarm) */
@@ -87,7 +104,8 @@ public final class InsulatorGeometry
      */
     public static final InsulatorGeometry SIDE_MOUNT = rotatable(
         new Vec3d(0.5, 0.5625, 0.125),
-        new float[]{0.3125f, 0.0f, 0.0625f, 0.6875f, 0.6875f, 0.9375f}
+        new float[]{0.3125f, 0.0f, 0.0625f, 0.6875f, 0.6875f, 0.9375f},
+        4
     );
 
     /**
@@ -96,6 +114,7 @@ public final class InsulatorGeometry
      */
     public static final InsulatorGeometry DEAD_END = rotatable(
         new Vec3d(0.5, 0.6875, 0.125),
-        new float[]{0.25f, 0.375f, 0.0f, 0.75f, 0.8125f, 1.0f}
+        new float[]{0.25f, 0.375f, 0.0f, 0.75f, 0.8125f, 1.0f},
+        2
     );
 }

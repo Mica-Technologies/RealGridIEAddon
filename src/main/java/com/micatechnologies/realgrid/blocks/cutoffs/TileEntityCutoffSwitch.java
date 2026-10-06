@@ -13,6 +13,7 @@ import blusunrize.immersiveengineering.common.blocks.IEBlockInterfaces.IDirectio
 import blusunrize.immersiveengineering.common.blocks.IEBlockInterfaces.IHammerInteraction;
 import blusunrize.immersiveengineering.common.blocks.IEBlockInterfaces.IRedstoneOutput;
 import blusunrize.immersiveengineering.common.util.IESounds;
+import com.micatechnologies.realgrid.blocks.crossarms.ArmSeat;
 import net.minecraft.block.state.IBlockState;
 import net.minecraft.entity.EntityLivingBase;
 import net.minecraft.entity.player.EntityPlayer;
@@ -469,7 +470,32 @@ public class TileEntityCutoffSwitch extends TileEntityImmersiveConnectable
     public Vec3d getRaytraceOffset(IImmersiveConnectable link) { return new Vec3d(0.5, 0.5, 0.5); }
 
     @Override
-    public Vec3d getConnectionOffset(Connection con) { return new Vec3d(0.5, 0.5, 0.5); }
+    public Vec3d getConnectionOffset(Connection con) {
+        // IE expects a wire's end inside its own block: once a wire is made it checks every block the
+        // wire passes, and only the blocks holding an end may contain it. A switch on an arm's front
+        // is drawn 10 px back, past its block's edge, so its wire point stops at that edge.
+        Vec3d p = new Vec3d(0.5, 0.5, 0.5).add(armShift());
+        return new Vec3d(inBlock(p.x), inBlock(p.y), inBlock(p.z));
+    }
+
+    private static double inBlock(double v) {
+        return Math.max(0.5 / 16, Math.min(15.5 / 16, v));
+    }
+
+    /**
+     * How far the switch is drawn from the middle of its block when it hangs off a crossarm behind it
+     * (see {@link ArmSeat}); the wire point and box move with it. Follows the block state's facing.
+     */
+    private Vec3d armShift()
+    {
+        if (world == null)
+            return Vec3d.ZERO;
+        IBlockState state = world.getBlockState(pos);
+        if (!(state.getBlock() instanceof BlockCutoffSwitchBase))
+            return Vec3d.ZERO;
+        EnumFacing f = state.getValue(BlockCutoffSwitchBase.FACING);
+        return ArmSeat.of(world, pos, f).offset(f, BlockCutoffSwitchBase.ARM_LIFT_PX);
+    }
 
     // -----------------------------------------------------------------------
     // ICacheData
@@ -497,7 +523,9 @@ public class TileEntityCutoffSwitch extends TileEntityImmersiveConnectable
 
     @Override
     public float[] getBlockBounds() {
-        return new float[]{ 0.1875f, 0.125f, 0.1875f, 0.8125f, 0.875f, 0.8125f };
+        Vec3d s = armShift();
+        return new float[]{ (float) (0.1875 + s.x), (float) (0.125 + s.y), (float) (0.1875 + s.z),
+                            (float) (0.8125 + s.x), (float) (0.875 + s.y), (float) (0.8125 + s.z) };
     }
 
     // -----------------------------------------------------------------------

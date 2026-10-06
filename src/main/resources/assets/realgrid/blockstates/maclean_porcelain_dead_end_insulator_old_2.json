@@ -7,19 +7,145 @@
     }
   },
   "variants": {
-    "facing": {
-      "north": {
-        "y": 180
+    "arm=none,facing=north": {
+      "model": "immersiveengineering:smartmodel/connector",
+      "custom": {
+        "base": "realgrid:block/maclean_porcelain_dead_end_insulator_old_2"
       },
-      "south": {
-        "y": 0
+      "y": 180
+    },
+    "arm=front,facing=north": {
+      "model": "immersiveengineering:smartmodel/connector",
+      "custom": {
+        "base": "realgrid:block/maclean_porcelain_dead_end_insulator_old_2_arm_front"
       },
-      "west": {
-        "y": 90
+      "y": 180
+    },
+    "arm=back,facing=north": {
+      "model": "immersiveengineering:smartmodel/connector",
+      "custom": {
+        "base": "realgrid:block/maclean_porcelain_dead_end_insulator_old_2_arm_back"
       },
-      "east": {
-        "y": 270
-      }
+      "y": 180
+    },
+    "arm=end_left,facing=north": {
+      "model": "immersiveengineering:smartmodel/connector",
+      "custom": {
+        "base": "realgrid:block/maclean_porcelain_dead_end_insulator_old_2_arm_end_left"
+      },
+      "y": 180
+    },
+    "arm=end_right,facing=north": {
+      "model": "immersiveengineering:smartmodel/connector",
+      "custom": {
+        "base": "realgrid:block/maclean_porcelain_dead_end_insulator_old_2_arm_end_right"
+      },
+      "y": 180
+    },
+    "arm=none,facing=south": {
+      "model": "immersiveengineering:smartmodel/connector",
+      "custom": {
+        "base": "realgrid:block/maclean_porcelain_dead_end_insulator_old_2"
+      },
+      "y": 0
+    },
+    "arm=front,facing=south": {
+      "model": "immersiveengineering:smartmodel/connector",
+      "custom": {
+        "base": "realgrid:block/maclean_porcelain_dead_end_insulator_old_2_arm_front"
+      },
+      "y": 0
+    },
+    "arm=back,facing=south": {
+      "model": "immersiveengineering:smartmodel/connector",
+      "custom": {
+        "base": "realgrid:block/maclean_porcelain_dead_end_insulator_old_2_arm_back"
+      },
+      "y": 0
+    },
+    "arm=end_left,facing=south": {
+      "model": "immersiveengineering:smartmodel/connector",
+      "custom": {
+        "base": "realgrid:block/maclean_porcelain_dead_end_insulator_old_2_arm_end_left"
+      },
+      "y": 0
+    },
+    "arm=end_right,facing=south": {
+      "model": "immersiveengineering:smartmodel/connector",
+      "custom": {
+        "base": "realgrid:block/maclean_porcelain_dead_end_insulator_old_2_arm_end_right"
+      },
+      "y": 0
+    },
+    "arm=none,facing=west": {
+      "model": "immersiveengineering:smartmodel/connector",
+      "custom": {
+        "base": "realgrid:block/maclean_porcelain_dead_end_insulator_old_2"
+      },
+      "y": 90
+    },
+    "arm=front,facing=west": {
+      "model": "immersiveengineering:smartmodel/connector",
+      "custom": {
+        "base": "realgrid:block/maclean_porcelain_dead_end_insulator_old_2_arm_front"
+      },
+      "y": 90
+    },
+    "arm=back,facing=west": {
+      "model": "immersiveengineering:smartmodel/connector",
+      "custom": {
+        "base": "realgrid:block/maclean_porcelain_dead_end_insulator_old_2_arm_back"
+      },
+      "y": 90
+    },
+    "arm=end_left,facing=west": {
+      "model": "immersiveengineering:smartmodel/connector",
+      "custom": {
+        "base": "realgrid:block/maclean_porcelain_dead_end_insulator_old_2_arm_end_left"
+      },
+      "y": 90
+    },
+    "arm=end_right,facing=west": {
+      "model": "immersiveengineering:smartmodel/connector",
+      "custom": {
+        "base": "realgrid:block/maclean_porcelain_dead_end_insulator_old_2_arm_end_right"
+      },
+      "y": 90
+    },
+    "arm=none,facing=east": {
+      "model": "immersiveengineering:smartmodel/connector",
+      "custom": {
+        "base": "realgrid:block/maclean_porcelain_dead_end_insulator_old_2"
+      },
+      "y": 270
+    },
+    "arm=front,facing=east": {
+      "model": "immersiveengineering:smartmodel/connector",
+      "custom": {
+        "base": "realgrid:block/maclean_porcelain_dead_end_insulator_old_2_arm_front"
+      },
+      "y": 270
+    },
+    "arm=back,facing=east": {
+      "model": "immersiveengineering:smartmodel/connector",
+      "custom": {
+        "base": "realgrid:block/maclean_porcelain_dead_end_insulator_old_2_arm_back"
+      },
+      "y": 270
+    },
+    "arm=end_left,facing=east": {
+      "model": "immersiveengineering:smartmodel/connector",
+      "custom": {
+        "base": "realgrid:block/maclean_porcelain_dead_end_insulator_old_2_arm_end_left"
+      },
+      "y": 270
+    },
+    "arm=end_right,facing=east": {
+      "model": "immersiveengineering:smartmodel/connector",
+      "custom": {
+        "base": "realgrid:block/maclean_porcelain_dead_end_insulator_old_2_arm_end_right"
+      },
+      "y": 270
     },
     "inventory": [
       {
