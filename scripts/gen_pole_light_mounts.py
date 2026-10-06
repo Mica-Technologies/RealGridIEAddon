@@ -18,11 +18,14 @@ Coordinate system (the same one every generated .obj uses): one unit is one bloc
 block spans 0..1 on every axis, the arm reaches NORTH (-Z), and the pole is on the SOUTH face
 (z = 1). The blockstate rotates the model to the other three facings.
 
-Arm reach: an arm of length L ends at the near edge of the block where its fixture goes, so a
-fixture placed as its own block lines up with the tip.
+Arm reach: the fixture is placed as its own block, one block above the mount, facing the same way
+as the arm. CSM's street-light fixtures (Cree LEDway, Sylvania, Sears) sit in the bottom of their
+block with the arm socket in the middle of the back face, about 1 to 4 px up, so the arm ends
+there and runs a little way into the socket:
   - straight: the fixture block is L blocks north of the mount.
   - left / right: the fixture block is n blocks north and n blocks west / east, n = round(L / sqrt 2).
-    The arm aims at that block's centre, so it runs a little short of a true 45 degrees.
+    CSM fixtures only face the four sides, so a swung arm curves round to run straight north into
+    the socket rather than meeting the fixture's corner at 45 degrees.
 """
 
 import json
@@ -52,8 +55,10 @@ CABLE_RADIUS = 0.017
 PIVOT = (0.5, 0.80)     # (x, z) where the arm leaves the fitting
 ARM_START_Y = 0.41      # height of the arm leaving the fitting
 ELBOW_TOP_Y = 0.70      # height at the top of the elbow
-ARM_TIP_Y = 0.85        # height of the slip-fitter, whatever the length
+ARM_TIP_Y = 1 + 2.5 * PX  # height of the slip-fitter: a CSM fixture's socket, one block up
 TIP_LENGTH = 0.18       # level slip-fitter at the tip
+TIP_INSET = 3 * PX      # how far the slip-fitter runs into the fixture's socket
+SWING_TURN = 0.7        # how far back from the socket a swung arm starts turning to meet it
 CABLE_DROP = 13 * PX    # how far the cable hangs under the arm at its lowest
 GUIDE_FRONT = (0.5, 0.875, 0.75)   # front face of the guide insulator = TileEntityPoleLightMount.WIRE_POINT
 
@@ -139,25 +144,34 @@ def _normalize(a):
     return (a[0] / m, a[1] / m, a[2] / m)
 
 
-def arm_end(length, swing):
-    """(x, z) of the arm tip: the near edge of the fixture block, seen from the pivot."""
+def arm_route(length, swing):
+    """The arm's course seen from above, as (x, z) points from the pivot to the tip. The tip is
+    TIP_INSET into the socket on the back face of the fixture block."""
     if swing == 'straight':
-        return (0.5, 1.0 - length)
+        return [PIVOT, (0.5, 1.0 - length - TIP_INSET)]
     n = max(1, round(length / math.sqrt(2)))
     side = -1 if swing == 'left' else 1
-    centre = (0.5 + side * n, 0.5 - n)
-    dx, dz = centre[0] - PIVOT[0], centre[1] - PIVOT[1]
-    d = math.hypot(dx, dz)
-    return (centre[0] - 0.5 * dx / d, centre[1] - 0.5 * dz / d)
+    sx, sz = 0.5 + side * n, 1.0 - n - TIP_INSET
+    # Quadratic Bezier whose control point is straight behind the socket, so the arm leaves the
+    # pivot heading for the fixture and arrives heading north.
+    cx, cz = sx, sz + SWING_TURN
+    pts = []
+    for i in range(41):
+        t = i / 40
+        a, b, c = (1 - t) ** 2, 2 * (1 - t) * t, t ** 2
+        pts.append((a * PIVOT[0] + b * cx + c * sx, a * PIVOT[1] + b * cz + c * sz))
+    return pts
 
 
 class ArmPath:
-    """Height of the arm as a function of horizontal distance s from the pivot, along its heading."""
+    """Height of the arm as a function of horizontal distance s from the pivot, along its route."""
 
     def __init__(self, length, swing):
-        ex, ez = arm_end(length, swing)
-        self.dx, self.dz = ex - PIVOT[0], ez - PIVOT[1]
-        self.reach = math.hypot(self.dx, self.dz)
+        self.route = arm_route(length, swing)
+        self.dist = [0.0]
+        for a, b in zip(self.route, self.route[1:]):
+            self.dist.append(self.dist[-1] + math.hypot(b[0] - a[0], b[1] - a[1]))
+        self.reach = self.dist[-1]
         d = self.reach
         self.s_level = min(0.12, 0.1 * d)                      # level run out of the fitting
         self.s_elbow = self.s_level + min(0.7, 0.45 * d)       # top of the elbow
@@ -175,8 +189,14 @@ class ArmPath:
         return ARM_TIP_Y
 
     def point(self, s, dy=0.0):
-        f = s / self.reach
-        return (PIVOT[0] + self.dx * f, self.y(s) + dy, PIVOT[1] + self.dz * f)
+        s = max(0.0, min(self.reach, s))
+        i = 1
+        while i < len(self.dist) - 1 and self.dist[i] < s:
+            i += 1
+        a, b = self.route[i - 1], self.route[i]
+        span = self.dist[i] - self.dist[i - 1]
+        f = (s - self.dist[i - 1]) / span if span else 0.0
+        return (a[0] + (b[0] - a[0]) * f, self.y(s) + dy, a[1] + (b[1] - a[1]) * f)
 
 
 def _samples(a, b, n):
@@ -192,9 +212,10 @@ def arm_model(length, swing, wired):
     for y in (2.5 * PX, 13.5 * PX):                                        # through-bolt heads
         obj.box((7.5 * PX, y - 0.5 * PX, 0.88), (8.5 * PX, y + 0.5 * PX, 0.9))
     obj.use('metal')
-    ss = [0.0] + _samples(path.s_level, path.s_elbow, 10) + [path.s_tip]
+    ss = ([0.0] + _samples(path.s_level, path.s_elbow, 10)
+          + _samples(path.s_elbow, path.s_tip, 1 if swing == 'straight' else max(1, round(3 * path.reach)))[1:])
     obj.tube([(PIVOT[0], ARM_START_Y, 0.86)] + [path.point(s) for s in ss], ARM_RADIUS, sides=ARM_SIDES)
-    obj.tube([path.point(path.s_tip - 0.01), path.point(path.reach)], TIP_RADIUS, sides=ARM_SIDES)
+    obj.tube([path.point(s) for s in _samples(path.s_tip - 0.01, path.reach, 3)], TIP_RADIUS, sides=ARM_SIDES)
     brace_s = min(0.9, 0.55 * path.reach)
     obj.tube([(0.5, 2 * PX, 0.89), path.point(brace_s, -ARM_RADIUS * 0.6)], BRACE_RADIUS, sides=TUBE_SIDES)
     if wired:
