@@ -315,8 +315,7 @@ public abstract class TileEntityRealTransformer extends TileEntityImmersiveConne
                 && ((TileEntityRealTransformer) master).canConnectCable(cableType, target);
         }
 
-        int tc = getTargetedConnector(target);
-        switch (tc)
+        switch (connectorFor(cableType, target))
         {
             case 0:
                 // MV/LV relay point - accepts COPPER or ELECTRUM, multiple connections
@@ -357,7 +356,7 @@ public abstract class TileEntityRealTransformer extends TileEntityImmersiveConne
         // Establish connector state immediately. On some IE paths the handler's connection table is not observable
         // until after this callback returns; relying on the subsequent sync alone left a window in which a copper
         // relay could accept electrum, or a one-wire transformer could accept a second HV wire.
-        int targetedConnector = getTargetedConnector(target);
+        int targetedConnector = connectorFor(cableType, target);
         if (targetedConnector == 0)
         {
             if (mvLvLimitType == null)
@@ -383,18 +382,37 @@ public abstract class TileEntityRealTransformer extends TileEntityImmersiveConne
         }
     }
 
+    /**
+     * The connector a wire of this type goes to. HV steel always goes to a bushing and copper or electrum
+     * to the relay, wherever the transformer was clicked: the relay is invisible and its click area small,
+     * so going by the click alone turned MV and LV wires away from most of the model. Between two
+     * bushings the click still decides, though the slots are only occupancy (see getHvConnectionOffset).
+     */
+    protected int connectorFor(WireType cableType, TargetingInfo target)
+    {
+        if (cableType != WireType.STEEL)
+            return 0;
+        int tc = getTargetedConnector(target);
+        return tc == 0 ? 1 : tc;
+    }
+
+    /**
+     * IE asks this only for the wire cutters, which clear the wires of the returned type. The clicked
+     * point decides; when nothing is attached there, the other type present is cut instead, so MV and
+     * LV wires can be cut without finding the relay's small click area.
+     */
     @Override
     public WireType getCableLimiter(TargetingInfo target)
     {
-        int tc = getTargetedConnector(target);
-        switch (tc)
+        WireType hv = hvCable1 != null ? hvCable1 : hvCable2;
+        switch (getTargetedConnector(target))
         {
             case 0:
-                return mvLvLimitType;
+                return mvLvLimitType != null ? mvLvLimitType : hv;
             case 1:
-                return hvCable1;
+                return hvCable1 != null ? hvCable1 : mvLvLimitType;
             case 2:
-                return hvCable2;
+                return hvCable2 != null ? hvCable2 : mvLvLimitType;
         }
         return null;
     }
