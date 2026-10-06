@@ -1,6 +1,7 @@
 package com.micatechnologies.realgrid.blocks.crossarms;
 
 import com.micatechnologies.realgrid.RealGrid;
+import com.micatechnologies.realgrid.blocks.cutoffs.BlockCutoffSwitchBase;
 import com.micatechnologies.realgrid.blocks.insulators.BlockInsulatorBase;
 import com.micatechnologies.realgrid.init.RealGridRegistry;
 import com.micatechnologies.realgrid.util.BoundsUtil;
@@ -32,7 +33,10 @@ import net.minecraft.world.World;
  * carries on that way, {@link #POLE} whether this segment sits against a pole, where it is
  * through-bolted. The hardware for what is mounted on the arm appears by itself, as on a real arm:
  * {@link #PIN} draws an insulator pin's nut under the arm when a top-mounted insulator stands on the
- * segment, and {@link #HANGER} a bracket down to an IE connector hung below it.
+ * segment, {@link #HANGER} a bracket down to an IE connector hung below it, and the fittings
+ * ({@link #FRONT_FIT}, {@link #BACK_FIT}, {@link #LEFT_FIT}, {@link #RIGHT_FIT}) an eyebolt where a
+ * dead-end or side-mount insulator or a cutoff switch hangs off that face of the segment (see
+ * {@link ArmSeat}).
  *
  * <p>Clicking a pole's face puts a segment flush in front of it; clicking either end of an arm adds
  * a segment there, in line with it. An arm stays up while any segment in its unbroken row is against
@@ -46,6 +50,10 @@ public class BlockCrossarm extends Block
     public static final PropertyBool POLE = PropertyBool.create("pole");
     public static final PropertyBool PIN = PropertyBool.create("pin");
     public static final PropertyBool HANGER = PropertyBool.create("hanger");
+    public static final PropertyBool FRONT_FIT = PropertyBool.create("front_fit");
+    public static final PropertyBool BACK_FIT = PropertyBool.create("back_fit");
+    public static final PropertyBool LEFT_FIT = PropertyBool.create("left_fit");
+    public static final PropertyBool RIGHT_FIT = PropertyBool.create("right_fit");
 
     /** The arm's cross-section, for a north-facing segment: 6 px square at the top back of the block, against the pole. */
     static final float[] ARM_BOUNDS = {0.0f, 10 / 16f, 10 / 16f, 1.0f, 1.0f, 1.0f};
@@ -66,7 +74,9 @@ public class BlockCrossarm extends Block
         setResistance(10.0f);
         setDefaultState(blockState.getBaseState().withProperty(FACING, EnumFacing.NORTH)
             .withProperty(LEFT, false).withProperty(RIGHT, false).withProperty(POLE, false)
-            .withProperty(PIN, false).withProperty(HANGER, false));
+            .withProperty(PIN, false).withProperty(HANGER, false)
+            .withProperty(FRONT_FIT, false).withProperty(BACK_FIT, false)
+            .withProperty(LEFT_FIT, false).withProperty(RIGHT_FIT, false));
         RealGridRegistry.registerBlock(this);
     }
 
@@ -82,7 +92,7 @@ public class BlockCrossarm extends Block
     @Override
     protected BlockStateContainer createBlockState()
     {
-        return new BlockStateContainer(this, FACING, LEFT, RIGHT, POLE, PIN, HANGER);
+        return new BlockStateContainer(this, FACING, LEFT, RIGHT, POLE, PIN, HANGER, FRONT_FIT, BACK_FIT, LEFT_FIT, RIGHT_FIT);
     }
 
     @Override
@@ -106,7 +116,26 @@ public class BlockCrossarm extends Block
             .withProperty(RIGHT, continues(world, pos, facing, facing.rotateY()))
             .withProperty(POLE, isPole(world, pos.offset(facing.getOpposite()), facing))
             .withProperty(PIN, hasPinInsulator(world, pos.up()))
-            .withProperty(HANGER, isConnector(world, pos.down()));
+            .withProperty(HANGER, isConnector(world, pos.down()))
+            .withProperty(FRONT_FIT, hangsOff(world, pos, facing))
+            .withProperty(BACK_FIT, hangsOff(world, pos, facing.getOpposite()))
+            .withProperty(LEFT_FIT, hangsOff(world, pos, facing.rotateYCCW()))
+            .withProperty(RIGHT_FIT, hangsOff(world, pos, facing.rotateY()));
+    }
+
+    /**
+     * @return whether a block hung from its back (a dead-end or side-mount insulator, a cutoff switch)
+     *         is fixed to this segment's face towards {@code way}: next to it that way, facing away
+     */
+    static boolean hangsOff(IBlockAccess world, BlockPos pos, EnumFacing way)
+    {
+        IBlockState state = world.getBlockState(pos.offset(way));
+        Block block = state.getBlock();
+        // The two kinds of block each have their own facing property.
+        if (block instanceof BlockCutoffSwitchBase)
+            return state.getValue(BlockCutoffSwitchBase.FACING) == way;
+        return block instanceof BlockInsulatorBase && !((BlockInsulatorBase) block).isTopMount()
+            && state.getValue(BlockInsulatorBase.FACING) == way;
     }
 
     /** @return whether a top-mounted insulator stands at {@code at}, pinned through the arm below it */

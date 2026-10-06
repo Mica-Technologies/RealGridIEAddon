@@ -3,6 +3,7 @@ package com.micatechnologies.realgrid.blocks.insulators;
 import blusunrize.immersiveengineering.api.IEProperties;
 import blusunrize.immersiveengineering.api.energy.wires.TileEntityImmersiveConnectable;
 import com.micatechnologies.realgrid.RealGrid;
+import com.micatechnologies.realgrid.blocks.crossarms.ArmSeat;
 import com.micatechnologies.realgrid.init.IRealGridTileEntityProvider;
 import com.micatechnologies.realgrid.init.RealGridRegistry;
 import net.minecraft.block.Block;
@@ -49,6 +50,12 @@ public abstract class BlockInsulatorBase extends Block implements ITileEntityPro
      */
     public static final PropertyEnum<InsulatorSeat> SEAT = PropertyEnum.create("seat", InsulatorSeat.class);
 
+    /**
+     * Where a side-mounted or dead-end insulator hangs off a crossarm behind it (see {@link ArmSeat}).
+     * Worked out from the block behind, never stored. Only the direction-dependent insulators have it.
+     */
+    public static final PropertyEnum<ArmSeat> ARM = PropertyEnum.create("arm", ArmSeat.class);
+
     protected static final AxisAlignedBB DEFAULT_AABB = new AxisAlignedBB(0.25, 0.0, 0.25, 0.75, 0.875, 0.75);
 
     public BlockInsulatorBase(String registryName)
@@ -88,7 +95,7 @@ public abstract class BlockInsulatorBase extends Block implements ITileEntityPro
     @Override
     protected BlockStateContainer createBlockState()
     {
-        IProperty[] properties = isTopMount() ? new IProperty[]{FACING, SEAT} : new IProperty[]{FACING};
+        IProperty[] properties = isTopMount() ? new IProperty[]{FACING, SEAT} : new IProperty[]{FACING, ARM};
         return new ExtendedBlockState(this, properties,
             new IUnlistedProperty[]{IEProperties.CONNECTIONS, IEProperties.TILEENTITY_PASSTHROUGH});
     }
@@ -114,7 +121,11 @@ public abstract class BlockInsulatorBase extends Block implements ITileEntityPro
     @Override
     public IBlockState getActualState(IBlockState state, IBlockAccess world, BlockPos pos)
     {
-        return state.getPropertyKeys().contains(SEAT) ? state.withProperty(SEAT, InsulatorSeat.at(world, pos)) : state;
+        if (state.getPropertyKeys().contains(SEAT))
+            return state.withProperty(SEAT, InsulatorSeat.at(world, pos));
+        if (state.getPropertyKeys().contains(ARM))
+            return state.withProperty(ARM, ArmSeat.of(world, pos, state.getValue(FACING)));
+        return state;
     }
 
     @Override

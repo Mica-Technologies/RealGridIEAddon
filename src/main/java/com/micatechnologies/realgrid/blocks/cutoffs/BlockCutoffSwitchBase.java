@@ -5,6 +5,7 @@ import blusunrize.immersiveengineering.api.energy.wires.TileEntityImmersiveConne
 import blusunrize.immersiveengineering.common.util.ChatUtils;
 import blusunrize.immersiveengineering.common.util.Utils;
 import com.micatechnologies.realgrid.RealGrid;
+import com.micatechnologies.realgrid.blocks.crossarms.ArmSeat;
 import com.micatechnologies.realgrid.init.IRealGridTileEntityProvider;
 import com.micatechnologies.realgrid.init.RealGridRegistry;
 import net.minecraft.block.Block;
@@ -12,6 +13,7 @@ import net.minecraft.block.ITileEntityProvider;
 import net.minecraft.block.material.Material;
 import net.minecraft.block.properties.IProperty;
 import net.minecraft.block.properties.PropertyBool;
+import net.minecraft.block.properties.PropertyEnum;
 import net.minecraft.block.properties.PropertyDirection;
 import net.minecraft.block.state.BlockStateContainer;
 import net.minecraft.block.state.IBlockState;
@@ -28,6 +30,7 @@ import net.minecraft.util.EnumHand;
 import net.minecraft.util.NonNullList;
 import net.minecraft.util.math.AxisAlignedBB;
 import net.minecraft.util.math.BlockPos;
+import net.minecraft.util.math.Vec3d;
 import net.minecraft.util.text.TextComponentTranslation;
 import net.minecraft.world.IBlockAccess;
 import net.minecraft.world.World;
@@ -64,6 +67,15 @@ public abstract class BlockCutoffSwitchBase extends Block implements ITileEntity
 
     /** true = switch CLOSED (power flows); false = switch OPEN (power blocked). */
     public static final PropertyBool ACTIVE = PropertyBool.create("active");
+
+    /**
+     * Where the switch hangs off a crossarm behind it (see {@link ArmSeat}); worked out from the
+     * block behind it, never stored.
+     */
+    public static final PropertyEnum<ArmSeat> ARM = PropertyEnum.create("arm", ArmSeat.class);
+
+    /** How far a switch rises when hung off a crossarm, in pixels, to bring its bracket to the arm's centre line. */
+    public static final double ARM_LIFT_PX = 2;
 
     private static final AxisAlignedBB SWITCH_AABB =
         new AxisAlignedBB(0.1875, 0.125, 0.1875, 0.8125, 0.875, 0.8125);
@@ -139,7 +151,7 @@ public abstract class BlockCutoffSwitchBase extends Block implements ITileEntity
     protected BlockStateContainer createBlockState()
     {
         return new ExtendedBlockState(this,
-            new IProperty[]{ FACING, ACTIVE },
+            new IProperty[]{ FACING, ACTIVE, ARM },
             new IUnlistedProperty[]{ IEProperties.CONNECTIONS, IEProperties.TILEENTITY_PASSTHROUGH });
     }
 
@@ -194,6 +206,7 @@ public abstract class BlockCutoffSwitchBase extends Block implements ITileEntity
     public IBlockState getActualState(IBlockState state, IBlockAccess world, BlockPos pos)
     {
         TileEntityCutoffSwitch te = getSwitchTE(world, pos);
+        state = state.withProperty(ARM, ArmSeat.of(world, pos, state.getValue(FACING)));
         return te != null ? state.withProperty(ACTIVE, te.active) : state;
     }
 
@@ -354,7 +367,8 @@ public abstract class BlockCutoffSwitchBase extends Block implements ITileEntity
     @Override
     public AxisAlignedBB getBoundingBox(IBlockState state, IBlockAccess source, BlockPos pos)
     {
-        return SWITCH_AABB;
+        Vec3d s = ArmSeat.of(source, pos, state.getValue(FACING)).offset(state.getValue(FACING), ARM_LIFT_PX);
+        return SWITCH_AABB.offset(s);
     }
 
     @Override public boolean isOpaqueCube(IBlockState state) { return false; }
