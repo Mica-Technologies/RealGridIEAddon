@@ -2,8 +2,11 @@ package com.micatechnologies.realgrid.init;
 
 import com.micatechnologies.realgrid.RealGrid;
 import com.micatechnologies.realgrid.blocks.bankmounts.BlockTransformerBankMount;
+import com.micatechnologies.realgrid.blocks.cases.BlockTransformerCase;
 import com.micatechnologies.realgrid.blocks.crossarms.BlockCrossarm;
+import com.micatechnologies.realgrid.blocks.crossarms.BlockCrossarmAlleyBrace;
 import com.micatechnologies.realgrid.blocks.crossarms.BlockCrossarmBrace;
+import com.micatechnologies.realgrid.blocks.crossarms.BlockCrossarmSpacer;
 import com.micatechnologies.realgrid.blocks.crossarms.CrossarmMaterial;
 import com.micatechnologies.realgrid.blocks.insulators.*;
 import com.micatechnologies.realgrid.blocks.lightmounts.BlockPoleLightMount;
@@ -133,9 +136,34 @@ public class ModBlocks
     public static final BlockTransformerBankMount TRANSFORMER_BANK_MOUNT_2 = new BlockTransformerBankMount(null, 2);
 
     // Crossarms (issue #38): one block per material, segments joining into an arm of any length
-    public static final BlockCrossarm CROSSARM_BROOKS_BROWN = new BlockCrossarm(CrossarmMaterial.BROOKS_BROWN);
+    public static final BlockCrossarm[] CROSSARMS = crossarms();
+    public static final BlockCrossarmAlleyBrace[] CROSSARM_ALLEY_BRACES = alleyBraces();
     public static final BlockCrossarmBrace CROSSARM_BRACE_WOOD = new BlockCrossarmBrace(BlockCrossarmBrace.Kind.WOOD);
     public static final BlockCrossarmBrace CROSSARM_BRACE_METAL = new BlockCrossarmBrace(BlockCrossarmBrace.Kind.METAL);
+    public static final BlockCrossarmSpacer CROSSARM_SPACER_WOOD = new BlockCrossarmSpacer(BlockCrossarmSpacer.Kind.WOOD);
+    public static final BlockCrossarmSpacer CROSSARM_SPACER_FIBERGLASS = new BlockCrossarmSpacer(BlockCrossarmSpacer.Kind.FIBERGLASS);
+
+    // Transformer cases (issue #38): platforms of any size between poles
+    public static final BlockTransformerCase TRANSFORMER_CASE_METAL = new BlockTransformerCase(BlockTransformerCase.Kind.METAL);
+    public static final BlockTransformerCase TRANSFORMER_CASE_WOOD = new BlockTransformerCase(BlockTransformerCase.Kind.WOOD);
+
+    private static BlockCrossarm[] crossarms() {
+        CrossarmMaterial[] materials = CrossarmMaterial.values();
+        BlockCrossarm[] arms = new BlockCrossarm[materials.length];
+        for (int i = 0; i < materials.length; i++)
+            arms[i] = new BlockCrossarm(materials[i]);
+        return arms;
+    }
+
+    private static BlockCrossarmAlleyBrace[] alleyBraces() {
+        BlockCrossarmAlleyBrace.Kind[] kinds = BlockCrossarmAlleyBrace.Kind.values();
+        int[] lengths = BlockCrossarmAlleyBrace.LENGTHS;
+        BlockCrossarmAlleyBrace[] braces = new BlockCrossarmAlleyBrace[kinds.length * lengths.length];
+        for (int k = 0; k < kinds.length; k++)
+            for (int l = 0; l < lengths.length; l++)
+                braces[k * lengths.length + l] = new BlockCrossarmAlleyBrace(kinds[k], lengths[l]);
+        return braces;
+    }
 
     // Creative Tab
     public static final CreativeTabs CREATIVE_TAB = new CreativeTabs(RealGrid.MODID) {

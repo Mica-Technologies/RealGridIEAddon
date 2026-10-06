@@ -1,0 +1,90 @@
+{
+  "multipart": [
+    {
+      "apply": {
+        "model": "realgrid:transformer_case/metal/deck"
+      }
+    },
+    {
+      "apply": {
+        "model": "realgrid:transformer_case/metal/joist"
+      }
+    },
+    {
+      "when": {
+        "north": "false"
+      },
+      "apply": {
+        "model": "realgrid:transformer_case/metal/frame_side",
+        "y": 0
+      }
+    },
+    {
+      "when": {
+        "north": "false",
+        "railings": "true"
+      },
+      "apply": {
+        "model": "realgrid:transformer_case/metal/rail_side",
+        "y": 0
+      }
+    },
+    {
+      "when": {
+        "east": "false"
+      },
+      "apply": {
+        "model": "realgrid:transformer_case/metal/frame_side",
+        "y": 90
+      }
+    },
+    {
+      "when": {
+        "east": "false",
+        "railings": "true"
+      },
+      "apply": {
+        "model": "realgrid:transformer_case/metal/rail_side",
+        "y": 90
+      }
+    },
+    {
+      "when": {
+        "south": "false"
+      },
+      "apply": {
+        "model": "realgrid:transformer_case/metal/frame_side",
+        "y": 180
+      }
+    },
+    {
+      "when": {
+        "south": "false",
+        "railings": "true"
+      },
+      "apply": {
+        "model": "realgrid:transformer_case/metal/rail_side",
+        "y": 180
+      }
+    },
+    {
+      "when": {
+        "west": "false"
+      },
+      "apply": {
+        "model": "realgrid:transformer_case/metal/frame_side",
+        "y": 270
+      }
+    },
+    {
+      "when": {
+        "west": "false",
+        "railings": "true"
+      },
+      "apply": {
+        "model": "realgrid:transformer_case/metal/rail_side",
+        "y": 270
+      }
+    }
+  ]
+}

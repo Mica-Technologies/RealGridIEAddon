@@ -90,3 +90,6 @@ docs/agent-plans/
 
 # Output of .github/scripts/server-smoke-test.sh when run locally.
 server-smoke.log
+
+# Python bytecode from the asset generators
+__pycache__/

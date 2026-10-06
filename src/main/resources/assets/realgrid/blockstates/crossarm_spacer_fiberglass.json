@@ -1,0 +1,28 @@
+{
+  "variants": {
+    "axis=z,style=plain": {
+      "model": "realgrid:crossarm/spacer_fiberglass/plain",
+      "y": 0
+    },
+    "axis=z,style=square": {
+      "model": "realgrid:crossarm/spacer_fiberglass/square",
+      "y": 0
+    },
+    "axis=z,style=round": {
+      "model": "realgrid:crossarm/spacer_fiberglass/round",
+      "y": 0
+    },
+    "axis=x,style=plain": {
+      "model": "realgrid:crossarm/spacer_fiberglass/plain",
+      "y": 90
+    },
+    "axis=x,style=square": {
+      "model": "realgrid:crossarm/spacer_fiberglass/square",
+      "y": 90
+    },
+    "axis=x,style=round": {
+      "model": "realgrid:crossarm/spacer_fiberglass/round",
+      "y": 90
+    }
+  }
+}

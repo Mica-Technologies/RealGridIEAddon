@@ -206,7 +206,16 @@ public abstract class TileEntityInsulatorBase extends TileEntityImmersiveConnect
     @Override
     public Vec3d getConnectionOffset(Connection con)
     {
-        return geometry.connectionOffset(facing).add(seatShift());
+        // IE expects a wire's end inside its own block: once a wire is made it checks every block the
+        // wire passes, and only the blocks holding an end may contain it. Seating on an arm moves the
+        // point, so it stops at the block's edge.
+        Vec3d p = geometry.connectionOffset(facing).add(seatShift());
+        return new Vec3d(inBlock(p.x), inBlock(p.y), inBlock(p.z));
+    }
+
+    private static double inBlock(double v)
+    {
+        return Math.max(0.5 / 16, Math.min(15.5 / 16, v));
     }
 
     @Override
