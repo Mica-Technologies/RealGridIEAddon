@@ -105,6 +105,9 @@ tile.realgrid.pole_light_mount_5.name=Pole Light Mount (5 Block Arm)
 tile.realgrid.pole_light_mount_6.name=Pole Light Mount (6 Block Arm)
 tile.realgrid.pole_light_mount_7.name=Pole Light Mount (7 Block Arm)
 tile.realgrid.pole_light_mount_8.name=Pole Light Mount (8 Block Arm)
+tile.realgrid.pole_light_mount_tip.name=Pole Light Mount Tip
+realgrid.pole_light_mount.tip_blocked=The arm needs a clear space where its insulator goes.
+realgrid.pole_light_mount.swing_wired=Take the wires off before swinging the arm.
 
 # Transformer Bank Mounts
 tile.realgrid.transformer_bank_mount_ladwp_3.name=LADWP Transformer Bank Mount (3 Transformers)

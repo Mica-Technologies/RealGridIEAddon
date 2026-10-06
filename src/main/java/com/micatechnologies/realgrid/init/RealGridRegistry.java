@@ -39,6 +39,23 @@ public class RealGridRegistry
      */
     public static void registerBlock(Block block)
     {
+        registerBlockWithoutItem(block);
+
+        // Auto-create and register the ItemBlock wrapper.
+        ItemBlock itemBlock = new ItemBlockBase(block);
+        itemBlock.setRegistryName(Objects.requireNonNull(block.getRegistryName()));
+        registerItem(itemBlock);
+    }
+
+    /**
+     * Registers a block with no item, for parts a player never holds, such as the invisible tip
+     * block a pole light mount places at the end of its arm.
+     *
+     * @throws IllegalArgumentException if a block with the same registry name
+     *                                  is already registered
+     */
+    public static void registerBlockWithoutItem(Block block)
+    {
         String key = Objects.requireNonNull(block.getRegistryName(),
             "Block must have a registry name before calling registerBlock()").toString();
 
@@ -49,12 +66,6 @@ public class RealGridRegistry
         }
 
         BLOCKS.put(key, block);
-
-        // Auto-create and register the ItemBlock wrapper.
-        ItemBlock itemBlock = new ItemBlockBase(block);
-        itemBlock.setRegistryName(Objects.requireNonNull(block.getRegistryName()));
-        registerItem(itemBlock);
-
         LOGGER.debug("Registered block: {}", key);
     }
 
