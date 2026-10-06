@@ -111,6 +111,7 @@ realgrid.pole_light_mount.swing_wired=Take the wires off before swinging the arm
 realgrid.pole_light_mount.style.street=Carries a street light
 realgrid.pole_light_mount.style.flood_up=Carries a floodlight, standing up
 realgrid.pole_light_mount.style.flood_down=Carries a floodlight, hanging down
+realgrid.transformer_bank_mount.arms_blocked=The frame needs a clear space on each side for its arms.
 
 # Transformer Bank Mounts
 tile.realgrid.transformer_bank_mount_ladwp_3.name=LADWP Transformer Bank Mount (3 Transformers)

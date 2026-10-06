@@ -1,7 +1,7 @@
 {
   "forge_marker": 1,
   "defaults": {
-    "model": "realgrid:transformer_bank_mount/mount_ladwp_3.obj",
+    "model": "realgrid:transformer_bank_mount/mount_ladwp_3_center.obj",
     "custom": {
       "flip-v": true
     }
@@ -21,9 +21,20 @@
         "y": 270
       }
     },
+    "part": {
+      "center": {
+        "model": "realgrid:transformer_bank_mount/mount_ladwp_3_center.obj"
+      },
+      "left": {
+        "model": "realgrid:transformer_bank_mount/mount_ladwp_3_left.obj"
+      },
+      "right": {
+        "model": "realgrid:transformer_bank_mount/mount_ladwp_3_right.obj"
+      }
+    },
     "inventory": [
       {
-        "model": "realgrid:transformer_bank_mount/mount_ladwp_3.obj",
+        "model": "realgrid:transformer_bank_mount/mount_ladwp_3_item.obj",
         "custom": {
           "flip-v": true
         },
@@ -42,7 +53,7 @@
                 "y": 135
               }
             ],
-            "scale": 0.4
+            "scale": 0.25
           },
           "ground": {
             "translation": [
@@ -50,7 +61,7 @@
               0.1,
               0
             ],
-            "scale": 0.25
+            "scale": 0.15
           },
           "fixed": {
             "rotation": [
@@ -58,7 +69,7 @@
                 "y": 180
               }
             ],
-            "scale": 0.4
+            "scale": 0.25
           },
           "thirdperson": {
             "translation": [
@@ -74,7 +85,7 @@
                 "y": 45
               }
             ],
-            "scale": 0.3
+            "scale": 0.188
           },
           "firstperson": {
             "translation": [
@@ -87,7 +98,7 @@
                 "y": 45
               }
             ],
-            "scale": 0.3
+            "scale": 0.188
           }
         }
       }
