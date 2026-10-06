@@ -121,3 +121,5 @@ tile.realgrid.transformer_bank_mount_2.name=Transformer Bank Mount (2 Transforme
 # Creative Tab
 itemGroup.realgrid=RealGrid
 tile.realgrid.crossarm_brooks_brown.name=Brooks Cedar Crossarm (Brown)
+tile.realgrid.crossarm_brace_wood.name=Wood Crossarm V-Brace
+tile.realgrid.crossarm_brace_metal.name=Steel Crossarm V-Brace

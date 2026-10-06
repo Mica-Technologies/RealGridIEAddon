@@ -14,6 +14,11 @@ Coordinate system (as in gen_pole_light_mounts.py): one unit is one block, the s
 0..1, the segment faces NORTH (away from the pole) and the pole is the block to its SOUTH (z 1..2).
 The arm runs along x. Left and right are seen looking out from the pole, so left is west (-x).
 The blockstate rotates the models to the other facings.
+
+V-braces (BlockCrossarmBrace) go one block below the arm, in front of the pole. A brace's point is
+bolted to the pole's face; each leg runs up to the arm's front face one block out to that side, and
+is drawn only while the arm carries on that far (left / right in its blockstate). Their models use
+the same coordinates, with the arm in the block above (y 1..2).
 """
 
 import json
@@ -38,6 +43,16 @@ MATERIALS = {
     'brooks_brown': ((122, 84, 56), 10),
 }
 
+# V-braces: kind -> (texture, strap half-thickness)
+BRACES = {
+    'wood': ('realgrid:blocks/crossarm_brace_wood', 1.2 * PX),
+    'metal': ('realgrid:blocks/pole_light_mount_metal', 0.8 * PX),
+}
+BRACE_POINT = (0.5, 0.55, 15.2 * PX)     # where the point is bolted to the pole's face
+BRACE_REACH = 1.0                        # how far out either side the legs meet the arm
+BRACE_TOP = 1.0 + ARM_LO + 1.5 * PX      # where a leg meets the arm's front face, in the block above
+BRACE_FRONT = ARM_LO - 0.4 * PX          # just in front of the arm's front face
+
 
 def arm_model(material, left, right, pole):
     obj = Obj('crossarm_%s_%s' % (material, key(left, right, pole)), 'crossarm.mtl', HEADER)
@@ -51,6 +66,50 @@ def arm_model(material, left, right, pole):
         obj.box((6 * PX, 11 * PX, ARM_LO - 0.4 * PX), (10 * PX, 15 * PX, ARM_LO))
         obj.box((7 * PX, 12 * PX, ARM_LO - 1.0 * PX), (9 * PX, 14 * PX, ARM_LO - 0.4 * PX))
     return obj.text()
+
+
+def brace_model(kind, left, right):
+    _, half = BRACES[kind]
+    obj = Obj('crossarm_brace_%s_%s' % (kind, key(left, right, False)), 'brace.mtl', HEADER)
+    px, py, pz = BRACE_POINT
+    obj.use('clamp')
+    obj.box((px - 2.5 * PX, py - 1.5 * PX, 15.4 * PX), (px + 2.5 * PX, py + 2.5 * PX, 1.0))          # plate on the pole
+    for on, sign in ((left, -1), (right, 1)):
+        if not on:
+            continue
+        end = (px + sign * BRACE_REACH, BRACE_TOP, BRACE_FRONT)
+        obj.use('strap')
+        obj.tube([(px + sign * 1.5 * PX, py + 0.5 * PX, pz), end], half, sides=4)
+        obj.use('clamp')
+        obj.box((end[0] - 1 * PX, end[1] - 1 * PX, end[2] - 1 * PX), (end[0] + 1 * PX, end[1] + 1 * PX, ARM_LO))   # bolt into the arm
+    return obj.text()
+
+
+def brace_mtl(kind):
+    texture, _ = BRACES[kind]
+    return HEADER + 'newmtl strap\nmap_Kd %s\nnewmtl clamp\nmap_Kd realgrid:blocks/pole_light_mount_clamp\n' % texture
+
+
+def brace_blockstate(kind):
+    variants = {}
+    for facing, y in FACINGS:
+        for left in (False, True):
+            for right in (False, True):
+                variants['facing=%s,left=%s,right=%s' % (facing, str(left).lower(), str(right).lower())] = {
+                    'model': 'realgrid:crossarm/brace_%s/brace_%s.obj' % (kind, key(left, right, False)),
+                    'custom': {'flip-v': True}, 'y': y}
+    variants['inventory'] = {
+        'model': 'realgrid:crossarm/brace_%s/brace_%s.obj' % (kind, key(True, True, False)),
+        'custom': {'flip-v': True},
+        'transform': {
+            'gui': {'translation': [0, -0.15, 0], 'rotation': [{'x': 30}, {'y': 135}], 'scale': 0.45},
+            'ground': {'translation': [0, 0.1, 0], 'scale': 0.3},
+            'fixed': {'rotation': [{'y': 180}], 'scale': 0.45},
+            'thirdperson': {'translation': [0, 0.1, 0.1], 'rotation': [{'x': 75}, {'y': 45}], 'scale': 0.35},
+            'firstperson': {'translation': [0.1, 0.1, 0], 'rotation': [{'y': 45}], 'scale': 0.35},
+        },
+    }
+    return {'forge_marker': 1, 'variants': variants}
 
 
 def key(left, right, pole):
@@ -121,6 +180,15 @@ def main():
         write(os.path.join(folder, 'crossarm.mtl'), mtl())
         write(os.path.join(BLOCKSTATE_DIR, 'crossarm_%s.json' % material), json.dumps(blockstate(material), indent=2) + '\n')
         png(os.path.join(TEXTURE_DIR, 'crossarm_%s.png' % material), wood_texture(colour, spread))
+    for kind in BRACES:
+        folder = os.path.join(MODEL_DIR, 'brace_%s' % kind)
+        os.makedirs(folder, exist_ok=True)
+        for left in (False, True):
+            for right in (False, True):
+                write(os.path.join(folder, 'brace_%s.obj' % key(left, right, False)), brace_model(kind, left, right))
+        write(os.path.join(folder, 'brace.mtl'), brace_mtl(kind))
+        write(os.path.join(BLOCKSTATE_DIR, 'crossarm_brace_%s.json' % kind), json.dumps(brace_blockstate(kind), indent=2) + '\n')
+    png(os.path.join(TEXTURE_DIR, 'crossarm_brace_wood.png'), wood_texture((150, 124, 92), 8))
 
 
 if __name__ == '__main__':
