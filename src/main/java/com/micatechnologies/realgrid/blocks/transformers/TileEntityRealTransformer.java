@@ -19,7 +19,6 @@ import net.minecraft.tileentity.TileEntity;
 import net.minecraft.util.EnumFacing;
 import net.minecraft.util.math.BlockPos;
 import net.minecraft.util.math.Vec3d;
-import net.minecraft.util.math.Vec3i;
 
 import java.util.Set;
 
@@ -291,17 +290,6 @@ public abstract class TileEntityRealTransformer extends TileEntityImmersiveConne
         }
     }
 
-    /**
-     * IE's wire coil asks this three-argument form, and TileEntityImmersiveConnectable answers it
-     * from the LV/MV/HV tier alone without consulting the two-argument form, so the rules below
-     * are only applied because this sends the question on to them.
-     */
-    @Override
-    public boolean canConnectCable(WireType cableType, TargetingInfo target, Vec3i offset)
-    {
-        return canConnectCable(cableType, target);
-    }
-
     @Override
     public boolean canConnectCable(WireType cableType, TargetingInfo target)
     {
@@ -315,7 +303,8 @@ public abstract class TileEntityRealTransformer extends TileEntityImmersiveConne
                 && ((TileEntityRealTransformer) master).canConnectCable(cableType, target);
         }
 
-        switch (connectorFor(cableType, target))
+        int tc = getTargetedConnector(target);
+        switch (tc)
         {
             case 0:
                 // MV/LV relay point - accepts COPPER or ELECTRUM, multiple connections
@@ -356,7 +345,7 @@ public abstract class TileEntityRealTransformer extends TileEntityImmersiveConne
         // Establish connector state immediately. On some IE paths the handler's connection table is not observable
         // until after this callback returns; relying on the subsequent sync alone left a window in which a copper
         // relay could accept electrum, or a one-wire transformer could accept a second HV wire.
-        int targetedConnector = connectorFor(cableType, target);
+        int targetedConnector = getTargetedConnector(target);
         if (targetedConnector == 0)
         {
             if (mvLvLimitType == null)
@@ -382,37 +371,18 @@ public abstract class TileEntityRealTransformer extends TileEntityImmersiveConne
         }
     }
 
-    /**
-     * The connector a wire of this type goes to. HV steel always goes to a bushing and copper or electrum
-     * to the relay, wherever the transformer was clicked: the relay is invisible and its click area small,
-     * so going by the click alone turned MV and LV wires away from most of the model. Between two
-     * bushings the click still decides, though the slots are only occupancy (see getHvConnectionOffset).
-     */
-    protected int connectorFor(WireType cableType, TargetingInfo target)
-    {
-        if (cableType != WireType.STEEL)
-            return 0;
-        int tc = getTargetedConnector(target);
-        return tc == 0 ? 1 : tc;
-    }
-
-    /**
-     * IE asks this only for the wire cutters, which clear the wires of the returned type. The clicked
-     * point decides; when nothing is attached there, the other type present is cut instead, so MV and
-     * LV wires can be cut without finding the relay's small click area.
-     */
     @Override
     public WireType getCableLimiter(TargetingInfo target)
     {
-        WireType hv = hvCable1 != null ? hvCable1 : hvCable2;
-        switch (getTargetedConnector(target))
+        int tc = getTargetedConnector(target);
+        switch (tc)
         {
             case 0:
-                return mvLvLimitType != null ? mvLvLimitType : hv;
+                return mvLvLimitType;
             case 1:
-                return hvCable1 != null ? hvCable1 : mvLvLimitType;
+                return hvCable1;
             case 2:
-                return hvCable2 != null ? hvCable2 : mvLvLimitType;
+                return hvCable2;
         }
         return null;
     }
