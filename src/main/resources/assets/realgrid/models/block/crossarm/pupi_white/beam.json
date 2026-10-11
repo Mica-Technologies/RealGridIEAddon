@@ -71,7 +71,7 @@
     }
   ],
   "textures": {
-    "wood": "realgrid:blocks/crossarm_pupi_white",
-    "particle": "realgrid:blocks/crossarm_pupi_white"
+    "wood": "realgrid:blocks/crossarm_brooks_brown",
+    "particle": "realgrid:blocks/crossarm_brooks_brown"
   }
 }
